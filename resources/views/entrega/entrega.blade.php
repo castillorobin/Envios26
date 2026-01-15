@@ -8,7 +8,7 @@
         <div class="section-body">
             <div class="row">
                 <div class="col-lg-12 mx-auto">
-                    <div class="card w-75 mx-auto"> 
+                    <div class="card w-50 mx-auto"> 
                         
                         <div class="card-body  p-3">
 
