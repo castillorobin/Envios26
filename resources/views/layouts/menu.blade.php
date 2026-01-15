@@ -4,6 +4,22 @@
     <i class="fas fa-home"></i><span>Inicio</span>
     </a>
     </li>
+
+
+    
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <i class="fas fa-building "></i> Entregas
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="/entrega"><i class="fas fa-truck"></i> Entregar</a>
+     
+          <a class="dropdown-item" href="/entrega/multiple"><i class="fas fa-archive"></i>Entrega multiple</a>
+        
+        </div>
+      </li>
+
+
     @can('ver-envios')
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
