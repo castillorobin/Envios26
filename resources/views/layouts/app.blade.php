@@ -2033,11 +2033,33 @@
         </section>
     </div>
 
-    <!-- Footer -->
-    <footer class="main-footer text-center">
-        <strong>© {{ now()->year }} - Melo Express</strong>
-    </footer>
-</div>
+
+
+    
+                <!-- ========== Footer Start ========== -->
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <script>
+                                    document.write(new Date().getFullYear())
+                                </script>
+                                © {{ now()->year }} - Melo Express
+                               
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+                <!-- ========== Footer End ========== -->
+
+            </div>
+            <!-- ==================================================== -->
+            <!-- End Page Content -->
+            <!-- ==================================================== -->
+        </div>
+        <!-- END Wrapper -->
+
+ 
 
 <!-- Scripts -->
  <!-- Vendor Javascript (Require in all Page) -->
