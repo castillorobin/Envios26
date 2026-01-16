@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-    <section class="section">
+<div class="container-xxl">
+    
         <div class="section-header">
             <h3 class="page__heading">Melo Express</h3>
         </div>
@@ -32,6 +33,7 @@
                 </div> 
             </div>
         </div>
-    </section>    
+       
+</div>
 @endsection
 
