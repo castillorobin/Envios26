@@ -22,10 +22,11 @@ class UsuarioController extends Controller
      */
     public function index()
     {
-        $usuarios = User::paginate(5);
-        $repartidores = Repartidor::all();
-        return view('usuarios.index')->with(['usuarios'=>$usuarios, 'repartidores'=>$repartidores]);
-
+       // Cargamos los roles de antemano para que la consulta sea rápida
+    $usuarios = User::with('roles')->paginate(5); 
+    $repartidores = Repartidor::all();
+    
+    return view('usuarios.index', compact('usuarios', 'repartidores'));
     }
  
     /**

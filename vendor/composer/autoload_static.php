@@ -376,8 +376,8 @@ class ComposerStaticInit85fca1059374edd6fd33604df155dcfc
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -604,6 +604,7 @@ class ComposerStaticInit85fca1059374edd6fd33604df155dcfc
         'App\\Http\\Controllers\\Auth\\ResetPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ResetPasswordController.php',
         'App\\Http\\Controllers\\Auth\\VerificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/VerificationController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
+        'App\\Http\\Controllers\\EntregaController' => __DIR__ . '/../..' . '/app/Http/Controllers/EntregaController.php',
         'App\\Http\\Controllers\\EstatusController' => __DIR__ . '/../..' . '/app/Http/Controllers/EstatusController.php',
         'App\\Http\\Controllers\\FacturacionController' => __DIR__ . '/../..' . '/app/Http/Controllers/FacturacionController.php',
         'App\\Http\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HomeController.php',
