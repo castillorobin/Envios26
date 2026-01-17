@@ -160,6 +160,7 @@
                                     <label class="form-check-label" for="customCheck1">Acepto los Términos y Condiciones</label>
                                 </div>
                             </div>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
                         </div>
                     </div> <!-- end col -->
                 </div> <!-- end row -->
