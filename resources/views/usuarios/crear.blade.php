@@ -11,7 +11,8 @@
                                     </h5>
                                 </div>
                     <div class="card-body">
-                                <form>
+                                <form action="{{ route('usuarios.store') }}" method="POST">
+    @csrf
     <div id="horizontalwizard">
         <ul class="nav nav-pills nav-justified icon-wizard form-wizard-header bg-light p-1" role="tablist">
             <li class="nav-item" role="presentation">
@@ -48,26 +49,26 @@
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="mb-3">
-                            <label for="basicUser" class="form-label">Nombre del usuario</label>
-                            <input id="basicUser" type="text" class="form-control" placeholder="Ingrese el nombre del usuario">
+                            <label for="name" class="form-label">Nombre del usuario</label>
+                            <input id="name" name="name" type="text" class="form-control" placeholder="Ingrese el nombre del usuario">
                         </div>
                     </div> <!-- end col -->
                     <div class="col-lg-6">
                         <div class="mb-3">
-                            <label for="basicEmail" class="form-label">Email</label>
-                            <input id="basicEmail" type="email" class="form-control" placeholder="Ingrese el email">
+                            <label for="email" class="form-label">Email</label>
+                            <input id="email" name="email" type="email" class="form-control" placeholder="Ingrese el email">
                         </div>
                     </div> <!-- end col -->
                     <div class="col-lg-6">
                         <div class="mb-3">
-                            <label for="basicPassworda" class="form-label">Contraseña</label>
-                            <input id="basicPassworda" type="text" class="form-control" placeholder="Ingrese la contraseña">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input id="password" name="password" type="text" class="form-control" placeholder="Ingrese la contraseña">
                         </div>
                     </div> <!-- end col -->
                     <div class="col-lg-6">
                         <div class="mb-3">
-                            <label for="basicConfirmPassword" class="form-label">Confirmar contraseña</label>
-                            <input id="basicConfirmPassword" type="text" class="form-control" placeholder="Confirme la contraseña">
+                            <label for="password_confirmation" class="form-label">Confirmar contraseña</label>
+                            <input id="password_confirmation" name="password_confirmation" type="text" class="form-control" placeholder="Confirme la contraseña">
                         </div>
                     </div> <!-- end col -->
                 </div> <!-- end row -->
@@ -84,26 +85,26 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="basicFname">Nombre del empleado</label>
-                                    <input type="text" id="basicFname" class="form-control" placeholder="Nombre">
+                                    <label class="form-label" for="first_name_emp">Nombre del empleado</label>
+                                    <input type="text" id="first_name_emp" name="first_name_emp" class="form-control" placeholder="Nombre">
                                 </div>
                             </div><!-- end col -->
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="basicLname">Apellido del empleado</label>
-                                    <input type="text" id="basicLname" class="form-control" placeholder="Apellido">
+                                    <label class="form-label" for="last_name">Apellido del empleado</label>
+                                    <input type="text" id="last_name" name="last_name" class="form-control" placeholder="Apellido">
                                 </div>
                             </div><!-- end col -->
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="basicMnumber">Número de teléfono</label>
-                                    <input type="number" id="basicMnumber" class="form-control" placeholder="Número de teléfono">
+                                    <label class="form-label" for="phone">Número de teléfono</label>
+                                    <input type="number" id="phone" name="phone" class="form-control" placeholder="Número de teléfono">
                                 </div>
                             </div><!-- end col -->
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="basicCountry">Whatsapp</label>
-                                    <input type="text" id="basicCountry" class="form-control" placeholder="Whatsapp">
+                                    <label class="form-label" for="whatsapp">Whatsapp</label>
+                                    <input type="text" id="whatsapp" name="whatsapp" class="form-control" placeholder="Whatsapp">
                                 </div>
                             </div><!-- end col -->
                         </div><!-- end row -->
@@ -118,26 +119,30 @@
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="mb-3">
-                            <label for="basicGitLink" class="form-label">DUI</label>
-                            <input id="basicGitLink" type="text" class="form-control" placeholder="DUI">
+                            <label for="dui" class="form-label">DUI</label>
+                            <input id="dui" name="dui" type="text" class="form-control" placeholder="DUI">
                         </div>
                     </div> <!-- end col -->
                     <div class="col-lg-6">
                         <div class="mb-3">
                             <label for="basicGoogleLink" class="form-label">Rol</label>
-                            <input id="basicGoogleLink" type="text" class="form-control" placeholder="Rol">
+                            <select name="rol" class="form-control">
+         @foreach($roles as $role)
+            <option value="{{ $role }}">{{ $role }}</option>
+        @endforeach
+    </select>
                         </div>
                     </div> <!-- end col -->
                     <div class="col-lg-6">
                         <div class="mb-3">
-                            <label for="basicInstagramLink" class="form-label">Dirección</label>
-                            <input id="basicInstagramLink" type="text" class="form-control" placeholder="Dirección">
+                            <label for="address" class="form-label">Dirección</label>
+                            <input id="address" name="address" type="text" class="form-control" placeholder="Dirección">
                         </div>
                     </div> <!-- end col -->
                     <div class="col-lg-6">
                         <div class="mb-3">
-                            <label for="basicSkypeLink" class="form-label">Fecha de Incorporacion</label>
-                            <input id="basicSkypeLink" type="date" class="form-control" placeholder="Fecha de Incorporacion">
+                            <label for="joined_at" class="form-label">Fecha de Incorporacion</label>
+                            <input id="joined_at" name="joined_at" type="date" class="form-control" placeholder="Fecha de Incorporacion">
                         </div>
                     </div> <!-- end col -->
                 </div><!-- end row -->
@@ -154,12 +159,7 @@
 
                             <p class="w-75 mb-2 mx-auto">Los datos se han llenado correctamente.</p>
 
-                            <div class="mb-3">
-                                <div class="form-check d-inline-block">
-                                    <input type="checkbox" class="form-check-input" id="customCheck1">
-                                    <label class="form-check-label" for="customCheck1">Acepto los Términos y Condiciones</label>
-                                </div>
-                            </div>
+                           
                             <button type="submit" class="btn btn-primary">Guardar</button>
                         </div>
                     </div> <!-- end col -->

@@ -150,4 +150,4 @@ Route::get('entrega', [App\Http\Controllers\EntregaController::class, 'index'] )
 
 
 //Usuarios
-Route::get('usuarios', [App\Http\Controllers\UsuarioController::class, 'index'] )->name('usuarios');
+Route::get('usuarios', [App\Http\Controllers\UsuarioController::class, 'index'] )->name('usuarios.inicio') ;

@@ -23,7 +23,7 @@ class UsuarioController extends Controller
     public function index()
     {
        // Cargamos los roles de antemano para que la consulta sea rápida
-    $usuarios = User::with('roles')->paginate(5); 
+    $usuarios = User::with('roles')->paginate(15); 
     $repartidores = Repartidor::all();
     
     return view('usuarios.index', compact('usuarios', 'repartidores'));
@@ -50,20 +50,30 @@ class UsuarioController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|same:confirm-password',
-            'roles' => 'required'
-        ]);
+        $request->validate([
+        'name'     => 'required|string|max:255',
+        'email'    => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:8|confirmed',
+        'rol'      => 'required'
+    ]);
 
-        $input = $request->all();
-        $input['password'] = Hash::make($input['password']);
+    // 1. Crear el usuario
+    $user = User::create([
+        'name'      => $request->name,
+        'last_name' => $request->last_name,
+        'email'     => $request->email,
+        'password'  => Hash::make($request->password),
+        'dui'       => $request->dui,
+        'phone'     => $request->phone,
+        'whatsapp'  => $request->whatsapp,
+        'address'   => $request->address,
+        'joined_at' => $request->joined_at,
+    ]);
 
-        $user = User::create($input);
-        $user->assignRole($request->input('roles'));
+    // 2. Asignar Rol de Spatie
+    $user->assignRole($request->rol);
 
-        return redirect()->route('usuarios.index');
+    return redirect()->route('usuarios.inicio')->with('success', 'Usuario creado correctamente.');
 
 
 
