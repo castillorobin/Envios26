@@ -22,7 +22,7 @@ use App\Http\Controllers\EstatusController;
 | contains the "web" middleware group. Now create something great!
 |
 */ 
-
+ 
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -147,3 +147,7 @@ Route::get('reportes/repofiltrobodegafecha', [App\Http\Controllers\PedidoControl
 //Entregas
 
 Route::get('entrega', [App\Http\Controllers\EntregaController::class, 'index'] )->name('entrega');
+
+
+//Usuarios
+Route::get('usuarios', [App\Http\Controllers\UsuarioController::class, 'index'] )->name('usuarios');
