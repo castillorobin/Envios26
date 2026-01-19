@@ -5,49 +5,42 @@
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
     <title>@yield('title') | {{ config('app.name') }}</title>
 
-    <!-- General CSS Files -->
-    <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css"/>
-    <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
+  <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}" />
 
-    <!-- Template CSS -->
-    <link rel="stylesheet" href="{{ asset('web/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('web/css/components.css')}}">
-    <link rel="stylesheet" href="{{ asset('assets/css/iziToast.min.css') }}">
+        <!-- Vendor css (Require in all Page) -->
+        <link href="{{ asset('assets/css/vendor.min.css') }}" rel="stylesheet" type="text/css" />
+
+        <!-- Icons css (Require in all Page) -->
+        <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
+
+        <!-- App css (Require in all Page) -->
+        <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css" />
+
+        <!-- Theme Config js (Require in all Page) -->
+        <script src="{{ asset('assets/js/config.js') }}"></script>
     <link href="{{ asset('assets/css/sweetalert.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ asset('assets/css/select2.min.css') }}" rel="stylesheet" type="text/css"/>
 </head>
 
-<body>
-<div id="app">
-    <section class="section">
-        <div class="container mt-5">
-            <div class="row">
-                <div class="col-md-6 offset-md-3">
-                    <div class="login-brand">
-                        <img src="{{ asset('img/logo.jpg') }}" alt="logo" width="100"
-                             class="shadow-light">
-                    </div>
+<body class="authentication-bg">
+
+             
                     @yield('content')
-                    <div class="simple-footer">
-{{--                        Copyright &copy; {{ getSettingValue('application_name') }}  {{ date('Y') }}--}}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
+                  
+<!-- Scripts -->
+ <!-- Vendor Javascript (Require in all Page) -->
+        <script src="{{ asset('assets/js/vendor.js') }}"></script>
 
-<!-- General JS Scripts -->
-<script src="{{ asset('assets/js/jquery.min.js') }}"></script>
-<script src="{{ asset('assets/js/popper.min.js') }}"></script>
-<script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('assets/js/jquery.nicescroll.js') }}"></script>
+        <!-- App Javascript (Require in all Page) -->
+        <script src="{{ asset('assets/js/app.js') }}"></script>
+        <!-- Vector Map Js -->
+        <script src="{{ asset('assets/vendor/jsvectormap/js/jsvectormap.min.js') }}"></script>
+        <script src="{{ asset('assets/vendor/jsvectormap/maps/world-merc.js') }}"></script>
+        <script src="{{ asset('assets/vendor/jsvectormap/maps/world.js') }}"></script>
 
-<!-- JS Libraies -->
+        <!-- Dashboard Js -->
+        <script src="{{ asset('assets/js/pages/dashboard.analytics.js') }}"></script>
 
-<!-- Template JS File -->
-<script src="{{ asset('web/js/stisla.js') }}"></script>
-<script src="{{ asset('web/js/scripts.js') }}"></script>
 <!-- Page Specific JS File -->
 </body>
 </html>

@@ -3,11 +3,40 @@
     Admin Login
 @endsection
 @section('content')
-    <div class="card card-primary">
-        <div class="card-header"><h4>Melo Express - Login</h4></div>
+    
 
-        <div class="card-body">
-            <form method="POST" action="{{ route('login') }}">
+        <div class="account-pages pt-2 pt-sm-5 pb-4 pb-sm-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-12">
+                        <div class="card auth-card">
+                            <div class="card-body p-0">
+                                <div class="row align-items-center g-0">
+                                    <div class="col-lg-6 d-none d-lg-inline-block border-end">
+                                        <div class="auth-page-sidebar">
+                                            <img src="assets/images/sign-in.svg" alt="auth" class="img-fluid">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="p-4">
+                                            <div class="mx-auto mb-4 text-center auth-logo">
+                                                <a href="index.html" class="logo-dark">
+                                                     <img src="{{ asset('img/logomelonegro.png') }}" alt="logo" width="200"
+                             class="shadow-light">
+                                                </a>
+
+                                                
+                                            </div>
+                                            <h2 class="fw-bold text-center fs-18">
+                                                Sign In
+                                            </h2>
+                                            <p class="text-muted text-center mt-1 mb-4">
+                                                Ingrese su correo y contraseña para acceder al sistema
+                                            </p>
+
+                                            <div class="row justify-content-center">
+                                                <div class="col-12 col-md-8">
+                                                    <form method="POST" action="{{ route('login') }}">
                 @csrf
                 @if ($errors->any())
                     <div class="alert alert-danger p-0">
@@ -18,53 +47,57 @@
                         </ul>
                     </div>
                 @endif
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input aria-describedby="emailHelpBlock" id="email" type="email"
-                           class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email"
-                           placeholder="Enter Email" tabindex="1"
-                           value="{{ (Cookie::get('email') !== null) ? Cookie::get('email') : old('email') }}" autofocus
-                           required>
-                    <div class="invalid-feedback">
-                        {{ $errors->first('email') }}
-                    </div>
-                </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="example-email">Email</label>
+                                                            <input type="email" id="example-email" name="example-email" class="form-control" placeholder="Enter your email">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                          
+                                                            <label class="form-label" for="example-password">Contraseña</label>
+                                                            <input type="password" id="example-password" class="form-control" placeholder="Enter your password">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                           
+                                                        </div>
 
-                <div class="form-group">
-                    <div class="d-block">
-                        <label for="password" class="control-label">Password</label>
-                        <!--
-                        <div class="float-right">
-                            <a href="{{ route('password.request') }}" class="text-small">
-                                Forgot Password?
-                            </a>
+                                                        <div class="mb-1 text-center d-grid">
+                                                            <button class="btn btn-primary" type="submit">
+                                                                Entrar
+                                                            </button>
+                                                        </div>
+                                                    </form>
+
+                                                   
+                                                </div>
+                                                <!-- end col -->
+                                            </div>
+                                            <!-- end row -->
+                                        </div>
+                                    </div>
+                                    <!-- end col -->
+                                </div>
+                                <!-- end row -->
+                            </div>
+                            <!-- end card-body -->
                         </div>
--->
+                        <!-- end card -->
+
+                        
                     </div>
-                    <input aria-describedby="passwordHelpBlock" id="password" type="password"
-                           value="{{ (Cookie::get('password') !== null) ? Cookie::get('password') : null }}"
-                           placeholder="Enter Password"
-                           class="form-control{{ $errors->has('password') ? ' is-invalid': '' }}" name="password"
-                           tabindex="2" required>
-                    <div class="invalid-feedback">
-                        {{ $errors->first('password') }}
-                    </div>
+                    <!-- end col -->
                 </div>
-<!--
-                <div class="form-group">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" name="remember" class="custom-control-input" tabindex="3"
-                               id="remember"{{ (Cookie::get('remember') !== null) ? 'checked' : '' }}>
-                        <label class="custom-control-label" for="remember">Remember Me</label>
-                    </div>
-                </div>
--->
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4">
-                        Entrar
-                    </button>
-                </div>
-            </form>
+                <!-- end row -->
+            </div>
         </div>
-    </div>
+
+        <!-- Vendor Javascript (Require in all Page) -->
+        <script src="assets/js/vendor.js"></script>
+
+        <!-- App Javascript (Require in all Page) -->
+        <script src="assets/js/app.js"></script>
+
+    
+
+<svg id="SvgjsSvg1001" width="2" height="0" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev" style="overflow: hidden; top: -100%; left: -100%; position: absolute; opacity: 0;"><defs id="SvgjsDefs1002"></defs><polyline id="SvgjsPolyline1003" points="0,0"></polyline><path id="SvgjsPath1004" d="M0 0 "></path></svg>
+
 @endsection
