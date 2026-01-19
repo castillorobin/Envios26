@@ -27,7 +27,7 @@
                         <div class="row">
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label">Nombre del empleado</label>
-                                <input type="text" name="completo" class="form-control" value="{{ $usuario->completo }}">
+                                <input type="text" name="nombre" class="form-control" value="{{ $usuario->nombre }}">
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label">Apellido del empleado</label>

@@ -68,6 +68,7 @@ class UsuarioController extends Controller
         'whatsapp'  => $request->whatsapp,
         'address'   => $request->address,
         'joined_at' => $request->joined_at,
+        'nombre' => $request->nombre,
     ]);
 
     // 2. Asignar Rol de Spatie

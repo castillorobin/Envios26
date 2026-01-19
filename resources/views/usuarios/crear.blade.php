@@ -86,7 +86,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="first_name_emp">Nombre del empleado</label>
-                                    <input type="text" id="first_name_emp" name="first_name_emp" class="form-control" placeholder="Nombre" required>
+                                    <input type="text" id="first_name_emp" name="nombre" class="form-control" placeholder="Nombre" required>
                                 </div>
                             </div><!-- end col -->
                             <div class="col-md-6">

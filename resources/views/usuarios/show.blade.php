@@ -52,7 +52,7 @@
                                                     <div class="col-lg-6">
                                                         <div class="mb-3">
                                                             <label class="form-label" for="nombre">Nombre del empleado</label>
-                                                            <input type="text" class="form-control" id="nombre" value="{{ $usuario->completo }}" readonly>
+                                                            <input type="text" class="form-control" id="nombre" value="{{ $usuario->nombre }}" readonly>
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-6">
