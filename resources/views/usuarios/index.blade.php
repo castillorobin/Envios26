@@ -128,6 +128,10 @@
                                         <!-- end tbody -->
                                     </table>
                                     <!-- end table -->
+
+                                     <div class="pagination pagination-rounded justify-content-end">
+                            {!! $usuarios->links() !!}
+                          </div> 
                                 </div>
                                 <!-- table responsive -->
                                 <div class="align-items-center justify-content-between row g-0 text-center text-sm-start p-3 border-top">
