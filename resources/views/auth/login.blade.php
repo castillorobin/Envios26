@@ -21,7 +21,7 @@
                                         <div class="p-4">
                                             <div class="mx-auto mb-4 text-center auth-logo">
                                                 <a href="index.html" class="logo-dark">
-                                                     <img src="{{ asset('img/logomelonegro.png') }}" alt="logo" width="200"
+                                                     <img src="{{ asset('img/logoazul.png') }}" alt="logo" width="200"
                              class="shadow-light">
                                                 </a>
 
