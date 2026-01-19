@@ -450,11 +450,25 @@
 
                                     <a
                                         class="dropdown-item text-danger"
-                                        href="auth-signin.html"
+                                        href="{{ url('logout') }}" onclick="event.preventDefault(); localStorage.clear();  document.getElementById('logout-form').submit();"
                                     >
                                         <i class="bx bx-log-out fs-18 align-middle me-1"></i
                                         ><span class="align-middle">Logout</span>
                                     </a>
+
+                                    <form id="logout-form" action="{{ url('/logout') }}" method="POST" class="d-none">
+                    {{ csrf_field() }}
+                </form>
+
+
+                
+
+
+
+
+
+
+
                                 </div>
                             </div>
                         </div>
