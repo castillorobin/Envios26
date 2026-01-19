@@ -49,12 +49,12 @@
                 @endif
                                                         <div class="mb-3">
                                                             <label class="form-label" for="example-email">Email</label>
-                                                            <input type="email" id="example-email" name="example-email" class="form-control" placeholder="Enter your email">
+                                                            <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email">
                                                         </div>
                                                         <div class="mb-3">
                                                           
                                                             <label class="form-label" for="example-password">Contraseña</label>
-                                                            <input type="password" id="example-password" class="form-control" placeholder="Enter your password">
+                                                            <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password">
                                                         </div>
                                                         <div class="mb-3">
                                                            
