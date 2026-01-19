@@ -101,7 +101,15 @@
                                                         <span class="badge badge-light-secondary text-muted">Nunca ha ingresado</span>
                                                     @endif
                                                 </td>
-                                                <td></td>
+                                                <td>
+                                                    @if($usuario->status == 'Alta')
+                                                        <span class="badge badge-soft-success">Alta</span>
+                                                    @else
+                                                        <span class="badge badge-soft-danger">Baja</span>
+                                                    @endif
+                                                   
+                                                    
+                                                </td>
                                                <td class="text-center">
                                                     <a href="{{ route('usuarios.show', $usuario->id) }}" class="btn btn-sm btn-soft-secondary me-1">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">

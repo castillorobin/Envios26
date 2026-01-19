@@ -62,11 +62,31 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-lg-12 mb-3">
+                            <div class="col-lg-6 mb-3">
                                 <label class="form-label">Dirección de residencia</label>
                                 <input type="text" name="address" class="form-control" value="{{ $usuario->address }}">
                             </div>
+
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Cambiar Status</label><br>
+                                    
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="status" id="altaEdit" value="Alta" 
+                                            {{ $usuario->status == 'Alta' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="altaEdit">Alta</label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="status" id="bajaEdit" value="Baja" 
+                                            {{ $usuario->status == 'Baja' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="bajaEdit">Baja</label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
+
 
                         <div class="d-flex justify-content-end gap-2 mt-3">
                             <a href="{{ route('usuarios.show', $usuario->id) }}" class="btn btn-secondary">Cerrar</a>

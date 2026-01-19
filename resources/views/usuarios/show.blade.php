@@ -122,20 +122,21 @@
 
                                                        
                                                        
-                                                    <div class="col-lg-6">
+                                                   <div class="col-lg-6">
                                                         <div class="mb-3">
                                                             <label class="form-label">Status</label><br>
                                                             
                                                             <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" name="radio" type="radio" id="offlineStatus" value="Offline" checked="" readonly>
-                                                                <label class="form-check-label" for="offlineStatus">Alta</label>
+                                                                <input class="form-check-input" type="radio" name="status" id="altaStatus" value="Alta" 
+                                                                    {{ $usuario->status == 'Alta' ? 'checked' : '' }} disabled>
+                                                                <label class="form-check-label" for="altaStatus">Alta</label>
                                                             </div>
 
                                                             <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" name="radio" type="radio" id="onlineStatus" value="Online" readonly>
-                                                                <label class="form-check-label" for="onlineStatus">Baja</label>
+                                                                <input class="form-check-input" type="radio" name="status" id="bajaStatus" value="Baja" 
+                                                                    {{ $usuario->status == 'Baja' ? 'checked' : '' }} disabled>
+                                                                <label class="form-check-label" for="bajaStatus">Baja</label>
                                                             </div>
-                                                            
                                                         </div>
                                                     </div>
 

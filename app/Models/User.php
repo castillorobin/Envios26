@@ -32,6 +32,7 @@ class User extends Authenticatable
     'joined_at',
     'last_login_at',
     'nombre',
+    'status',
 ];
 
     /**
