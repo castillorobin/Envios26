@@ -57,12 +57,12 @@
                                         <thead class="teble-light">
                                             <tr>
                                                 <th>Usuario</th>
-                                                <th>DUI</th>
+                                                
                                                 <th>Fecha de incorporación</th>
                                                 <th>Email</th>
                                                 <th>Rol</th>
                                                 <th>Último acceso</th>
-                                                <th>Sesión</th>
+                                                <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -77,7 +77,7 @@
                                                         {{ $usuario->name }}</a>
                                                     </div>
                                                 </td>
-                                                <td>{{ $usuario->dui }}</td>
+                                                
                                                 <td>{{ $usuario->created_at->format('d/m/Y') }}</td>
                                                 <td>{{ $usuario->email }}</td>
                                                 <td>
@@ -101,7 +101,7 @@
                                                         <span class="badge badge-light-secondary text-muted">Nunca ha ingresado</span>
                                                     @endif
                                                 </td>
-                                                <td>15</td>
+                                                <td></td>
                                                 <td>
                                                     <button type="button" class="btn btn-sm btn-soft-secondary me-1">
                                                         <i class="bx bx-edit fs-16"></i>
