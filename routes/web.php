@@ -151,3 +151,8 @@ Route::get('entrega', [App\Http\Controllers\EntregaController::class, 'index'] )
 
 //Usuarios
 Route::get('usuarios', [App\Http\Controllers\UsuarioController::class, 'index'] )->name('usuarios.inicio') ;
+
+// Ruta para ver el detalle del usuario
+Route::get('/usuarios/{id}', [App\Http\Controllers\UsuarioController::class, 'show'])->name('usuarios.show');
+Route::get('/usuarios/{id}/edit', [App\Http\Controllers\UsuarioController::class, 'edit'])->name('usuarios.edit');
+Route::put('/usuarios/{id}', [App\Http\Controllers\UsuarioController::class, 'update'])->name('usuarios.update');

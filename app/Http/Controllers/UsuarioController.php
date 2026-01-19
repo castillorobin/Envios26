@@ -86,9 +86,14 @@ class UsuarioController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {
-        //
-    }
+{
+    // Buscamos al usuario por ID cargando sus roles (Spatie)
+    // findOrFail lanzará un error 404 si el usuario no existe
+    $usuario = User::with('roles')->findOrFail($id);
+
+    // Retornamos la vista (que crearemos en el siguiente paso)
+    return view('usuarios.show', compact('usuario'));
+}
 
     /**
      * Show the form for editing the specified resource.
@@ -96,15 +101,7 @@ class UsuarioController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
-        $user = User::find($id);
-        $roles = Role::pluck('name', 'name')->all();
-        $userRole = $user->roles->pluck('name', 'name')->all();
-
-        return view('usuarios.editar', compact('user', 'roles', 'userRole'));
-    }
-
+    
     /**
      * Update the specified resource in storage.
      *
@@ -112,29 +109,23 @@ class UsuarioController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,'.$id,
-            'password' => 'same:confirm-password',
-            'roles' => 'required'
-        ]);
+   public function edit($id) {
+    $usuario = User::findOrFail($id);
+    $roles = \Spatie\Permission\Models\Role::pluck('name', 'name'); // Si usas Spatie
+    return view('usuarios.edit', compact('usuario', 'roles'));
+}
 
-        $input = $request->all();
-        if(!empty($input['password'])){
-            $input['password'] = Hash::make($input['password']);
-        }else{
-            $input = Arr::except($input, array('password'));
-        }
+public function update(Request $request, $id) {
+    $usuario = User::findOrFail($id);
+    
+    // Validar y actualizar
+    $usuario->update($request->all());
+    
+    // Actualizar Rol (Spatie)
+    $usuario->syncRoles($request->rol);
 
-        $user = User::find($id);
-        $user->update($input);
-        DB::table('model_has_roles')->where('model_id', $id)->delete();
-
-        $user->assignRole($request->input('roles'));
-        return redirect()->route('usuarios.index');
-    }
+    return redirect()->route('usuarios.show', $id)->with('success', 'Usuario actualizado');
+}
 
     /**
      * Remove the specified resource from storage.

@@ -63,7 +63,7 @@
                                                 <th>Rol</th>
                                                 <th>Último acceso</th>
                                                 <th>Status</th>
-                                                <th>Action</th>
+                                                <th>Acción</th>
                                             </tr>
                                         </thead>
                                         <!-- end thead-->
@@ -102,11 +102,16 @@
                                                     @endif
                                                 </td>
                                                 <td></td>
-                                                <td>
-                                                    <button type="button" class="btn btn-sm btn-soft-secondary me-1">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none"><path fill="currentColor" fill-rule="evenodd" d="M12 5C7.336 5 3.6 7.903 2 12c1.6 4.097 5.336 7 10 7s8.4-2.903 10-7c-1.6-4.097-5.336-7-10-7m0 10a3 3 0 1 0 0-6a3 3 0 0 0 0 6" clip-rule="evenodd" opacity="0.16"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 12c1.6-4.097 5.336-7 10-7s8.4 2.903 10 7c-1.6 4.097-5.336 7-10 7s-8.4-2.903-10-7"/></g></svg>
-                                                    </button>
-                                                    
+                                               <td class="text-center">
+                                                    <a href="{{ route('usuarios.show', $usuario->id) }}" class="btn btn-sm btn-soft-secondary me-1">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                                            <g fill="none">
+                                                                <path fill="currentColor" fill-rule="evenodd" d="M12 5C7.336 5 3.6 7.903 2 12c1.6 4.097 5.336 7 10 7s8.4-2.903 10-7c-1.6-4.097-5.336-7-10-7m0 10a3 3 0 1 0 0-6a3 3 0 0 0 0 6" clip-rule="evenodd" opacity="0.16"/>
+                                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0"/>
+                                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 12c1.6-4.097 5.336-7 10-7s8.4 2.903 10 7c-1.6 4.097-5.336 7-10 7s-8.4-2.903-10-7"/>
+                                                            </g>
+                                                        </svg>
+                                                    </a>
                                                 </td>
                                             </tr>
                                             @endforeach
