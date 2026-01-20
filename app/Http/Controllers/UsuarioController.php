@@ -23,7 +23,7 @@ class UsuarioController extends Controller
     public function index()
     {
        // Cargamos los roles de antemano para que la consulta sea rápida
-    $usuarios = User::with('roles')->paginate(15); 
+    $usuarios = User::with('roles')->get(); 
     $repartidores = Repartidor::all();
     
     return view('usuarios.index', compact('usuarios', 'repartidores'));

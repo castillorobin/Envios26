@@ -1,12 +1,33 @@
 @extends('layouts.app')
 
 @section('content')
+
+<style>
+    /* Estilo para integrar DataTables con el diseño de la plantilla */
+    .dataTables_length select {
+        padding: 5px 10px;
+        border-radius: 5px;
+        border: 1px solid #e1e3ea;
+    }
+    .dataTables_info, .dataTables_paginate {
+        margin-top: 15px !important;
+    }
+    /* Ocultar el buscador por defecto de DataTables */
+    .dataTables_filter {
+        display: none;
+    }
+    /* Ajuste de ancho de tu buscador personalizado */
+    .search-bar input {
+        width: 250px !important;
+    }
+</style>
+
 <div class="container-xxl">
                     <!-- ========== Page Title Start ========== -->
                     <div class="row">
                         <div class="col-12">
                             <div class="page-title-box">
-                                <h4 class="mb-0 fw-semibold">Listado de usuarios</h4>
+                                <h4 class="mb-0 fw-semibold">Listado de usuariosssss</h4>
                                 
                             </div>
                         </div>
@@ -53,7 +74,7 @@
                         <div class="tab-pane show active" id="team-list" role="tabpanel">
                             <div class="card overflow-hidden">
                                 <div class="table-responsive table-centered">
-                                    <table class="table text-nowrap mb-0">
+                                    <table class="table text-nowrap mb-0" id="tabla-usuarios">
                                         <thead class="teble-light">
                                             <tr>
                                                 <th>Usuario</th>
@@ -129,9 +150,7 @@
                                     </table>
                                     <!-- end table -->
 
-                                     <div class="pagination pagination-rounded justify-content-end">
-                            {!! $usuarios->links() !!}
-                          </div> 
+                                   
                                 </div>
                                 <!-- table responsive -->
                                 <div class="align-items-center justify-content-between row g-0 text-center text-sm-start p-3 border-top">
@@ -348,5 +367,34 @@
                         </div>
                     </div>
                 </div>
+
+<script>
+    // Usamos una función que espere a que jQuery esté listo
+    window.onload = function() {
+        if (typeof jQuery !== 'undefined') {
+            $(document).ready(function() {
+                var table = $('#tabla-usuarios').DataTable({
+                    "paging": true,
+                    "info": true,
+                    "pageLength": 10,
+                    "lengthMenu": [5, 10, 25, 50],
+                    "dom": '<"row"<"col-sm-12"tr>><"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>', // Quitamos la 'f' y 'l' de arriba
+                    "language": {
+                        "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+                    }
+                });
+
+                // Vinculamos tu buscador personalizado
+                $('#search').on('keyup', function() {
+                    table.search(this.value).draw();
+                });
+
+                // Si quieres que el selector de "Mostrar X" aparezca en algún lado, 
+                // puedes mover el div de .dataTables_length manualmente o usar un dom diferente
+            });
+        }
+    };
+</script>
+
 @endsection
 
