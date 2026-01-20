@@ -159,7 +159,7 @@
                             <h3 class="mt-0">Finalizado !</h3>
 
                             <p class="w-75 mb-2 mx-auto">Los datos se han llenado correctamente.</p>
-
+                            <a href="{{ route('usuarios.inicio') }}" class="btn btn-secondary">Cerrar</a>
                            
                             <button type="submit" class="btn btn-primary">Guardar</button>
                         </div>
@@ -169,11 +169,7 @@
 
 
              <div class="d-flex flex-wrap align-items-center wizard justify-content-between gap-3 mt-3">
-                <div class="first">
-                    <a href="javascript:void(0);" class="btn btn-soft-primary" id="btn-inicio">
-                        Inicio
-                    </a>
-                </div>
+               
                 <div class="d-flex gap-2">
                     <div class="previous">
                         <a href="javascript:void(0);" class="btn btn-primary" id="btn-anterior">
@@ -186,11 +182,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="last">
-                    <a href="javascript:void(0);" class="btn btn-soft-primary" id="btn-finalizar">
-                        Finalizar
-                    </a>
-                </div>
+                
             </div>
 
             
