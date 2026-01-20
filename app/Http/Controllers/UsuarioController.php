@@ -116,16 +116,38 @@ class UsuarioController extends Controller
     return view('usuarios.edit', compact('usuario', 'roles'));
 }
 
-public function update(Request $request, $id) {
+public function update(Request $request, $id)
+{
     $usuario = User::findOrFail($id);
-    
-    // Validar y actualizar
-    $usuario->update($request->all());
-    
-    // Actualizar Rol (Spatie)
+
+    // 1. Validar datos
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email,' . $id,
+        'password' => 'nullable|confirmed', // nullable permite que vaya vacío
+        'status' => 'required|in:Alta,Baja',
+    ]);
+
+    // 2. Obtener todos los datos del formulario
+    $data = $request->all();
+
+    // 3. Lógica de la contraseña
+    if ($request->filled('password')) {
+        // Si el campo password tiene contenido, lo encriptamos
+        $data['password'] = Hash::make($request->password);
+    } else {
+        // Si está vacío, quitamos el campo del arreglo para no afectar la DB
+        unset($data['password']);
+    }
+
+    // 4. Actualizar el registro
+    $usuario->update($data);
+
+    // 5. Sincronizar roles (Spatie)
     $usuario->syncRoles($request->rol);
 
-    return redirect()->route('usuarios.show', $id)->with('success', 'Usuario actualizado');
+    return redirect()->route('usuarios.show', $id)
+                     ->with('success', 'Usuario y credenciales actualizados correctamente.');
 }
 
     /**
