@@ -12,34 +12,34 @@
                                 </div>
                     <div class="card-body">
                                 <form action="{{ route('usuarios.store') }}" method="POST">
-    @csrf
-    <div id="horizontalwizard">
-        <ul class="nav nav-pills nav-justified icon-wizard form-wizard-header bg-light p-1" role="tablist">
-            <li class="nav-item" role="presentation">
-                <a href="#basictab1" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 py-2 active" aria-selected="true" role="tab">
-                    <iconify-icon icon="iconamoon:profile-circle-duotone" class="fs-26"></iconify-icon>
-                    Usuario
-                </a><!-- end nav-link -->
-            </li><!-- end nav-item -->
-            <li class="nav-item" role="presentation">
-                <a href="#basictab2" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 py-2" aria-selected="false" role="tab" tabindex="-1">
-                    <iconify-icon icon="iconamoon:profile-duotone" class="fs-26"></iconify-icon>
-                    Perfil
-                </a><!-- end nav-link -->
-            </li><!-- end nav-item -->
-            <li class="nav-item" role="presentation">
-                <a href="#basictab3" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 py-2" aria-selected="false" tabindex="-1" role="tab">
-                    <iconify-icon icon="iconamoon:link-fill" class="fs-26"></iconify-icon>
-                    Datos personales
-                </a><!-- end nav-link -->
-            </li><!-- end nav-item -->
-            <li class="nav-item" role="presentation">
-                <a href="#basictab4" data-bs-toggle="tab" data-toggle="tab" class="nav-link rounded-0 py-2" aria-selected="false" tabindex="-1" role="tab">
-                    <iconify-icon icon="iconamoon:check-circle-1-duotone" class="fs-26"></iconify-icon>
-                    Finalizar
-                </a><!-- end nav-link -->
-            </li><!-- end nav-item -->
-        </ul>
+                                @csrf
+                                <div id="horizontalwizard">
+                                    <ul class="nav nav-pills nav-justified icon-wizard form-wizard-header bg-light p-1" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <a href="#basictab1" class="nav-link rounded-0 py-2 active" role="tab">
+                                        <iconify-icon icon="iconamoon:profile-circle-duotone" class="fs-26"></iconify-icon>
+                                        Usuario
+                                    </a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a href="#basictab2" class="nav-link rounded-0 py-2" role="tab">
+                                        <iconify-icon icon="iconamoon:profile-duotone" class="fs-26"></iconify-icon>
+                                        Perfil
+                                    </a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a href="#basictab3" class="nav-link rounded-0 py-2" role="tab">
+                                        <iconify-icon icon="iconamoon:link-fill" class="fs-26"></iconify-icon>
+                                        Datos personales
+                                    </a>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <a href="#basictab4" class="nav-link rounded-0 py-2" role="tab">
+                                        <iconify-icon icon="iconamoon:check-circle-1-duotone" class="fs-26"></iconify-icon>
+                                        Finalizar
+                                    </a>
+                                </li>
+                            </ul>
 
         <div class="tab-content mb-0">
             <div class="tab-pane active show" id="basictab1" role="tabpanel">
@@ -196,47 +196,41 @@
 <script>new Wizard('#horizontalwizard');</script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const btnInicio = document.getElementById('btn-inicio');
-    const btnFinalizar = document.getElementById('btn-finalizar');
     const btnSiguiente = document.getElementById('btn-siguiente');
     const btnAnterior = document.getElementById('btn-anterior');
+    const tabs = document.querySelectorAll('.icon-wizard .nav-link');
 
-    // Función para validar campos del panel activo
+    // Función para validar campos del panel activo (se mantiene igual)
     function validarPasoActual() {
-    const activePane = document.querySelector('.tab-pane.active');
-    const inputs = activePane.querySelectorAll('input[required], select[required], textarea[required]');
-    let valido = true;
-    let primerError = null;
+        const activePane = document.querySelector('.tab-pane.active');
+        const inputs = activePane.querySelectorAll('input[required], select[required], textarea[required]');
+        let valido = true;
+        let primerError = null;
 
-    inputs.forEach(input => {
-        if (!input.value.trim()) {
-            valido = false;
-            input.classList.add('is-invalid');
-            if (!primerError) primerError = input; // Guardamos el primero para hacer foco
-        } else {
-            input.classList.remove('is-invalid');
-            input.classList.add('is-valid');
-        }
-    });
-
-    if (!valido) {
-        // Alerta con SweetAlert2
-        Swal.fire({
-            text: "¡Atención! Hay campos obligatorios vacíos en esta sección.",
-            icon: "warning",
-            buttonsStyling: false,
-            confirmButtonText: "Entendido",
-            customClass: {
-                confirmButton: "btn btn-primary" // Clase de Metronic
+        inputs.forEach(input => {
+            if (!input.value.trim()) {
+                valido = false;
+                input.classList.add('is-invalid');
+                if (!primerError) primerError = input;
+            } else {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
             }
-        }).then(() => {
-            // Opcional: Llevar el cursor al primer campo con error
-            if (primerError) primerError.focus();
         });
-    }
 
-    return valido;
-}
+        if (!valido) {
+            Swal.fire({
+                text: "¡Atención! Hay campos obligatorios vacíos en esta sección.",
+                icon: "warning",
+                buttonsStyling: false,
+                confirmButtonText: "Entendido",
+                customClass: { confirmButton: "btn btn-primary" }
+            }).then(() => {
+                if (primerError) primerError.focus();
+            });
+        }
+        return valido;
+    }
 
     function cambiarTab(targetId) {
         const triggerEl = document.querySelector(`.nav-link[href="${targetId}"]`);
@@ -246,7 +240,31 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Evento Siguiente (CON VALIDACIÓN)
+    // --- NUEVA LÓGICA PARA LAS PESTAÑAS ---
+    tabs.forEach((tab, index) => {
+        tab.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Obtenemos el índice de la pestaña activa actualmente
+            const activeTab = document.querySelector('.nav-link.active');
+            const currentIndex = Array.from(tabs).indexOf(activeTab);
+            const targetIndex = index;
+
+            // Si intenta avanzar (ir a una pestaña con índice mayor)
+            if (targetIndex > currentIndex) {
+                // Solo validamos el paso actual. 
+                // Nota: Si quieres validar TODOS los pasos intermedios, se requeriría una lógica extra.
+                if (validarPasoActual()) {
+                    cambiarTab(this.getAttribute('href'));
+                }
+            } else {
+                // Si intenta retroceder, permitimos el cambio sin validar
+                cambiarTab(this.getAttribute('href'));
+            }
+        });
+    });
+
+    // --- EVENTOS DE BOTONES (SE MANTIENEN) ---
     btnSiguiente.addEventListener('click', function() {
         if (validarPasoActual()) {
             const activeTab = document.querySelector('.nav-link.active');
@@ -257,7 +275,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Evento Anterior (SIN VALIDACIÓN, para permitir corregir)
     btnAnterior.addEventListener('click', function() {
         const activeTab = document.querySelector('.nav-link.active');
         const prevTab = activeTab.closest('.nav-item').previousElementSibling?.querySelector('.nav-link');
@@ -266,21 +283,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Eventos Inicio y Finalizar
-    btnInicio.addEventListener('click', () => cambiarTab('#basictab1'));
-    btnFinalizar.addEventListener('click', () => {
-        // Validamos todos los pasos previos si se intenta saltar al final
-        if (validarPasoActual()) cambiarTab('#basictab4');
-    });
-
-    // Control de estado de botones (disabled)
-    const tabLinks = document.querySelectorAll('.nav-link[data-bs-toggle="tab"]');
-    tabLinks.forEach(link => {
+    // Control de estado de botones (Actualización de clases disabled)
+    document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('shown.bs.tab', function (event) {
-            const isFirst = event.target.getAttribute('href') === '#basictab1';
-            const isLast = event.target.getAttribute('href') === '#basictab4';
-            btnAnterior.classList.toggle('disabled', isFirst);
-            btnSiguiente.classList.toggle('disabled', isLast);
+            const href = event.target.getAttribute('href');
+            btnAnterior.classList.toggle('disabled', href === '#basictab1');
+            btnSiguiente.classList.toggle('disabled', href === '#basictab4');
         });
     });
 });
