@@ -168,8 +168,7 @@
             </div><!-- end tab-pane -->
 
 
-             <div class="d-flex flex-wrap align-items-center wizard justify-content-between gap-3 mt-3">
-               
+            <div class="d-flex flex-wrap align-items-center wizard justify-content-center gap-3 mt-3" style="width: 100%;">
                 <div class="d-flex gap-2">
                     <div class="previous">
                         <a href="javascript:void(0);" class="btn btn-primary" id="btn-anterior">
@@ -182,7 +181,6 @@
                         </a>
                     </div>
                 </div>
-                
             </div>
 
             
