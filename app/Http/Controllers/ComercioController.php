@@ -5,26 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Comercio;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 
 class ComercioController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $comercios = Comercio::all();
         return view('comercio.index', compact('comercios'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+ 
     public function create()
     {
         dd('crear comercio');
@@ -33,7 +25,7 @@ class ComercioController extends Controller
 
     public function guardar()
     {
-        dd('crear comercio');
+       // dd('crear comerciooooo');
         return view('comercio.crear');
     }
 
@@ -45,7 +37,29 @@ class ComercioController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // 1. Validar los datos
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:comercios,email', // Cambia 'comercios' por tu tabla
+        'password' => 'nullable',
+        'status' => 'required|in:Alta,Baja',
+    ]);
+
+    // 2. Crear el registro
+    Comercio::create([
+        'nombre'      => $request->name,
+        'direccion' => $request->direccion,
+        'telefono'  => $request->telefono,
+        'whatsapp'  => $request->whatsapp,
+        'email'     => $request->email,
+        'password'  => Hash::make($request->password), // ¡Importante encriptar!
+        //'fecha'     => $request->fecha,
+        'status'    => $request->status,
+    ]);
+
+    // 3. Redireccionar con mensaje de éxito
+    return redirect()->route('comercios.inicio')
+                     ->with('success', 'El comercio se ha creado correctamente.');
     }
 
     /**
@@ -54,9 +68,11 @@ class ComercioController extends Controller
      * @param  \App\Models\Comercio  $comercio
      * @return \Illuminate\Http\Response
      */
-    public function show(Comercio $comercio)
+    public function show($id)
     {
-        //
+
+        $comercio = Comercio::findOrFail($id);
+        return view('comercio.show', compact('comercio'));
     }
 
     /**

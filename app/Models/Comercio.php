@@ -8,4 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Comercio extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+    'nombre', 
+    'direccion', 
+    'telefono', 
+    'whatsapp', 
+    'email', 
+    'password', 
+    //'fecha', // Fecha de incorporación
+    'status'
+];
 }

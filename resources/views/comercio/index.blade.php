@@ -200,7 +200,7 @@
                                                 <td>
                                                     <div class="d-flex align-items-center gap-1">
                                                         
-                                                        {{ $comercio->name }}</a>
+                                                        {{ $comercio->nombre }}</a>
                                                     </div>
                                                 </td>
 
@@ -208,24 +208,14 @@
                                                 <td>{{ $comercio->email }}</td>
                                                 <td>
                                                    
-                                                        <h5><span class="badge badge-dark">{{ $comercio->getRoleNames()->first() ?? 'Sin Rol' }}</span></h5>
+                                                        <h5><span class="badge badge-dark"> </span></h5>
                                                
                                                     
                                                 </td>
                                                 <td>
-                                                    @if($comercio->last_login_at)
-                                                        <div class="d-flex flex-column">
-                                                            <span class="fw-bold text-gray-800">
-                                                                {{ \Carbon\Carbon::parse($comercio->last_login_at)->format('d/m/Y') }}
-                                                            </span>
-                                                            <span class="text-muted small">
-                                                                {{ \Carbon\Carbon::parse($comercio->last_login_at)->format('h:i A') }} 
-                                                                ({{ \Carbon\Carbon::parse($comercio->last_login_at)->diffForHumans() }})
-                                                            </span>
-                                                        </div>
-                                                    @else
+                                                   
                                                         <span class="badge badge-light-secondary text-muted">Nunca ha ingresado</span>
-                                                    @endif
+                                                   
                                                 </td>
                                                 <td>
                                                     @if($comercio->status == 'Alta')
@@ -237,7 +227,7 @@
                                                     
                                                 </td>
                                                <td class="text-center">
-                                                    <a href="{{ route('usuarios.show', $usuario->id) }}" class="btn btn-sm btn-soft-secondary me-1">
+                                                    <a href="{{ route('comercios.show', $comercio->id) }}" class="btn btn-sm btn-soft-secondary me-1">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                                             <g fill="none">
                                                                 <path fill="currentColor" fill-rule="evenodd" d="M12 5C7.336 5 3.6 7.903 2 12c1.6 4.097 5.336 7 10 7s8.4-2.903 10-7c-1.6-4.097-5.336-7-10-7m0 10a3 3 0 1 0 0-6a3 3 0 0 0 0 6" clip-rule="evenodd" opacity="0.16"/>
@@ -314,6 +304,36 @@
             });
         }
     };
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Alerta de Éxito
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: '¡Logrado!',
+                text: "{{ session('success') }}",
+                confirmButtonText: 'Aceptar',
+                customClass: {
+                    confirmButton: 'btn btn-primary'
+                }
+            });
+        @endif
+
+        // Alerta de Error
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: "{{ session('error') }}",
+                confirmButtonText: 'Cerrar',
+                customClass: {
+                    confirmButton: 'btn btn-danger'
+                }
+            });
+        @endif
+    });
 </script>
 
 @endsection

@@ -164,7 +164,10 @@ Route::put('/usuarios/{id}', [App\Http\Controllers\UsuarioController::class, 'up
 
 //Comercios
 Route::get('comercios', [App\Http\Controllers\ComercioController::class, 'index'] )->name('comercios.inicio') ;
+Route::get('/comercios/guardar', [App\Http\Controllers\ComercioController::class, 'guardar'] )->name('comercios.guardar') ;
+
 Route::get('/comercios/{id}', [App\Http\Controllers\ComercioController::class, 'show'])->name('comercios.show');
 Route::get('/comercios/{id}/edit', [App\Http\Controllers\ComercioController::class, 'edit'])->name('comercios.edit');
 Route::put('/comercios/{id}', [App\Http\Controllers\ComercioController::class, 'update'])->name('comercios.update');
-Route::get('/comercios/crear', [App\Http\Controllers\ComercioController::class, 'guardar'] )->name('comercios.guardar') ;
+Route::post('/comercios/crear', [App\Http\Controllers\ComercioController::class, 'store'])->name('comercios.store') ;
+
