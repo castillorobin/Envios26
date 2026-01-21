@@ -159,7 +159,7 @@
                                             <div class="d-flex flex-wrap gap-2 justify-content-md-end align-items-center">
                                                
 
-                                                <a href="{{ route('comercios.create') }}" class="btn btn-danger">
+                                                <a href="{{ route('comercios.guardar') }}" class="btn btn-danger">
                                                     <i class="bi bi-plus-circle me-1"></i>Agregar comercio
                                                 </a>
                                             </div>

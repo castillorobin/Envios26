@@ -27,7 +27,14 @@ class ComercioController extends Controller
      */
     public function create()
     {
-        //
+        dd('crear comercio');
+        return view('comercio.crear');
+    }
+
+    public function guardar()
+    {
+        dd('crear comercio');
+        return view('comercio.crear');
     }
 
     /**

@@ -69,7 +69,7 @@ Route::get('pedido/crearpf', [App\Http\Controllers\PedidoController::class, 'cre
 Route::get('pedido/crearcas', [App\Http\Controllers\PedidoController::class, 'crearcas'] )->name('crearcas') ;
 Route::get('pedido/guardarperso', [App\Http\Controllers\PedidoController::class, 'guardarperso'] )->name('guardarpers') ;   
 
-Route::get('comercio/filtrado/{id}', [App\Http\Controllers\VendedorController::class, 'filtrado'] )->name('filtrado') ;
+
 
 
 Route::get('pedido/indexfiltro', [App\Http\Controllers\PedidoController::class, 'indexfiltro'] )->name('indexfiltro') ;
@@ -78,7 +78,7 @@ Route::get('pedido/indexfiltrocomer', [App\Http\Controllers\PedidoController::cl
 Route::get('pedido/indexdigitadofiltro', [App\Http\Controllers\PedidoController::class, 'indexdigitadofiltro'] )->name('indexdigitadofiltro') ;
 Route::get('pedido/indexdigitado/', [App\Http\Controllers\PedidoController::class, 'indexdigitado'] )->name('indexdigitado') ;
 
-Route::get('comercio/guardar', [App\Http\Controllers\VendedorController::class, 'guardar'] )->name('guardar') ;
+
  
 Route::get('facturas', [App\Http\Controllers\FacturacionController::class, 'index'] )->name('facturacion') ;
 Route::get('factura/facturando', [App\Http\Controllers\FacturacionController::class, 'index'] )->name('factura.facturando') ;
@@ -161,9 +161,10 @@ Route::get('/usuarios/{id}/edit', [App\Http\Controllers\UsuarioController::class
 Route::put('/usuarios/{id}', [App\Http\Controllers\UsuarioController::class, 'update'])->name('usuarios.update');
 
 
+
 //Comercios
 Route::get('comercios', [App\Http\Controllers\ComercioController::class, 'index'] )->name('comercios.inicio') ;
 Route::get('/comercios/{id}', [App\Http\Controllers\ComercioController::class, 'show'])->name('comercios.show');
 Route::get('/comercios/{id}/edit', [App\Http\Controllers\ComercioController::class, 'edit'])->name('comercios.edit');
 Route::put('/comercios/{id}', [App\Http\Controllers\ComercioController::class, 'update'])->name('comercios.update');
-Route::get('comercios/crear', [App\Http\Controllers\ComercioController::class, 'create'] )->name('comercios.create') ;
+Route::get('/comercios/crear', [App\Http\Controllers\ComercioController::class, 'guardar'] )->name('comercios.guardar') ;
