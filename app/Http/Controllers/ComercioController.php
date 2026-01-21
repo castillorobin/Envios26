@@ -81,9 +81,10 @@ class ComercioController extends Controller
      * @param  \App\Models\Comercio  $comercio
      * @return \Illuminate\Http\Response
      */
-    public function edit(Comercio $comercio)
+    public function edit($id)
     {
-        //
+        $comercio = Comercio::findOrFail($id);
+        return view('comercio.edit', compact('comercio'));
     }
 
     /**
@@ -93,9 +94,38 @@ class ComercioController extends Controller
      * @param  \App\Models\Comercio  $comercio
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Comercio $comercio)
+    public function update(Request $request, $id)
     {
-        //
+        $comercio = Comercio::findOrFail($id);
+
+    // 1. Validar datos
+    $request->validate([
+        'nombre' => 'required|string|max:255',
+        'email' => 'nullable|email|unique:comercios,email,' . $id,
+        'password' => 'nullable|confirmed', // nullable permite que vaya vacío
+        'status' => 'nullable|in:Alta,Baja',
+    ]);
+
+    // 2. Obtener todos los datos del formulario
+    $data = $request->all();
+
+    // 3. Lógica de la contraseña
+    if ($request->filled('password')) {
+        // Si el campo password tiene contenido, lo encriptamos
+        $data['password'] = Hash::make($request->password);
+    } else {
+        // Si está vacío, quitamos el campo del arreglo para no afectar la DB
+        unset($data['password']);
+    }
+
+    // 4. Actualizar el registro
+    $comercio->update($data);
+
+    // 5. Sincronizar roles (Spatie)
+   
+
+    return redirect()->route('comercios.show', $id)
+                     ->with('success', 'Comercio actualizado correctamente.');
     }
 
     /**
