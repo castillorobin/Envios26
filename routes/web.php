@@ -11,6 +11,9 @@ use App\Http\Controllers\RepartidorController;
 use App\Http\Controllers\VendedorController;
 use App\Http\Controllers\FacturacionController;
 use App\Http\Controllers\EstatusController;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\ComercioController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -67,7 +70,7 @@ Route::get('pedido/crearcas', [App\Http\Controllers\PedidoController::class, 'cr
 Route::get('pedido/guardarperso', [App\Http\Controllers\PedidoController::class, 'guardarperso'] )->name('guardarpers') ;   
 
 Route::get('comercio/filtrado/{id}', [App\Http\Controllers\VendedorController::class, 'filtrado'] )->name('filtrado') ;
-Route::get('comercio/listado', [App\Http\Controllers\VendedorController::class, 'comercios'] )->name('comercios') ;
+
 
 Route::get('pedido/indexfiltro', [App\Http\Controllers\PedidoController::class, 'indexfiltro'] )->name('indexfiltro') ;
 Route::get('pedido/indexfiltrocomer', [App\Http\Controllers\PedidoController::class, 'indexfiltrocomer'] )->name('indexfiltrocomer') ;   
@@ -156,3 +159,11 @@ Route::get('usuarios', [App\Http\Controllers\UsuarioController::class, 'index'] 
 Route::get('/usuarios/{id}', [App\Http\Controllers\UsuarioController::class, 'show'])->name('usuarios.show');
 Route::get('/usuarios/{id}/edit', [App\Http\Controllers\UsuarioController::class, 'edit'])->name('usuarios.edit');
 Route::put('/usuarios/{id}', [App\Http\Controllers\UsuarioController::class, 'update'])->name('usuarios.update');
+
+
+//Comercios
+Route::get('comercios', [App\Http\Controllers\ComercioController::class, 'index'] )->name('comercios.inicio') ;
+Route::get('/comercios/{id}', [App\Http\Controllers\ComercioController::class, 'show'])->name('comercios.show');
+Route::get('/comercios/{id}/edit', [App\Http\Controllers\ComercioController::class, 'edit'])->name('comercios.edit');
+Route::put('/comercios/{id}', [App\Http\Controllers\ComercioController::class, 'update'])->name('comercios.update');
+Route::get('comercios/crear', [App\Http\Controllers\ComercioController::class, 'create'] )->name('comercios.create') ;

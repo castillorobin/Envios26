@@ -131,7 +131,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="page-title-box">
-                                <h4 class="mb-0 fw-semibold">Listado de usuarios</h4>
+                                <h4 class="mb-0 fw-semibold">Listado de comercios</h4>
                                 
                             </div>
                         </div>
@@ -146,10 +146,10 @@
                                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
                                         <div>
                                             <form class="d-flex flex-wrap align-items-center gap-2">
-                                                <label for="inputPassword2" class="visually-hidden">Buscar usuario</label>
+                                                <label for="inputPassword2" class="visually-hidden">Buscar comercio</label>
                                                 <div class="search-bar me-3">
                                                     <span><i class="bx bx-search-alt"></i></span>
-                                                    <input type="search" class="form-control" id="search" placeholder="Buscar usuario ...">
+                                                    <input type="search" class="form-control" id="search" placeholder="Buscar comercio ...">
                                                 </div>
 
                                                 
@@ -159,8 +159,8 @@
                                             <div class="d-flex flex-wrap gap-2 justify-content-md-end align-items-center">
                                                
 
-                                                <a href="{{ route('usuarios.create') }}" class="btn btn-danger">
-                                                    <i class="bi bi-plus-circle me-1"></i>Agregar usuario
+                                                <a href="{{ route('comercios.create') }}" class="btn btn-danger">
+                                                    <i class="bi bi-plus-circle me-1"></i>Agregar comercio
                                                 </a>
                                             </div>
                                         </div>
@@ -182,8 +182,7 @@
                                         <thead class="teble-light">
                                             <tr>
                                                 <td>ID</td>
-                                                <th>Usuario</th>
-                                                
+                                                <th>Comercio</th>             
                                                 <th>Fecha de incorporación</th>
                                                 <th>Email</th>
                                                 <th>Rol</th>
@@ -195,33 +194,33 @@
                                         <!-- end thead-->
                                         <tbody>
 
-                                            @foreach ($usuarios as $usuario)
+                                            @foreach ($comercios as $comercio)
                                             <tr>
-                                                <td>{{ $usuario->id }}</td>
+                                                <td>{{ $comercio->id }}</td>
                                                 <td>
                                                     <div class="d-flex align-items-center gap-1">
                                                         
-                                                        {{ $usuario->name }}</a>
+                                                        {{ $comercio->name }}</a>
                                                     </div>
                                                 </td>
-                                                
-                                                <td>{{ $usuario->created_at->format('d/m/Y') }}</td>
-                                                <td>{{ $usuario->email }}</td>
+
+                                                <td>{{ $comercio->created_at->format('d/m/Y') }}</td>
+                                                <td>{{ $comercio->email }}</td>
                                                 <td>
                                                    
-                                                        <h5><span class="badge badge-dark">{{ $usuario->getRoleNames()->first() ?? 'Sin Rol' }}</span></h5>
+                                                        <h5><span class="badge badge-dark">{{ $comercio->getRoleNames()->first() ?? 'Sin Rol' }}</span></h5>
                                                
                                                     
                                                 </td>
                                                 <td>
-                                                    @if($usuario->last_login_at)
+                                                    @if($comercio->last_login_at)
                                                         <div class="d-flex flex-column">
                                                             <span class="fw-bold text-gray-800">
-                                                                {{ \Carbon\Carbon::parse($usuario->last_login_at)->format('d/m/Y') }}
+                                                                {{ \Carbon\Carbon::parse($comercio->last_login_at)->format('d/m/Y') }}
                                                             </span>
                                                             <span class="text-muted small">
-                                                                {{ \Carbon\Carbon::parse($usuario->last_login_at)->format('h:i A') }} 
-                                                                ({{ \Carbon\Carbon::parse($usuario->last_login_at)->diffForHumans() }})
+                                                                {{ \Carbon\Carbon::parse($comercio->last_login_at)->format('h:i A') }} 
+                                                                ({{ \Carbon\Carbon::parse($comercio->last_login_at)->diffForHumans() }})
                                                             </span>
                                                         </div>
                                                     @else
@@ -229,7 +228,7 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    @if($usuario->status == 'Alta')
+                                                    @if($comercio->status == 'Alta')
                                                         <span class="badge badge-soft-success">Alta</span>
                                                     @else
                                                         <span class="badge badge-soft-danger">Baja</span>

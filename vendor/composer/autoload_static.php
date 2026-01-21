@@ -624,6 +624,7 @@ class ComposerStaticInit85fca1059374edd6fd33604df155dcfc
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Listeners\\UpdateLastLogin' => __DIR__ . '/../..' . '/app/Listeners/UpdateLastLogin.php',
+        'App\\Models\\Comercio' => __DIR__ . '/../..' . '/app/Models/Comercio.php',
         'App\\Models\\Estatus' => __DIR__ . '/../..' . '/app/Models/Estatus.php',
         'App\\Models\\Facturacion' => __DIR__ . '/../..' . '/app/Models/Facturacion.php',
         'App\\Models\\Filtroganan' => __DIR__ . '/../..' . '/app/Models/Filtroganan.php',

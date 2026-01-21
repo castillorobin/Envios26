@@ -1120,7 +1120,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="apps-email.html">
+                            <a class="nav-link" href="/comercios">
                                 <span class="nav-icon">
                                     <iconify-icon
                                         icon="iconamoon:store-duotone"
