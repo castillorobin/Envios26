@@ -181,6 +181,7 @@
                                     <table class="table text-nowrap mb-0" id="tabla-usuarios">
                                         <thead class="teble-light">
                                             <tr>
+                                                <td>ID</td>
                                                 <th>Usuario</th>
                                                 
                                                 <th>Fecha de incorporación</th>
@@ -196,6 +197,7 @@
 
                                             @foreach ($usuarios as $usuario)
                                             <tr>
+                                                <td>{{ $usuario->id }}</td>
                                                 <td>
                                                     <div class="d-flex align-items-center gap-1">
                                                         
@@ -281,6 +283,7 @@
                     "info": true,
                     "pageLength": 10,
                     "lengthMenu": [5, 10, 25, 50],
+                    "order": [[ 0, "asc" ]],
                     // 't' es tabla, 'i' es info, 'p' es paginación. 
                     // Los incluimos para que se generen y podamos moverlos.
                     "dom": 'tip', 
