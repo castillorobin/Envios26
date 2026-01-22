@@ -26,8 +26,13 @@
         <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css" />
 
         <!-- Theme Config js (Require in all Page) -->
-        <script src="{{ asset('assets/js/config.js') }}"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+      <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+
+    <script src="{{ asset('assets/js/config.js') }}"></script>
     </head>
 
     <body>
@@ -1193,21 +1198,12 @@
 
 <!-- Scripts -->
  <!-- Vendor Javascript (Require in all Page) -->
-  <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
-        <script src="{{ asset('assets/js/vendor.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
-        <!-- App Javascript (Require in all Page) -->
-        <script src="{{ asset('assets/js/app.js') }}"></script>
-        <!-- Vector Map Js -->
-        <script src="{{ asset('assets/vendor/jsvectormap/js/jsvectormap.min.js') }}"></script>
-        <script src="{{ asset('assets/vendor/jsvectormap/maps/world-merc.js') }}"></script>
-        <script src="{{ asset('assets/vendor/jsvectormap/maps/world.js') }}"></script>
-
-        <!-- Dashboard Js -->
-        <script src="{{ asset('assets/js/pages/dashboard.analytics.js') }}"></script>
-
+    <script src="{{ asset('assets/js/vendor.js') }}"></script>
+    <script src="{{ asset('assets/js/app.js') }}"></script>
 
 </body>
 </html>

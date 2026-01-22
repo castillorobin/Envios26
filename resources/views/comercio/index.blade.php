@@ -126,6 +126,45 @@
     }
 </style>
 
+<style>
+    /* Forzar que el buscador de Select2 se muestre sobre el modal */
+    .select2-search__field {
+        display: block !important;
+    }
+    .select2-dropdown {
+        z-index: 1061 !important; /* Por encima del modal de Bootstrap (1060) */
+    }
+</style>
+
+<style>
+    /* Igualar altura de Select2 con los inputs de Bootstrap (38px aprox) */
+    .select2-container .select2-selection--single {
+        height: 38px !important;
+        background-color: #fff !important;
+        border: 1px solid #dee2e6 !important;
+        border-radius: 0.375rem !important;
+    }
+
+    /* Centrar el texto verticalmente dentro del select */
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 36px !important;
+        padding-left: 12px !important;
+        color: #6c757d !important;
+    }
+
+    /* Ajustar la posición de la flechita lateral */
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 36px !important;
+        right: 10px !important;
+    }
+
+    /* Quitar el borde azul de enfoque original de Select2 para usar el de la plantilla */
+    .select2-container--default.select2-container--focus .select2-selection--single {
+        border-color: #3e60d5 !important;
+        outline: 0;
+    }
+</style>
+
 <div class="container-xxl">
                     <!-- ========== Page Title Start ========== -->
                     <div class="row">
@@ -156,13 +195,65 @@
                                             </form>
                                         </div>
                                         <div>
-                                            <div class="d-flex flex-wrap gap-2 justify-content-md-end align-items-center">
-                                               
+                                           <div class="d-flex flex-wrap gap-2 justify-content-md-end align-items-center">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCrearUsuarioComercio">
+        <i class="bi bi-person-plus me-1"></i> Crear Usuario
+    </button>
 
-                                                <a href="{{ route('comercios.guardar') }}" class="btn btn-danger">
-                                                    <i class="bi bi-plus-circle me-1"></i>Agregar comercio
-                                                </a>
-                                            </div>
+    <a href="{{ route('comercios.guardar') }}" class="btn btn-danger">
+        <i class="bi bi-plus-circle me-1"></i> Agregar comercio
+    </a>
+</div>
+
+<div class="modal fade" id="modalCrearUsuarioComercio" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" id="modalLabel">Crear Usuario para Comercio</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('comercios.storeusuario') }}" method="POST" id="formCrearUsuarioComercio">
+                @csrf
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Seleccionar Comercio</label>
+                            <select class="form-control select2-modal" name="comercio_id" id="comercio_select" required>
+                                <option value="">Seleccione un comercio...</option>
+                                @foreach($comercios as $com)
+                                    <option value="{{ $com->id }}" data-email="{{ $com->email }}" data-nombre="{{ $com->nombre }}">
+                                        {{ $com->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Correo Electrónico</label>
+                            <input type="email" name="email" id="comercio_email" class="form-control bg-light" readonly>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <input type="password" name="password" class="form-control" required minlength="8">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Confirmar Contraseña</label>
+                            <input type="password" name="password_confirmation" class="form-control" required>
+                        </div>
+                    </div>
+                    <input type="hidden" name="name" id="comercio_name_hidden">
+                    <input type="hidden" name="rol" value="Comercio">
+                    <input type="hidden" name="status" value="Alta">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear Usuario</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
                                         </div>
                                         <!-- end col-->
                                     </div>
@@ -263,78 +354,86 @@
                     </div>
                 </div>
 
+            
 <script>
-    window.onload = function() {
-        if (typeof jQuery !== 'undefined') {
-            $(document).ready(function() {
-                var table = $('#tabla-usuarios').DataTable({
-                    "paging": true,
-                    "info": true,
-                    "pageLength": 10,
-                    "lengthMenu": [5, 10, 25, 50],
-                    "order": [[ 0, "asc" ]],
-                    // 't' es tabla, 'i' es info, 'p' es paginación. 
-                    // Los incluimos para que se generen y podamos moverlos.
-                    "dom": 'tip', 
-                    "language": {
-                        "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json",
-                        "paginate": {
-                            "previous": "<i class='bx bx-chevron-left'></i>",
-                            "next": "<i class='bx bx-chevron-right'></i>"
-                        }
-                    },
-                    "drawCallback": function(settings) {
-                        // 1. Aplicamos el diseño redondeado de Reback
-                        $('.dataTables_paginate > ul.pagination').addClass('pagination-rounded');
-                        
-                        // 2. MOVER los controles a tus contenedores externos
-                        var api = this.api();
-                        var container = $(api.table().container());
-                        
-                        // Inyectamos los elementos dentro de tus contenedores específicos
-                        $('#dt-info-container').append(container.find('.dataTables_info'));
-                        $('#dt-pagination-container').append(container.find('.dataTables_paginate'));
-                    }
-                });
+$(document).ready(function() {
+    console.log("¡Configurando interfaz de Comercios!");
 
-                // Buscador personalizado
-                $('#search').on('keyup', function() {
-                    table.search(this.value).draw();
-                });
-            });
+    // 1. Destruir si existe para evitar conflictos
+    if ($.fn.DataTable.isDataTable('#tabla-usuarios')) {
+        $('#tabla-usuarios').DataTable().destroy();
+    }
+
+    // 2. Inicialización limpia
+    var table = $('#tabla-usuarios').DataTable({
+        "paging": true,
+        "info": true,
+        "pageLength": 10,
+        "lengthMenu": [5, 10, 25, 50],
+        "order": [[ 0, "asc" ]],
+        // Definimos donde aparecen los elementos: t=tabla, i=info, p=paginación
+        "dom": 'rtip', 
+        "language": {
+            "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json",
+            "paginate": {
+                "previous": "<i class='bx bx-chevron-left'></i>",
+                "next": "<i class='bx bx-chevron-right'></i>"
+            }
+        },
+        "drawCallback": function(settings) {
+            // Aplicar estilo Reback a la paginación
+            $('.dataTables_paginate > ul.pagination').addClass('pagination-rounded');
+            
+            // MOVER elementos a los contenedores fijos fuera del scroll
+            // Usamos append() para asegurar que el movimiento sea reactivo
+            var container = $(this.api().table().container());
+            
+            $('#dt-info-container').empty().append(container.find('.dataTables_info'));
+            $('#dt-pagination-container').empty().append(container.find('.dataTables_paginate'));
         }
-    };
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Alerta de Éxito
-        @if(session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: '¡Logrado!',
-                text: "{{ session('success') }}",
-                confirmButtonText: 'Aceptar',
-                customClass: {
-                    confirmButton: 'btn btn-primary'
-                }
-            });
-        @endif
-
-        // Alerta de Error
-        @if(session('error'))
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: "{{ session('error') }}",
-                confirmButtonText: 'Cerrar',
-                customClass: {
-                    confirmButton: 'btn btn-danger'
-                }
-            });
-        @endif
     });
-</script>
 
+    // 3. Vincular el buscador personalizado
+    $('#search').on('keyup', function() {
+        table.search(this.value).draw();
+    });
+
+    // 4. Lógica del Modal y Select2
+    $('#modalCrearUsuarioComercio').on('shown.bs.modal', function () {
+        setTimeout(function() {
+            $('.select2-modal').select2({
+                dropdownParent: $('#modalCrearUsuarioComercio'),
+                width: '100%',
+                placeholder: "Seleccione un comercio...",
+                allowClear: true
+            });
+        }, 150);
+    });
+
+    // Capturar selección para llenar Email y Nombre
+    $(document).on('select2:select', '#comercio_select', function (e) {
+        var element = $(e.params.data.element);
+        var email = element.attr('data-email');
+        var nombre = element.attr('data-nombre');
+
+        $('#comercio_email').val(email);
+        $('#comercio_name_hidden').val(nombre);
+        console.log("Datos cargados en formulario:", nombre, email);
+    });
+
+    // 5. Alertas SweetAlert2
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: "{{ session('success') }}",
+            confirmButtonText: 'Aceptar',
+            customClass: { confirmButton: 'btn btn-primary' }
+        });
+    @endif
+});
+</script>
 @endsection
+
+
 

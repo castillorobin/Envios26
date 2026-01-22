@@ -6,6 +6,8 @@ use App\Models\Comercio;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 
 class ComercioController extends Controller
@@ -138,4 +140,24 @@ class ComercioController extends Controller
     {
         //
     }
+
+    public function storeusuario(Request $request)
+{
+    $request->validate([
+        'name' => 'required',
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|confirmed',
+    ]);
+
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'status' => 'Alta',
+    ]);
+
+    $user->assignRole('Comercio'); // Rol por defecto
+
+    return redirect()->back()->with('success', '¡Usuario de comercio creado con éxito!');
+}
 }
