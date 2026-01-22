@@ -13,6 +13,9 @@ use App\Http\Controllers\FacturacionController;
 use App\Http\Controllers\EstatusController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ComercioController;
+use App\Http\Controllers\PuntoController;
+
+
 
 
 /*
@@ -173,3 +176,7 @@ Route::post('/comercios/usuario', [App\Http\Controllers\ComercioController::clas
 Route::post('/comercios/crear', [App\Http\Controllers\ComercioController::class, 'store'])->name('comercios.store') ;
 Route::get('/comercios/{id}/editaruser', [App\Http\Controllers\ComercioController::class, 'editaruser'])->name('comercios.editaruser');
 Route::put('/comercios/{id}', [App\Http\Controllers\ComercioController::class, 'updateuser'])->name('comercios.updateuser');
+
+//Configuración
+Route::get('/configuracion', [App\Http\Controllers\PuntoController::class, 'index'] )->name('configuracion.index') ;
+Route::post('/configuracion/crear', [App\Http\Controllers\PuntoController::class, 'store'])->name('puntos.store') ;
