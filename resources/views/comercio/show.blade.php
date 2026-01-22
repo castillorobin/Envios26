@@ -23,6 +23,13 @@
                                                 <span class="d-none d-sm-inline">Datos del comercio</span>
                                             </a>
                                         </li>
+
+                                        <li class="nav-item" data-target-form="#generalDetailForm2" role="presentation">
+                                            <a href="#generalDetail2" data-bs-toggle="tab" data-toggle="tab" class="nav-link pb-3"  role="tab">
+                                                <i class="bx bxs-contact me-1"></i>
+                                                <span class="d-none d-sm-inline">Datos del usuario</span>
+                                            </a>
+                                        </li>
                                         <!-- end nav item -->
                                         
                                     </ul>
@@ -70,25 +77,22 @@
                                                             <input type="text" class="form-control" id="email" value="{{ $comercio->email }}" readonly>
                                                         </div>
                                                     </div>
-                                                    <div class="col-lg-6">
-                                                        <div class="mb-3">
-                                                            <label class="form-label" for="password">Contraseña</label>
-                                                            <input type="password" class="form-control" id="password" value="{{ $comercio->password }}"  readonly>
-                                                        </div>
-                                                    </div>
-                                                </div>
 
-
-                                               
-
-                                                <div class="row">
-                                                    
                                                     <div class="col-lg-6">
                                                         <div class="mb-3">
                                                             <label class="form-label" for="fecha">Fecha de incorporación</label>
                                                             <input type="text" class="form-control" id="fecha" value="{{ \Carbon\Carbon::parse($comercio->created_at)->format('d/m/Y') }}"  readonly>
                                                         </div>
                                                     </div>
+                                                    
+                                                </div>
+
+
+                                                
+
+                                                <div class="row">
+                                                    
+                                                    
 
                                                     <div class="col-lg-6">
                                                         <div class="mb-3">
@@ -110,20 +114,71 @@
                                                 </div>
 
                                                
-                                               
-                                                
-                                               
-                                            
-                                        </div>
-                                        <!-- end contact detail tab pane -->
-                                       
-                                        <div class="d-flex flex-wrap gap-2 wizard justify-content-between mt-3">
+                                               <div class="d-flex flex-wrap gap-2 wizard justify-content-between mt-3">
                                             <div class="ms-auto d-flex gap-2">
                                                 <a href="{{ route('comercios.inicio') }}" class="btn btn-secondary">Cerrar</a>
                                                 
                                                 <a href="{{ route('comercios.edit', $comercio->id) }}" class="btn btn-primary">Editar</a>
                                             </div>
                                         </div>
+                                                
+                                               
+                                            
+                                        </div>
+                                        <!-- end contact detail tab pane -->
+
+
+
+
+                                        <div class="tab-pane" id="generalDetail2" role="tabpanel">
+                                            
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="email">Email</label>
+                                                            <input type="text" class="form-control" id="email" value="{{ $comercio->email }}" readonly>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+
+
+                                                
+                                                <div class="row">
+                                                    
+                                                    <div class="col-lg-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="password">Contraseña</label>
+                                                            <input type="password" class="form-control" id="password" value="{{ $comercio->password }}"  readonly>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="password">Confirmar Contraseña</label>
+                                                            <input type="password" class="form-control" id="password" value="{{ $comercio->password }}"  readonly>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                                                                                              
+                                               <div class="d-flex flex-wrap gap-2 wizard justify-content-between mt-3">
+                                            <div class="ms-auto d-flex gap-2">
+                                                <a href="{{ route('comercios.inicio') }}" class="btn btn-secondary">Cerrar</a>
+                                                
+                                                <a href="{{ route('comercios.editaruser', $comercio->id) }}" class="btn btn-primary">Editar</a>
+                                            </div>
+                                        </div>
+                                                
+                                               
+                                            
+                                        </div>
+
+
+
+
+
+
+                                       
+                                        
                                     </div>
                                     <!-- end tab content-->
                                 </div>

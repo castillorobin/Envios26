@@ -43,7 +43,7 @@ class ComercioController extends Controller
     $request->validate([
         'name' => 'required|string|max:255',
         'email' => 'required|email|unique:comercios,email', // Cambia 'comercios' por tu tabla
-        'password' => 'nullable',
+        
         'status' => 'required|in:Alta,Baja',
     ]);
 
@@ -54,7 +54,7 @@ class ComercioController extends Controller
         'telefono'  => $request->telefono,
         'whatsapp'  => $request->whatsapp,
         'email'     => $request->email,
-        'password'  => Hash::make($request->password), // ¡Importante encriptar!
+        //'password'  => Hash::make($request->password), // ¡Importante encriptar!
         //'fecha'     => $request->fecha,
         'status'    => $request->status,
     ]);
@@ -87,6 +87,12 @@ class ComercioController extends Controller
     {
         $comercio = Comercio::findOrFail($id);
         return view('comercio.edit', compact('comercio'));
+    }
+
+    public function editaruser($id)
+    {
+        $usuario = User::findOrFail($id);
+        return view('comercio.edituser', compact('usuario'));
     }
 
     /**
@@ -124,6 +130,41 @@ class ComercioController extends Controller
     $comercio->update($data);
 
     // 5. Sincronizar roles (Spatie)
+   
+
+    return redirect()->route('comercios.show', $id)
+                     ->with('success', 'Comercio actualizado correctamente.');
+    }
+
+     public function updateuser(Request $request, $id)
+    {
+         $usuario = User::findOrFail($id);
+
+    // 1. Validar datos
+    $request->validate([
+        //'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email,' . $id,
+        'password' => 'nullable|confirmed', // nullable permite que vaya vacío
+        //'status' => 'required|in:Alta,Baja',
+    ]);
+
+    // 2. Obtener todos los datos del formulario
+    $data = $request->all();
+
+    // 3. Lógica de la contraseña
+    if ($request->filled('password')) {
+        // Si el campo password tiene contenido, lo encriptamos
+        $data['password'] = Hash::make($request->password);
+    } else {
+        // Si está vacío, quitamos el campo del arreglo para no afectar la DB
+        unset($data['password']);
+    }
+
+    // 4. Actualizar el registro
+    $usuario->update($data);
+
+    // 5. Sincronizar roles (Spatie)
+    //$usuario->syncRoles($request->rol);
    
 
     return redirect()->route('comercios.show', $id)

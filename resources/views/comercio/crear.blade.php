@@ -42,16 +42,14 @@
                                 <input type="text" name="email" class="form-control" placeholder="Ingrese el email">
                             </div>
                             <div class="col-lg-6 mb-3">
-                                <label class="form-label">Contraseña</label>
-                                <input type="password" name="password" class="form-control" placeholder="Ingrese la contraseña">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-lg-6 mb-3">
                                 <label class="form-label">Fecha de incorporación</label>
                                 <input type="text" name="fecha" class="form-control" value="{{ date('d-m-Y') }}" readonly>
                             </div>
+                            
+                        </div>
+
+                        <div class="row">
+                            
                               <div class="col-lg-6">
                                                         <div class="mb-3">
                                                             <label class="form-label">Status</label><br>

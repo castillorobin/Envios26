@@ -171,4 +171,5 @@ Route::get('/comercios/{id}/edit', [App\Http\Controllers\ComercioController::cla
 Route::put('/comercios/{id}', [App\Http\Controllers\ComercioController::class, 'update'])->name('comercios.update');
 Route::post('/comercios/usuario', [App\Http\Controllers\ComercioController::class, 'storeusuario'])->name('comercios.storeusuario') ;
 Route::post('/comercios/crear', [App\Http\Controllers\ComercioController::class, 'store'])->name('comercios.store') ;
-
+Route::get('/comercios/{id}/editaruser', [App\Http\Controllers\ComercioController::class, 'editaruser'])->name('comercios.editaruser');
+Route::put('/comercios/{id}', [App\Http\Controllers\ComercioController::class, 'updateuser'])->name('comercios.updateuser');
