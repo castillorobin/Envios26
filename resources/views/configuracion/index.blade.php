@@ -170,7 +170,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="page-title-box">
-                                <h4 class="mb-0 fw-semibold">Listado de comercios</h4>
+                                <h4 class="mb-0 fw-semibold">Listado de puntos</h4>
                                 
                             </div>
                         </div>

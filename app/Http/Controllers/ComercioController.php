@@ -14,8 +14,13 @@ class ComercioController extends Controller
 {
     public function index()
     {
-        $comercios = Comercio::all();
-        return view('comercio.index', compact('comercios'));
+       $comercios = Comercio::all(); // O la consulta que ya tengas
+    
+    // Obtenemos todos los emails de usuarios que tienen el rol 'Comercio'
+    // Esto crea un array simple de emails para comparar rápido
+    $emailsConUsuario = \App\Models\User::role('Comercio')->pluck('email')->toArray();
+
+    return view('comercio.index', compact('comercios', 'emailsConUsuario'));
     }
 
  

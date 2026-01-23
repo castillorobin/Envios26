@@ -298,11 +298,13 @@
                                                 <td>{{ $comercio->created_at->format('d/m/Y') }}</td>
                                                 <td>{{ $comercio->email }}</td>
                                                 <td>
-                                                   
-                                                        <h5><span class="badge badge-dark"> </span></h5>
-                                               
-                                                    
+                                                    @if(in_array($comercio->email, $emailsConUsuario))
+                                                        <h5><span class="badge text-bg-dark">Comercio</span></h5>
+                                                    @else
+                                                        <h5><span class="badge text-bg-light">Sin usuario</span></h5>
+                                                    @endif
                                                 </td>
+                                               
                                                 <td>
                                                    
                                                         <span class="badge badge-light-secondary text-muted">Nunca ha ingresado</span>

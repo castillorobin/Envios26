@@ -96,7 +96,7 @@
 
 
                         <div class="d-flex justify-content-end gap-2 mt-3">
-                            <a href="{{ route('comercios.inicio') }}" class="btn btn-secondary">Cerrar</a>
+                            <a href="{{ route('comercios.inicio') }}" class="btn btn-secondary">Cancelar</a>
                             <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                         </div>
                     </form>

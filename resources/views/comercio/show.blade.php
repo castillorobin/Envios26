@@ -116,7 +116,7 @@
                                                
                                                <div class="d-flex flex-wrap gap-2 wizard justify-content-between mt-3">
                                             <div class="ms-auto d-flex gap-2">
-                                                <a href="{{ route('comercios.inicio') }}" class="btn btn-secondary">Cerrar</a>
+                                                <a href="{{ route('comercios.inicio') }}" class="btn btn-secondary">Cancelar</a>
                                                 
                                                 <a href="{{ route('comercios.edit', $comercio->id) }}" class="btn btn-primary">Editar</a>
                                             </div>
@@ -162,7 +162,7 @@
                                                                                                                               
                                                <div class="d-flex flex-wrap gap-2 wizard justify-content-between mt-3">
                                             <div class="ms-auto d-flex gap-2">
-                                                <a href="{{ route('comercios.inicio') }}" class="btn btn-secondary">Cerrar</a>
+                                                <a href="{{ route('comercios.inicio') }}" class="btn btn-secondary">Cancelar</a>
                                                 
                                                 <a href="{{ route('comercios.editaruser', $comercio->id) }}" class="btn btn-primary">Editar</a>
                                             </div>
