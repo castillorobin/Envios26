@@ -221,10 +221,10 @@
                                     <table class="table text-nowrap mb-0" id="tabla-usuarios">
                                         <thead class="teble-light">
                                             <tr>
-                                                <th>ID</th>
-                                                <th>Punto</th>             
-                                                <th>Tipo</th>
-                                                <th>Acción</th>
+                                                <th style="width: 5%;">ID</th>
+                                                <th style="width: 60%;">Punto</th>             
+                                                <th style="width: 20%;">Tipo</th>
+                                                <th style="width: 15%;">Acción</th>
                                             </tr>
                                         </thead>
                                         <!-- end thead-->

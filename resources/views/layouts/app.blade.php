@@ -1135,8 +1135,18 @@
                             </a>
                         </li>
 
+                        
+
+
                         <li class="nav-item">
-                            <a class="nav-link" href="/configuracion">
+                            <a
+                                class="nav-link menu-arrow"
+                                href="#sidebarEcommerce2"
+                                data-bs-toggle="collapse"
+                                role="button"
+                                aria-expanded="false"
+                                aria-controls="sidebarEcommerce2"
+                            >
                                 <span class="nav-icon">
                                     <iconify-icon
                                         icon="iconamoon:settings-duotone"
@@ -1144,7 +1154,30 @@
                                 </span>
                                 <span class="nav-text"> Configuración </span>
                             </a>
+                            <div class="collapse" id="sidebarEcommerce2">
+                                <ul class="nav sub-navbar-nav">
+                                    <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
+                                            href="/configuracion"
+                                            >Puntos</a
+                                        >
+                                    </li>
+                                    <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
+                                            href="/rutas"
+                                            >Rutas</a
+                                        >
+                                    </li>
+                                   
+
+                                    
+                                </ul>
+                            </div>
                         </li>
+
+
 
 
 
