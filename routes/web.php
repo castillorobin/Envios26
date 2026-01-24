@@ -180,3 +180,6 @@ Route::put('/comercios/{id}', [App\Http\Controllers\ComercioController::class, '
 //Configuración
 Route::get('/configuracion', [App\Http\Controllers\PuntoController::class, 'index'] )->name('configuracion.index') ;
 Route::post('/configuracion/crear', [App\Http\Controllers\PuntoController::class, 'store'])->name('puntos.store') ;
+
+Route::put('/puntos/{id}', [App\Http\Controllers\PuntoController::class, 'update'])->name('puntos.update');
+Route::delete('/puntos/{id}', [App\Http\Controllers\PuntoController::class, 'destroy'])->name('puntos.destroy');

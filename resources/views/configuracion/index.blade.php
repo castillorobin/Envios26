@@ -165,6 +165,23 @@
     }
 </style>
 
+
+<style>
+    /* Asegurar que la tabla ocupe todo el ancho y sea flexible */
+    #tabla-usuarios {
+        width: 100% !important;
+        table-layout: auto; /* Permite que el navegador ajuste si es necesario */
+    }
+
+    /* Opcional: Si el nombre del punto es MUY largo, truncarlo con puntos suspensivos */
+    .punto-nombre {
+        max-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
+
 <div class="container-xxl">
                     <!-- ========== Page Title Start ========== -->
                     <div class="row">
@@ -224,7 +241,7 @@
                                                 <th style="width: 5%;">ID</th>
                                                 <th style="width: 60%;">Punto</th>             
                                                 <th style="width: 20%;">Tipo</th>
-                                                <th style="width: 15%;">Acción</th>
+                                                <th style="width: 15%;" class="text-center">Acción</th>
                                             </tr>
                                         </thead>
                                         <!-- end thead-->
@@ -244,9 +261,23 @@
                                                     <h5><span class="badge text-bg-dark">{{ $punto->tipo }}</span></h5>
                                                 </td>
                                               
-                                               <td class="text-center">
-                                                    
-                                                </td>
+                                              <td class="text-center">
+                                                <button type="button" class="btn btn-sm btn-soft-secondary me-1 btn-editar" 
+                                                        data-id="{{ $punto->id }}" 
+                                                        data-nombre="{{ $punto->nombre }}" 
+                                                        data-tipo="{{ $punto->tipo }}"
+                                                        data-bs-toggle="modal" data-bs-target="#modalEditarPunto">
+                                                    <i class="bx bx-edit fs-18"></i>
+                                                </button>
+
+                                                <form action="{{ route('puntos.destroy', $punto->id) }}" method="POST" class="d-inline form-eliminar">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-sm btn-soft-danger btn-borrar">
+                                                        <i class="bx bx-trash fs-18"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
                                             </tr>
                                             @endforeach
                                             
@@ -299,8 +330,43 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Guardar Punto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="modal fade" id="modalEditarPunto" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title">Editar Punto / Agencia</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="" method="POST" id="formEditarPunto">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Tipo</label>
+                        <select name="tipo" id="edit_tipo" class="form-select" required>
+                            <option value="Punto">Punto</option>
+                            <option value="Agencia">Agencia</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" name="nombre" id="edit_nombre" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Actualizar Cambios</button>
                 </div>
             </form>
         </div>
@@ -313,24 +379,22 @@
 });
 </script>
 
-            
 <script>
 $(document).ready(function() {
-    console.log("¡Configurando interfaz de Comercios!");
+    console.log("¡Configurando interfaz de Puntos!");
 
-    // 1. Destruir si existe para evitar conflictos
+    // 1. Destruir instancia previa si existe
     if ($.fn.DataTable.isDataTable('#tabla-usuarios')) {
         $('#tabla-usuarios').DataTable().destroy();
     }
 
-    // 2. Inicialización limpia
+    // 2. Inicializar DataTable
     var table = $('#tabla-usuarios').DataTable({
         "paging": true,
         "info": true,
         "pageLength": 10,
         "lengthMenu": [5, 10, 25, 50],
         "order": [[ 0, "asc" ]],
-        // Definimos donde aparecen los elementos: t=tabla, i=info, p=paginación
         "dom": 'rtip', 
         "language": {
             "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json",
@@ -340,13 +404,9 @@ $(document).ready(function() {
             }
         },
         "drawCallback": function(settings) {
-            // Aplicar estilo Reback a la paginación
             $('.dataTables_paginate > ul.pagination').addClass('pagination-rounded');
-            
-            // MOVER elementos a los contenedores fijos fuera del scroll
-            // Usamos append() para asegurar que el movimiento sea reactivo
             var container = $(this.api().table().container());
-            
+            // Limpiamos los contenedores antes de inyectar para evitar duplicados
             $('#dt-info-container').empty().append(container.find('.dataTables_info'));
             $('#dt-pagination-container').empty().append(container.find('.dataTables_paginate'));
         }
@@ -357,39 +417,57 @@ $(document).ready(function() {
         table.search(this.value).draw();
     });
 
-    // 4. Lógica del Modal y Select2
-    $('#modalCrearUsuarioComercio').on('shown.bs.modal', function () {
-        setTimeout(function() {
-            $('.select2-modal').select2({
-                dropdownParent: $('#modalCrearUsuarioComercio'),
-                width: '100%',
-                placeholder: "Seleccione un comercio...",
-                allowClear: true
-            });
-        }, 150);
+    // 4. Lógica para EDITAR (Llenar el modal)
+    // Usamos delegación de eventos $(document).on para que funcione con la paginación
+    $(document).on('click', '.btn-editar', function() {
+        const id = $(this).data('id');
+        const nombre = $(this).data('nombre');
+        const tipo = $(this).data('tipo');
+
+        console.log("Cargando datos para editar:", nombre);
+
+        // Actualizar el action del formulario y los campos
+        $('#formEditarPunto').attr('action', '/puntos/' + id);
+        $('#edit_nombre').val(nombre);
+        $('#edit_tipo').val(tipo);
     });
 
-    // Capturar selección para llenar Email y Nombre
-    $(document).on('select2:select', '#comercio_select', function (e) {
-        var element = $(e.params.data.element);
-        var email = element.attr('data-email');
-        var nombre = element.attr('data-nombre');
-
-        $('#comercio_email').val(email);
-        $('#comercio_name_hidden').val(nombre);
-        console.log("Datos cargados en formulario:", nombre, email);
+    // 5. Lógica para ELIMINAR (SweetAlert2)
+    $(document).on('click', '.btn-borrar', function(e) {
+        e.preventDefault();
+        const form = $(this).closest('form');
+        
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción eliminará el punto de forma permanente.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3e60d5',
+            cancelButtonColor: '#f1556c',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
     });
 
-    // 5. Alertas SweetAlert2
+    // 6. Alertas SweetAlert2 de Laravel
     @if(session('success'))
         Swal.fire({
             icon: 'success',
-            title: '¡Éxito!',
+            title: '¡Logrado!',
             text: "{{ session('success') }}",
             confirmButtonText: 'Aceptar',
             customClass: { confirmButton: 'btn btn-primary' }
         });
     @endif
+
+    // 7. Resetear formularios de modales al cerrar
+    $('.modal').on('hidden.bs.modal', function () {
+        $(this).find('form')[0].reset();
+    });
 });
 </script>
 @endsection

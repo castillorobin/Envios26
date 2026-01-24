@@ -83,10 +83,18 @@ class PuntoController extends Controller
      * @param  \App\Models\Punto  $punto
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Punto $punto)
-    {
-        //
-    }
+    public function update(Request $request, $id)
+{
+    $request->validate([
+        'tipo'   => 'required|in:Punto,Agencia',
+        'nombre' => 'required|string|max:255',
+    ]);
+
+    $punto = Punto::findOrFail($id);
+    $punto->update($request->all());
+
+    return redirect()->back()->with('success', 'El punto se actualizó correctamente.');
+}
 
     /**
      * Remove the specified resource from storage.
@@ -94,8 +102,11 @@ class PuntoController extends Controller
      * @param  \App\Models\Punto  $punto
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Punto $punto)
-    {
-        //
-    }
+    public function destroy($id)
+{
+    $punto = Punto::findOrFail($id);
+    $punto->delete();
+
+    return redirect()->back()->with('success', 'El punto ha sido eliminado.');
+}
 }
