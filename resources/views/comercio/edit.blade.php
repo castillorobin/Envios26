@@ -29,7 +29,7 @@
                     <h5 class="card-title">Editando Comercio: {{ $comercio->nombre }}</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('comercios.update', $comercio->id) }}" method="POST">
+                    <form action=" /comercios/{{$comercio->id}}" method="POST">
                         @csrf
                         @method('PUT')
 

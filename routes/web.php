@@ -164,18 +164,24 @@ Route::get('/usuarios/{id}/edit', [App\Http\Controllers\UsuarioController::class
 Route::put('/usuarios/{id}', [App\Http\Controllers\UsuarioController::class, 'update'])->name('usuarios.update');
 
 
+// --- SECCIÓN COMERCIOS CORREGIDA ---
 
-//Comercios
-Route::get('comercios', [App\Http\Controllers\ComercioController::class, 'index'] )->name('comercios.inicio') ;
-Route::get('/comercios/guardar', [App\Http\Controllers\ComercioController::class, 'guardar'] )->name('comercios.guardar') ;
+// 1. Rutas de creación (Fijas)
+Route::get('comercios', [ComercioController::class, 'index'])->name('comercios.inicio');
+Route::get('/comercios/guardar', [ComercioController::class, 'guardar'])->name('comercios.guardar');
 
-Route::get('/comercios/{id}', [App\Http\Controllers\ComercioController::class, 'show'])->name('comercios.show');
-Route::get('/comercios/{id}/edit', [App\Http\Controllers\ComercioController::class, 'edit'])->name('comercios.edit');
-Route::put('/comercios/{id}', [App\Http\Controllers\ComercioController::class, 'update'])->name('comercios.update');
-Route::post('/comercios/usuario', [App\Http\Controllers\ComercioController::class, 'storeusuario'])->name('comercios.storeusuario') ;
-Route::post('/comercios/crear', [App\Http\Controllers\ComercioController::class, 'store'])->name('comercios.store') ;
-Route::get('/comercios/{id}/editaruser', [App\Http\Controllers\ComercioController::class, 'editaruser'])->name('comercios.editaruser');
-Route::put('/comercios/{id}', [App\Http\Controllers\ComercioController::class, 'updateuser'])->name('comercios.updateuser');
+// 2. Rutas de edición de usuario (Más específicas que el show)
+Route::get('/comercios/editaruser/{id}', [ComercioController::class, 'editaruser'])->name('comercios.editaruser');
+Route::put('/comercios/updateuser/{id}', [ComercioController::class, 'updateuser'])->name('comercios.updateuser');
+
+// 3. Rutas de procesamiento de formularios
+Route::post('/comercios/usuario', [ComercioController::class, 'storeusuario'])->name('comercios.storeusuario');
+Route::post('/comercios/crear', [ComercioController::class, 'store'])->name('comercios.store');
+
+// 4. Rutas con parámetros generales (DÉJALAS AL FINAL DE LA SECCIÓN)
+Route::get('/comercios/{id}', [ComercioController::class, 'show'])->name('comercios.show');
+Route::get('/comercios/{id}/edit', [ComercioController::class, 'edit'])->name('comercios.edit');
+Route::put('/comercios/{id}', [ComercioController::class, 'update'])->name('comercios.update');
 
 //Configuración
 Route::get('/configuracion', [App\Http\Controllers\PuntoController::class, 'index'] )->name('configuracion.index') ;

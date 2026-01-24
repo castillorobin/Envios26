@@ -196,6 +196,8 @@
                                         <tbody>
 
                                             @foreach ($usuarios as $usuario)
+                                            @if($usuario->getRoleNames()->first() != 'Comercio')
+                                                
                                             <tr>
                                                 <td>{{ $usuario->id }}</td>
                                                 <td>
@@ -209,7 +211,7 @@
                                                 <td>{{ $usuario->email }}</td>
                                                 <td>
                                                    
-                                                        <h5><span class="badge badge-dark">{{ $usuario->getRoleNames()->first() ?? 'Sin Rol' }}</span></h5>
+                                                        <h5><span class="badge text-bg-dark">{{ $usuario->getRoleNames()->first() ?? 'Sin Rol' }}</span></h5>
                                                
                                                     
                                                 </td>
@@ -249,6 +251,7 @@
                                                     </a>
                                                 </td>
                                             </tr>
+                                            @endif
                                             @endforeach
                                             
                                         </tbody>

@@ -37,7 +37,7 @@
                                       <div class="col-lg-6">
                                                         <div class="mb-3">
                                                             <label class="form-label" for="email">Email</label>
-                                                            <input type="text" class="form-control" id="email" value="{{ $usuario->email }}" >
+                                                            <input type="text" class="form-control" id="email" name="email" value="{{ $usuario->email }}" >
                                                         </div>
                                                     </div>
                                                     

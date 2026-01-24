@@ -95,10 +95,21 @@ class ComercioController extends Controller
     }
 
     public function editaruser($id)
-    {
-        $usuario = User::findOrFail($id);
-        return view('comercio.edituser', compact('usuario'));
+{
+    // 1. Buscamos el registro del comercio (para obtener su email)
+    $comercio = Comercio::findOrFail($id);
+
+    // 2. Buscamos al usuario que tenga ese mismo email
+    $usuario = \App\Models\User::where('email', $comercio->email)->first();
+
+    // 3. Si el usuario no existe, lanzamos un error manual en lugar de un 404 genérico
+    if (!$usuario) {
+        return redirect()->back()->with('error', 'No existe un usuario creado para el correo: ' . $comercio->email);
     }
+
+    // 4. Retornamos la vista con ambos objetos por si los necesitas
+    return view('comercio.edituser', compact('usuario', 'comercio'));
+}
 
     /**
      * Update the specified resource in storage.
@@ -143,6 +154,8 @@ class ComercioController extends Controller
 
      public function updateuser(Request $request, $id)
     {
+
+    
          $usuario = User::findOrFail($id);
 
     // 1. Validar datos
@@ -170,7 +183,7 @@ class ComercioController extends Controller
 
     // 5. Sincronizar roles (Spatie)
     //$usuario->syncRoles($request->rol);
-   
+  
 
     return redirect()->route('comercios.show', $id)
                      ->with('success', 'Comercio actualizado correctamente.');
