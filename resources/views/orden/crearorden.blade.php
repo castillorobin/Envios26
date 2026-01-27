@@ -49,10 +49,10 @@
                         <div class="row">
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label">Comercio</label>
-                                <select name="comercio_id" id="comercio_id" class="form-control">
+                                <select name="comercio_id" id="comercio" class="form-control">
                                     <option value="" disabled selected>Seleccione un comercio</option>
                                     @foreach($comercios as $comercio)
-                                        <option value="{{ $comercio->id }}">{{ $comercio->nombre }}</option>
+                                        <option value="{{ $comercio->nombre }}">{{ $comercio->nombre }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -87,7 +87,7 @@
 
                             <div class="col-lg-12 mb-3 d-none" id="contenedor_puntos">
                                 <label class="form-label" id="label_punto">Seleccionar Ubicación</label>
-                                <select name="punto_id" id="select_puntos" class="form-control">
+                                <select name="destino" id="select_puntos" class="form-control">
                                     <option value="" disabled selected>Seleccione una opción</option>
                                     @foreach($puntos as $punto)
                                         <option value="{{ $punto->id }}" data-tipo="{{ $punto->tipo }}">
