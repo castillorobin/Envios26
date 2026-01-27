@@ -221,7 +221,7 @@
                                                 <td>{{ $orden->whatsapp }}</td>
                                                 
                                                 <td>
-                                                    <i class="bx bxs-circle text-primary me-1"></i> {{ $orden->statdo }}
+                                                    <i class="bx bxs-circle text-primary me-1"></i> {{ $orden->estado }}
                                                 </td>
                                             </tr>
                                             @endforeach
