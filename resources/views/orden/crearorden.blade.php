@@ -80,9 +80,21 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-lg-12 mb-3">
-                                <label class="form-label">Destinoo</label>
-                                <input type="text" name="destino" class="form-control" placeholder="Ingrese el destino">
+                            <div class="col-lg-12 mb-3" id="contenedor_direccion">
+                                <label class="form-label">Dirección de Destino</label>
+                                <input type="text" name="destino" id="input_destino" class="form-control" placeholder="Ingrese la dirección exacta">
+                            </div>
+
+                            <div class="col-lg-12 mb-3 d-none" id="contenedor_puntos">
+                                <label class="form-label" id="label_punto">Seleccionar Ubicación</label>
+                                <select name="punto_id" id="select_puntos" class="form-control">
+                                    <option value="" disabled selected>Seleccione una opción</option>
+                                    @foreach($puntos as $punto)
+                                        <option value="{{ $punto->id }}" data-tipo="{{ $punto->tipo }}">
+                                            {{ $punto->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
 
@@ -162,6 +174,62 @@
             });
         @endif
     });
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const selectTipoPaquete = document.getElementById('tipo');
+    const contenedorDireccion = document.getElementById('contenedor_direccion');
+    const contenedorPuntos = document.getElementById('contenedor_puntos');
+    const inputDestino = document.getElementById('input_destino');
+    const selectPuntos = document.getElementById('select_puntos');
+    const labelPunto = document.getElementById('label_punto');
+
+    // Guardamos todas las opciones originales de puntos para filtrar luego
+    const opcionesPuntosOriginales = Array.from(selectPuntos.options);
+
+    selectTipoPaquete.addEventListener('change', function() {
+        const valor = this.value;
+
+        if (valor === 'Personalizado' || valor === 'Personalizado departamental') {
+            // Mostrar Dirección, Ocultar Puntos
+            contenedorDireccion.classList.remove('d-none');
+            contenedorPuntos.classList.add('d-none');
+            inputDestino.required = true;
+            selectPuntos.required = false;
+            selectPuntos.value = ""; 
+        } 
+        else if (valor === 'Punto fijo' || valor === 'Casillero') {
+            // Mostrar Puntos, Ocultar Dirección
+            contenedorDireccion.classList.add('d-none');
+            contenedorPuntos.classList.remove('d-none');
+            inputDestino.required = false;
+            inputDestino.value = "";
+            selectPuntos.required = true;
+
+            // Determinar qué tipo de punto filtrar
+            // Si el paquete es 'Punto fijo' busca tipo 'Punto'
+            // Si el paquete es 'Casillero' busca tipo 'Agencia'
+            const tipoABuscar = (valor === 'Punto fijo') ? 'Punto' : 'Agencia';
+            labelPunto.textContent = (valor === 'Punto fijo') ? 'Seleccionar Punto Fijo' : 'Seleccionar Agencia/Casillero';
+
+            // Filtrar las opciones del select
+            filtrarPuntos(tipoABuscar);
+        }
+    });
+
+    function filtrarPuntos(tipo) {
+        // Limpiamos el select
+        selectPuntos.innerHTML = '<option value="" disabled selected>Seleccione una opción</option>';
+        
+        // Agregamos solo las que coinciden con el tipo
+        opcionesPuntosOriginales.forEach(option => {
+            if (option.getAttribute('data-tipo') === tipo) {
+                selectPuntos.appendChild(option.cloneNode(true));
+            }
+        });
+    }
+});
 </script>
 
 @endsection

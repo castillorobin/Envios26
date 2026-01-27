@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Orden;
 use Illuminate\Http\Request;
 use App\Models\Comercio;
+use App\Models\Punto;
 
 class OrdenController extends Controller
 {
@@ -26,8 +27,9 @@ class OrdenController extends Controller
      */
     public function create()
     {
+        $puntos = Punto::all();
         $comercios = Comercio::all();
-        return view('orden.crearorden', compact('comercios'));
+        return view('orden.crearorden', compact('comercios', 'puntos'));
     }
 
     /**
@@ -65,7 +67,7 @@ class OrdenController extends Controller
         ]);
 
         // Redirigir a la lista de órdenes con un mensaje de éxito
-        return redirect()->route('ordenes.inicio')->with('success', 'Orden creada exitosamente.');
+        return redirect()->route('orden.crearorden')->with('success', 'Orden creada exitosamente.');
     }
 
     /**
