@@ -49,7 +49,7 @@
                         <div class="row">
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label">Comercio</label>
-                                <select name="comercio_id" id="comercio" class="form-control">
+                                <select name="comercio" id="comercio" class="form-control">
                                     <option value="" disabled selected>Seleccione un comercio</option>
                                     @foreach($comercios as $comercio)
                                         <option value="{{ $comercio->nombre }}">{{ $comercio->nombre }}</option>
