@@ -2,6 +2,26 @@
 
 @section('content')
 
+@if ($errors->any())
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Errores de validación',
+                html: `<ul style="text-align: left;">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                       </ul>`,
+                confirmButtonText: 'Corregir',
+                customClass: {
+                    confirmButton: 'btn btn-danger'
+                }
+            });
+        });
+    </script>
+@endif
+
 
 <div class="container-xxl">
     <div class="row">
@@ -11,7 +31,7 @@
                     <h5 class="card-title">Crear Orden</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('comercios.store') }}" method="POST">
+                    <form action="{{ route('ordenes.store') }}" method="POST">
                         @csrf
 
                         <div class="row">
@@ -29,7 +49,12 @@
                         <div class="row">
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label">Comercio</label>
-                                <input type="text" name="name" class="form-control" placeholder="Ingrese el nombre del comercio" required>
+                                <select name="comercio_id" id="comercio_id" class="form-control">
+                                    <option value="" disabled selected>Seleccione un comercio</option>
+                                    @foreach($comercios as $comercio)
+                                        <option value="{{ $comercio->id }}">{{ $comercio->nombre }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label">Dirección de origen</label>
@@ -44,7 +69,7 @@
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label">Tipo de paquete</label>
-                                <select name="tipo_paquete" id="tipo_paquete" class="form-control">
+                                <select name="tipo" id="tipo" class="form-control">
                                     <option value="" disabled selected>Seleccione el tipo de paquete</option>
                                     <option value="Personalizado">Personalizado</option>
                                     <option value="Personalizado departamental">Personalizado departamental</option>
@@ -84,6 +109,14 @@
                             
                         </div>
 
+                        <div class="row">
+                            <div class="col-lg-12 mb-3">
+                                <label class="form-label">Nota</label>
+                                <input type="text" name="nota" class="form-control" placeholder="Ingrese la nota">
+                            </div>
+                        </div>
+
+
                                             
 
                         
@@ -91,7 +124,7 @@
 
 
                         <div class="d-flex justify-content-end gap-2 mt-3">
-                            <a href="{{ route('comercios.inicio') }}" class="btn btn-secondary">Cancelar</a>
+                            <a href="{{ route('ordenes.inicio') }}" class="btn btn-secondary">Cancelar</a>
                             <button type="submit" class="btn btn-primary">Guardar</button>
                         </div>
                     </form>

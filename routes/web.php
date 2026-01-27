@@ -194,3 +194,4 @@ Route::delete('/puntos/{id}', [App\Http\Controllers\PuntoController::class, 'des
 //Usuarios
 Route::get('ordenes', [App\Http\Controllers\OrdenController::class, 'index'] )->name('ordenes.inicio') ;
 Route::get('/ordenes/crear', [App\Http\Controllers\OrdenController::class, 'create'])->name('ordenes.crear');
+Route::post('/ordenes/guardar', [App\Http\Controllers\OrdenController::class, 'store'])->name('ordenes.store');

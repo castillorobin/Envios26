@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Orden;
 use Illuminate\Http\Request;
+use App\Models\Comercio;
 
 class OrdenController extends Controller
 {
@@ -25,7 +26,8 @@ class OrdenController extends Controller
      */
     public function create()
     {
-        return view('orden.crearorden');
+        $comercios = Comercio::all();
+        return view('orden.crearorden', compact('comercios'));
     }
 
     /**
@@ -36,7 +38,34 @@ class OrdenController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validar los datos recibidos
+        $request->validate([
+
+            'comercio' => 'required|string|max:255',
+            //'origen' => 'required|string|max:255',
+            'tipo' => 'required|string|max:255',
+            'destino' => 'required|string|max:255',
+            'nota' => 'nullable|string|max:500',
+        ]);
+
+        // Crear una nueva orden
+        Orden::create([
+            'guia' => $request->input('guia'),
+            'comercio' => $request->input('comercio'),
+            'direccion' => $request->input('direccion'),
+            'destinatario' => $request->input('destinatario'),
+            'telefono' => $request->input('telefono'),
+            'whatsapp' => $request->input('whatsapp'),
+            'tipo' => $request->input('tipo'),
+            'destino' => $request->input('destino'),
+            'fecha_entrega' => $request->input('fecha_entrega'),
+            'total' => $request->input('total'),
+            'nota' => $request->input('nota'),
+            'nota' => $request->input('nota'),
+        ]);
+
+        // Redirigir a la lista de órdenes con un mensaje de éxito
+        return redirect()->route('ordenes.inicio')->with('success', 'Orden creada exitosamente.');
     }
 
     /**
