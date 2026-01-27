@@ -67,7 +67,7 @@ class OrdenController extends Controller
         ]);
 
         // Redirigir a la lista de órdenes con un mensaje de éxito
-        return redirect()->route('orden.inicio')->with('success', 'Orden creada exitosamente.');
+        return redirect()->route('ordenes.inicio')->with('success', 'Orden creada exitosamente.');
     }
 
     /**
