@@ -1061,6 +1061,13 @@
                             </a>
                             <div class="collapse" id="sidebarEcommerce">
                                 <ul class="nav sub-navbar-nav">
+                                      <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
+                                            href="/ordenes"
+                                            >Listado</a
+                                        >
+                                    </li>
                                     <li class="sub-nav-item">
                                         <a
                                             class="sub-nav-link"

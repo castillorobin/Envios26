@@ -320,7 +320,7 @@
                     <div class="mb-3">
                         <label class="form-label">Tipo</label>
                         <select name="tipo" class="form-select" required>
-                            <option value="Punto">Punto</option>
+                            <option value="Punto fijo">Punto fijo</option>
                             <option value="Agencia">Agencia</option>
                         </select>
                     </div>
