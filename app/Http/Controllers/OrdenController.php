@@ -63,7 +63,7 @@ class OrdenController extends Controller
             'fecha_entrega' => $request->input('fecha_entrega'),
             'total' => $request->input('total'),
             'nota' => $request->input('nota'),
-            'estado' => 'Creado',
+            //cambios en 'estado' => 'Creado',
         ]);
 
         // Redirigir a la lista de órdenes con un mensaje de éxito
