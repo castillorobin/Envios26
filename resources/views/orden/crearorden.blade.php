@@ -90,7 +90,7 @@
                                 <select name="destino" id="select_puntos" class="form-control">
                                     <option value="" disabled selected>Seleccione una opción</option>
                                     @foreach($puntos as $punto)
-                                        <option value="{{ $punto->id }}" data-tipo="{{ $punto->tipo }}">
+                                        <option value="{{ $punto->nombre }}" data-tipo="{{ $punto->tipo }}">
                                             {{ $punto->nombre }}
                                         </option>
                                     @endforeach
@@ -210,7 +210,7 @@
             // Determinar qué tipo de punto filtrar
             // Si el paquete es 'Punto fijo' busca tipo 'Punto'
             // Si el paquete es 'Casillero' busca tipo 'Agencia'
-            const tipoABuscar = (valor === 'Punto fijo') ? 'Punto' : 'Agencia';
+            const tipoABuscar = (valor === 'Punto fijo') ? 'Punto fijo' : 'Agencia';
             labelPunto.textContent = (valor === 'Punto fijo') ? 'Seleccionar Punto Fijo' : 'Seleccionar Agencia/Casillero';
 
             // Filtrar las opciones del select

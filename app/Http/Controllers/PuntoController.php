@@ -37,10 +37,10 @@ class PuntoController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    { 
         // 1. Validar
     $request->validate([
-        'tipo'   => 'required|in:Punto,Agencia',
+        'tipo'   => 'required|in:Punto fijo,Agencia',
         'nombre' => 'required|string|max:255',
     ]);
 
@@ -86,7 +86,7 @@ class PuntoController extends Controller
     public function update(Request $request, $id)
 {
     $request->validate([
-        'tipo'   => 'required|in:Punto,Agencia',
+        'tipo'   => 'required|in:Punto fijo,Agencia',
         'nombre' => 'required|string|max:255',
     ]);
 
