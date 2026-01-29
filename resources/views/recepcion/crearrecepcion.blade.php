@@ -73,7 +73,9 @@
                                     </div>
                         <div class="row">
                             <div class="col-6">
-                                <a href="{{ route('recepcion.inicio') }}" class="btn btn-outline-primary w-100">Cancelar</a>
+                               <a href="{{ route('recepcion.crearrecepcion', ['comercio_id' => $comercio->id]) }}" class="btn btn-outline-primary w-100">
+                                    Cancelar
+                                </a>
                             </div>
                             <div class="col-6">
                                 <button type="submit" class="btn btn-primary w-100">Guardar</button>

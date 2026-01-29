@@ -19,11 +19,19 @@ class RecepcionController extends Controller
     }
 
     public function crearrecepcion(Request $request)
-    {
-        $comercio_id = $request->input('comercio_id');
-        $comercio = Comercio::find($comercio_id);
-        return view('recepcion.crearrecepcion', compact('comercio'));
-    }
+{
+    // Validar que el comercio_id esté presente y exista en la tabla
+    $request->validate([
+        'comercio_id' => 'required|exists:comercios,id'
+    ], [
+        'comercio_id.required' => 'Debe seleccionar un comercio antes de continuar.'
+    ]);
+
+    $comercio_id = $request->input('comercio_id');
+    $comercio = Comercio::findOrFail($comercio_id);
+    
+    return view('recepcion.crearrecepcion', compact('comercio'));
+}
     public function elegircomercio()
     {
         $comercios = Comercio::all();
