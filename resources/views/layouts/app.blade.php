@@ -1109,16 +1109,39 @@
                             </div>
                         </li>
 
+                        
+
+
                         <li class="nav-item">
-                            <a class="nav-link" href="apps-chat.html">
+                            <a
+                                class="nav-link menu-arrow"
+                                href="#sidebarEcommerce3"
+                                data-bs-toggle="collapse"
+                                role="button"
+                                aria-expanded="false"
+                                aria-controls="sidebarEcommerce3"
+                            >
                                 <span class="nav-icon">
                                     <iconify-icon
                                         icon="iconamoon:shopping-card-remove-bold"
                                     ></iconify-icon>
                                 </span>
-                                <span class="nav-text"> Facturacion </span>
+                                <span class="nav-text"> Facturacion</span>
                             </a>
-                        </li>
+                            <div class="collapse" id="sidebarEcommerce3">
+                                <ul class="nav sub-navbar-nav">
+                                    <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
+                                            href="/recepcion/elegircomercio"
+                                            >Recepción</a
+                                        >
+                                    </li>
+                                    
+                                   
+
+                                    
+                                </ul>
 
                         <li class="nav-item">
                             <a class="nav-link" href="/usuarios">
