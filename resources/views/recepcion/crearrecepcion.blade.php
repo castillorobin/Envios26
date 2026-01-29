@@ -51,7 +51,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                                         <label for="usuari" class="form-label">Usuario</label>
-                                        <input type="text" class="form-control" id="usuario" name="usuario" value="{{ Auth::user()->name }}" >
+                                        <input type="text" class="form-control" id="usuario" name="usuario" value="{{ Auth::user()->name }}" readonly>
                                     </div>
 
                                     <div class="mb-3">
@@ -69,7 +69,7 @@
                                     </div>
                                     <div class="d-flex justify-content-end align-items-center gap-3 mb-3">
                                         <label for="total" class="form-label mb-0">Total a cobrar</label>
-                                        <input type="number" class="form-control" id="total" name="total" placeholder="$ 0.00" style="max-width: 100px;">
+                                        <input type="number" class="form-control" id="total" name="total" placeholder="$ 0.00" style="max-width: 100px;" readonly>
                                     </div>
                         <div class="row">
                             <div class="col-6">
@@ -178,6 +178,33 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+    // --- Lógica de cálculos financieros ---
+const inputSubtotal = document.getElementById('subtotal');
+const inputDescuento = document.getElementById('descuento');
+const inputTotal = document.getElementById('total');
+
+function calcularTotal() {
+    // Obtenemos los valores, si están vacíos o no son números usamos 0
+    const subtotal = parseFloat(inputSubtotal.value) || 0;
+    const descuento = parseFloat(inputDescuento.value) || 0;
+
+    // Calculamos la diferencia
+    const resultado = subtotal - descuento;
+
+    // Asignamos el valor al input total (formateado a 2 decimales)
+    inputTotal.value = resultado.toFixed(2);
+    
+    // Opcional: Cambiar el color si el total es negativo por error
+    if (resultado < 0) {
+        inputTotal.classList.add('text-danger');
+    } else {
+        inputTotal.classList.remove('text-danger');
+    }
+}
+
+// Escuchamos el evento 'input' para que el cálculo sea en tiempo real mientras escriben
+inputSubtotal.addEventListener('input', calcularTotal);
+inputDescuento.addEventListener('input', calcularTotal);
 });
 </script>
 
