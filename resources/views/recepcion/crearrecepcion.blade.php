@@ -64,6 +64,14 @@
                                         <input type="number" class="form-control" id="descuento" name="descuento" placeholder="$ 0.00">
                                     </div>
                                     <div class="mb-3">
+                                        <label for="metodo_pago" class="form-label">Metodo de pago</label>
+                                        <select name="metodo_pago" id="metodo_pago" class="form-select">
+                                            <option value="Efectivo">Efectivo</option>
+                                            <option value="Transferencia bancaria">Transferencia bancaria</option>
+                                            
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
                                         <label for="nota" class="form-label">Nota</label>
                                         <input type="text" class="form-control" id="nota" name="nota" placeholder="Ingrese una nota de descuento">
                                     </div>
