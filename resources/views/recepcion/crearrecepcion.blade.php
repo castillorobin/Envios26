@@ -23,10 +23,10 @@
                         </div>
                     </div>
                     <div class="table-responsive table-centered mt-3">
-                        <table class="table text-nowrap mb-0">
+                        <table class="table text-nowrap mb-0" id="tabla-guias-dinamica">
                             <thead>
                                 <tr>
-                                    <th style="width: 40%;">Guia</th>
+                                    <th style="display: none;">Orden</th> <th style="width: 35%;">Guia</th>
                                     <th>Comercio</th>
                                     <th>Fecha de recepcion</th>
                                     <th>Status</th>
@@ -63,6 +63,11 @@
                                         <label for="descuento" class="form-label">Descuento</label>
                                         <input type="number" class="form-control" id="descuento" name="descuento" placeholder="$ 0.00">
                                     </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="nota" class="form-label">Nota</label>
+                                        <input type="text" class="form-control" id="nota" name="nota" placeholder="Ingrese una nota de descuento">
+                                    </div>
                                     <div class="mb-3">
                                         <label for="metodo_pago" class="form-label">Metodo de pago</label>
                                         <select name="metodo_pago" id="metodo_pago" class="form-select">
@@ -70,10 +75,6 @@
                                             <option value="Transferencia bancaria">Transferencia bancaria</option>
                                             
                                         </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="nota" class="form-label">Nota</label>
-                                        <input type="text" class="form-control" id="nota" name="nota" placeholder="Ingrese una nota de descuento">
                                     </div>
                                     <div class="d-flex justify-content-end align-items-center gap-3 mb-3">
                                         <label for="total" class="form-label mb-0">Total a cobrar</label>
@@ -99,71 +100,73 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Variable para llevar el orden (un simple contador que aumenta)
+    let contadorOrden = 0;
+
+    const tableGuias = $('#tabla-guias-dinamica').DataTable({
+        "paging": true,
+        "pageLength": 5,
+        "lengthChange": false,
+        "searching": false,
+        "info": true,
+        // 1. Configuramos el orden inicial por la columna 0 (la oculta) de forma descendente
+        "order": [[0, "desc"]], 
+        "columnDefs": [
+            { "targets": [0], "visible": false, "searchable": false } // Ocultar columna 0
+        ],
+        "language": {
+            "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+        }
+    });
+
     const btnAgregar = document.getElementById('btn-agregar');
     const inputGuia = document.getElementById('input-guia');
-    const tablaBody = document.getElementById('tabla-guias-body');
     const hiddenInputsContainer = document.getElementById('hidden-inputs');
-
-    // Datos estáticos que vienen de PHP
-    const nombreComercio = "{{ $comercio->nombre }}";
-    const fechaHoy = "{{ date('d/m/Y') }}"; 
 
     function agregarGuia() {
         const guiaValue = inputGuia.value.trim();
+        if (guiaValue === "") return;
 
-        // 1. Validación de campo vacío
-        if (guiaValue === "") {
-            Swal.fire({ icon: 'warning', title: 'Campo vacío', text: 'Por favor ingrese un código de guía' });
-            return;
-        }
-
-        // 2. VALIDACIÓN DE DUPLICADOS
-        // Buscamos si ya existe un input oculto con ese mismo valor de guía
+        // Validación de duplicados... (mismo código anterior)
         const guiasExistentes = Array.from(hiddenInputsContainer.querySelectorAll('input[name="guias[]"]'))
                                      .map(input => input.value);
-
         if (guiasExistentes.includes(guiaValue)) {
-            Swal.fire({ 
-                icon: 'error', 
-                title: 'Guía Duplicada', 
-                text: `La guía ${guiaValue} ya ha sido agregada a la lista actual.` 
-            });
+            Swal.fire({ icon: 'error', title: 'Duplicada', text: 'Esta guía ya está en la lista.' });
             inputGuia.value = "";
-            inputGuia.focus();
             return;
         }
 
-        // 3. Crear la fila para la tabla si pasa las validaciones
-        const tr = document.createElement('tr');
-        tr.setAttribute('data-guia', guiaValue); // Atributo extra para facilitar eliminación
-        tr.innerHTML = `
-            <td><strong>${guiaValue}</strong></td>
-            <td>${nombreComercio}</td>
-            <td>${fechaHoy}</td>
-            <td><span class="badge bg-success-subtle text-success">Recepcionado</span></td>
-            <td>
-                <button type="button" class="btn btn-sm btn-danger btn-eliminar">
-                    <i class="bx bx-trash"></i>
-                </button>
-            </td>
-        `;
+        // Incrementamos el contador para que esta fila sea "mayor" que la anterior
+        contadorOrden++;
 
-        tablaBody.appendChild(tr);
+        // 2. AGREGAR A DATATABLE
+        // El primer valor es el contadorOrden para que al ordenar 'desc' quede arriba
+        tableGuias.row.add([
+            contadorOrden, 
+            `<strong>${guiaValue}</strong>`,
+            "{{ $comercio->nombre }}",
+            "{{ date('d/m/Y') }}",
+            `<span class="badge bg-success-subtle text-success">Recepcionado</span>`,
+            `<button type="button" class="btn btn-sm btn-danger btn-eliminar" data-guia="${guiaValue}">
+                <i class="bx bx-trash"></i>
+            </button>`
+        ]).draw(false);
 
-        // 4. Crear el input oculto para el envío del formulario
+        // 3. Forzamos a la tabla a mostrar la página 1 (donde estará el nuevo registro)
+        tableGuias.page('first').draw(false);
+
+        // Crear input oculto... (mismo código anterior)
         const hiddenInput = document.createElement('input');
         hiddenInput.type = 'hidden';
         hiddenInput.name = 'guias[]';
         hiddenInput.value = guiaValue;
-        hiddenInput.id = `input-hidden-${guiaValue}`; // ID único para borrarlo después
+        hiddenInput.id = `input-hidden-${guiaValue}`;
         hiddenInputsContainer.appendChild(hiddenInput);
 
-        // Limpiar input y dar foco
         inputGuia.value = "";
         inputGuia.focus();
     }
 
-    // Eventos de teclado y click
     btnAgregar.addEventListener('click', agregarGuia);
     inputGuia.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
