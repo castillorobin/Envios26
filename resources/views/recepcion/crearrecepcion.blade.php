@@ -107,7 +107,7 @@
                                     </div>
                         <div class="row">
                             <div class="col-6">
-                               <a href="{{ route('recepcion.crearrecepcion', ['comercio_id' => $comercio->id]) }}" class="btn btn-outline-primary w-100">
+                               <a href="{{ route('recepcion.elegircomercio') }}" class="btn btn-outline-primary w-100">
                                     Cancelar
                                 </a>
                             </div>
