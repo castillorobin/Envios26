@@ -29,7 +29,22 @@
             </div>
         </div>
     </div>
+@if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 
+@if($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
     <div class="row">
         <div class="col-xl-9">
             <div class="card">
@@ -67,7 +82,7 @@
         </div>
 
         <div class="col-xl-3">
-            <form action="{{ route('recepcion.guardar') }}" method="POST">
+            <form action="{{ route('recepcion.guardar') }}" method="POST" target="_blank">
                 @csrf
                 <input type="hidden" name="comercio_id" value="{{ $comercio->id }}">
                 <div id="hidden-inputs"></div>
@@ -78,7 +93,7 @@
                                         <label for="usuari" class="form-label">Usuario</label>
                                         <input type="text" class="form-control" id="usuario" name="usuario" value="{{ Auth::user()->name }}" readonly>
                                     </div>
-
+<input type="hidden" name="comercio_nombre" value="{{ $comercio->nombre }}">
                                     <div class="mb-3">
                                         <label for="subtotal" class="form-label">Subtotal</label>
                                         <input type="number" class="form-control" id="subtotal" name="subtotal" placeholder="$ 0.00">
@@ -246,7 +261,8 @@ function calcularTotal() {
     const resultado = sub - desc;
     
     // Mostramos el resultado con 2 decimales en el campo Total
-    inputTotal.value = resultado.toFixed(2);
+   // inputTotal.value = resultado.toFixed(2);
+    inputTotal.value = Math.max(0, resultado).toFixed(2);
 }
 
 // Escuchamos cuando el usuario escribe en cualquiera de los dos campos

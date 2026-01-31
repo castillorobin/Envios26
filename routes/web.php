@@ -203,4 +203,5 @@ Route::post('/ordenes/guardar', [App\Http\Controllers\OrdenController::class, 's
 Route::post('/recepcion/inicio', [App\Http\Controllers\RecepcionController::class, 'index'])->name('recepcion.inicio');
 Route::get('recepcion/crearrecepcion', [App\Http\Controllers\RecepcionController::class, 'crearrecepcion'] )->name('recepcion.crearrecepcion') ;
 Route::get('recepcion/elegircomercio', [App\Http\Controllers\RecepcionController::class, 'elegircomercio'] )->name('recepcion.elegircomercio') ;
-Route::post('/recepcion/guardar', [App\Http\Controllers\RecepcionController::class, 'store'])->name('recepcion.guardar');
+Route::post('/recepcion/guardar', [App\Http\Controllers\RecepcionController::class, 'guardar'])->name('recepcion.guardar');
+
