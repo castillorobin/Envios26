@@ -82,7 +82,7 @@
         </div>
 
         <div class="col-xl-3">
-            <form action="{{ route('recepcion.guardar') }}" method="POST" target="_blank">
+            <form action="{{ route('recepcion.guardar') }}" method="POST" target="_blank" onsubmit="setTimeout(() => { window.location.href = '{{ route('recepcion.elegircomercio') }}'; }, 1000);">
                 @csrf
                 <input type="hidden" name="comercio_id" value="{{ $comercio->id }}">
                 <div id="hidden-inputs"></div>
