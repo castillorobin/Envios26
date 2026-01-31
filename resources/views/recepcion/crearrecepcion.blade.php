@@ -1,6 +1,26 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    /* Asegurar visibilidad en los contenedores del footer */
+    #dt-info-container, #dt-pagination-container {
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Forzar que los controles de DataTables sean visibles siempre que se muevan aquí */
+    #dt-pagination-container .dataTables_paginate,
+    #dt-info-container .dataTables_info {
+        display: block !important;
+    }
+
+    /* Ocultar los controles originales que quedan dentro del wrapper de la tabla */
+    .dataTables_wrapper .dataTables_info, 
+    .dataTables_wrapper .dataTables_paginate {
+        display: none;
+    }
+</style>
 <div class="container-xxl">
     <div class="row">
         <div class="col-12">
@@ -37,7 +57,12 @@
                                 </tbody>
                         </table>
                     </div>
-                </div>
+                </div><div class="card-footer bg-transparent border-top">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <div id="dt-info-container"></div>
+                <div id="dt-pagination-container"></div>
+            </div>
+        </div>
             </div>
         </div>
 
@@ -97,65 +122,92 @@
     </div>
 </div>
 
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Variable para llevar el orden (un simple contador que aumenta)
     let contadorOrden = 0;
-
-    const tableGuias = $('#tabla-guias-dinamica').DataTable({
-        "paging": true,
-        "pageLength": 5,
-        "lengthChange": false,
-        "searching": false,
-        "info": true,
-        // 1. Configuramos el orden inicial por la columna 0 (la oculta) de forma descendente
-        "order": [[0, "desc"]], 
-        "columnDefs": [
-            { "targets": [0], "visible": false, "searchable": false } // Ocultar columna 0
-        ],
-        "language": {
-            "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
-        }
-    });
-
     const btnAgregar = document.getElementById('btn-agregar');
     const inputGuia = document.getElementById('input-guia');
     const hiddenInputsContainer = document.getElementById('hidden-inputs');
+    const nombreComercio = "{{ $comercio->nombre }}";
+    const fechaHoy = "{{ date('d/m/Y') }}";
 
+    // Inicialización de DataTable
+    const tableGuias = $('#tabla-guias-dinamica').DataTable({
+    "paging": true,
+    "pageLength": 5,
+    "lengthChange": false,
+    "searching": false,
+    "info": true,
+    "order": [[0, "desc"]], // Ordena por la columna 'Orden' aunque esté oculta
+    "dom": 'rtip',
+    "columnDefs": [
+        {
+            "targets": [0],      // La columna 'Orden' (índice 0)
+            "visible": false,    // La oculta completamente del ojo humano
+            "searchable": false  // No se busca por este campo
+        }
+    ],
+    "language": {
+        "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json",
+        "paginate": {
+            "previous": "<i class='bx bx-chevron-left'></i>",
+            "next": "<i class='bx bx-chevron-right'></i>"
+        }
+    },
+    "drawCallback": function(settings) {
+            // 1. Estilo de los botones
+            $('.dataTables_paginate > ul.pagination').addClass('pagination-rounded');
+
+            // 2. Mover los controles al footer de forma segura
+            // Usamos append() sobre los contenedores para "jalar" el HTML
+            const nodes = $(this.api().table().container());
+            
+            const info = nodes.find('.dataTables_info');
+            const paginate = nodes.find('.dataTables_paginate');
+
+            $('#dt-info-container').append(info);
+            $('#dt-pagination-container').append(paginate);
+            
+            // 3. Forzar visibilidad si hay más de una página o si queremos ver el info
+            if (this.api().rows().count() > 0) {
+                info.show();
+                // Solo mostrar paginación si hay más de 1 página
+                if (this.api().page.info().pages > 1) {
+                    paginate.show();
+                } else {
+                    paginate.hide();
+                }
+            }
+        }
+    });
+
+    // Función para agregar guía
     function agregarGuia() {
         const guiaValue = inputGuia.value.trim();
         if (guiaValue === "") return;
 
-        // Validación de duplicados... (mismo código anterior)
-        const guiasExistentes = Array.from(hiddenInputsContainer.querySelectorAll('input[name="guias[]"]'))
-                                     .map(input => input.value);
-        if (guiasExistentes.includes(guiaValue)) {
-            Swal.fire({ icon: 'error', title: 'Duplicada', text: 'Esta guía ya está en la lista.' });
+        // Verificar duplicados en los inputs ocultos
+        if (document.getElementById(`input-hidden-${guiaValue}`)) {
+            Swal.fire({ icon: 'error', title: 'Duplicada', text: `La guía ${guiaValue} ya está en la lista.` });
             inputGuia.value = "";
             return;
         }
 
-        // Incrementamos el contador para que esta fila sea "mayor" que la anterior
         contadorOrden++;
 
-        // 2. AGREGAR A DATATABLE
-        // El primer valor es el contadorOrden para que al ordenar 'desc' quede arriba
+        // Añadir a la tabla
         tableGuias.row.add([
-            contadorOrden, 
+            contadorOrden,
             `<strong>${guiaValue}</strong>`,
-            "{{ $comercio->nombre }}",
-            "{{ date('d/m/Y') }}",
+            nombreComercio,
+            fechaHoy,
             `<span class="badge bg-success-subtle text-success">Recepcionado</span>`,
             `<button type="button" class="btn btn-sm btn-danger btn-eliminar" data-guia="${guiaValue}">
                 <i class="bx bx-trash"></i>
             </button>`
         ]).draw(false);
 
-        // 3. Forzamos a la tabla a mostrar la página 1 (donde estará el nuevo registro)
-        tableGuias.page('first').draw(false);
-
-        // Crear input oculto... (mismo código anterior)
+        // Crear input oculto
         const hiddenInput = document.createElement('input');
         hiddenInput.type = 'hidden';
         hiddenInput.name = 'guias[]';
@@ -167,60 +219,41 @@ document.addEventListener('DOMContentLoaded', function() {
         inputGuia.focus();
     }
 
+    // Eventos
     btnAgregar.addEventListener('click', agregarGuia);
-    inputGuia.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            agregarGuia();
-        }
+    inputGuia.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); agregarGuia(); } });
+
+    // Eliminar registro
+    $('#tabla-guias-body').on('click', '.btn-eliminar', function() {
+        const row = $(this).closest('tr');
+        const guia = $(this).data('guia');
+        tableGuias.row(row).remove().draw();
+        $(`#input-hidden-${guia}`).remove();
     });
 
-    // Delegación de eventos para eliminar fila e input oculto
-    tablaBody.addEventListener('click', function(e) {
-        if (e.target.closest('.btn-eliminar')) {
-            const row = e.target.closest('tr');
-            const guiaABorrar = row.getAttribute('data-guia');
-            
-            // Borrar la fila visual
-            row.remove();
-            
-            // Borrar el input oculto correspondiente para que no se envíe al servidor
-            const inputOculto = document.getElementById(`input-hidden-${guiaABorrar}`);
-            if (inputOculto) {
-                inputOculto.remove();
-            }
-        }
-    });
-    // --- Lógica de cálculos financieros ---
+
+    // --- LÓGICA DE CÁLCULOS ---
 const inputSubtotal = document.getElementById('subtotal');
 const inputDescuento = document.getElementById('descuento');
 const inputTotal = document.getElementById('total');
 
 function calcularTotal() {
-    // Obtenemos los valores, si están vacíos o no son números usamos 0
-    const subtotal = parseFloat(inputSubtotal.value) || 0;
-    const descuento = parseFloat(inputDescuento.value) || 0;
-
-    // Calculamos la diferencia
-    const resultado = subtotal - descuento;
-
-    // Asignamos el valor al input total (formateado a 2 decimales)
-    inputTotal.value = resultado.toFixed(2);
+    // Obtenemos los valores y los convertimos a número (si están vacíos, usamos 0)
+    const sub = parseFloat(inputSubtotal.value) || 0;
+    const desc = parseFloat(inputDescuento.value) || 0;
     
-    // Opcional: Cambiar el color si el total es negativo por error
-    if (resultado < 0) {
-        inputTotal.classList.add('text-danger');
-    } else {
-        inputTotal.classList.remove('text-danger');
-    }
+    // Calculamos la resta
+    const resultado = sub - desc;
+    
+    // Mostramos el resultado con 2 decimales en el campo Total
+    inputTotal.value = resultado.toFixed(2);
 }
 
-// Escuchamos el evento 'input' para que el cálculo sea en tiempo real mientras escriben
+// Escuchamos cuando el usuario escribe en cualquiera de los dos campos
 inputSubtotal.addEventListener('input', calcularTotal);
 inputDescuento.addEventListener('input', calcularTotal);
 });
 </script>
-
 
 @endsection
 
