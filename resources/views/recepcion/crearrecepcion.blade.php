@@ -148,8 +148,13 @@
     </div>
 </div>
 
+<script src="https://unpkg.com/html5-qrcode"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("Interfaz de Recepción cargada con éxito...");
+
+    // 1. Variables de Control
     let contadorOrden = 0;
     const btnAgregar = document.getElementById('btn-agregar');
     const inputGuia = document.getElementById('input-guia');
@@ -157,62 +162,69 @@ document.addEventListener('DOMContentLoaded', function() {
     const nombreComercio = "{{ $comercio->nombre }}";
     const fechaHoy = "{{ date('d/m/Y') }}";
 
-    // Inicialización de DataTable
+    // Elementos del Escáner QR
+    const btnActivarQr = document.getElementById('btn-activar-qr');
+    const btnCerrarCamara = document.getElementById('btn-cerrar-camara');
+    const readerContainer = document.getElementById('reader-container');
+    let html5QrCode;
+
+    // 2. Inicialización de DataTable
     const tableGuias = $('#tabla-guias-dinamica').DataTable({
-    "paging": true,
-    "pageLength": 5,
-    "lengthChange": false,
-    "searching": false,
-    "info": true,
-    "order": [[0, "desc"]], // Ordena por la columna 'Orden' aunque esté oculta
-    "dom": 'rtip',
-    "columnDefs": [
-        {
-            "targets": [0],      // La columna 'Orden' (índice 0)
-            "visible": false,    // La oculta completamente del ojo humano
-            "searchable": false  // No se busca por este campo
-        }
-    ],
-    "language": {
-        "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json",
-        "paginate": {
-            "previous": "<i class='bx bx-chevron-left'></i>",
-            "next": "<i class='bx bx-chevron-right'></i>"
-        }
-    },
-    "drawCallback": function(settings) {
-            // 1. Estilo de los botones
+        "paging": true,
+        "pageLength": 5,
+        "lengthChange": false,
+        "searching": false,
+        "info": true,
+        "order": [[0, "desc"]],
+        "dom": 'rtip',
+        "columnDefs": [{ "targets": [0], "visible": false }],
+        "language": {
+            "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json",
+            "paginate": {
+                "previous": "<i class='bx bx-chevron-left'></i>",
+                "next": "<i class='bx bx-chevron-right'></i>"
+            }
+        },
+        "drawCallback": function(settings) {
+            // 1. Aplicar estilo a los botones
             $('.dataTables_paginate > ul.pagination').addClass('pagination-rounded');
 
-            // 2. Mover los controles al footer de forma segura
-            // Usamos append() sobre los contenedores para "jalar" el HTML
-            const nodes = $(this.api().table().container());
+            // 2. Capturar los elementos
+            var api = this.api();
+            var container = $(api.table().container());
             
-            const info = nodes.find('.dataTables_info');
-            const paginate = nodes.find('.dataTables_paginate');
+            var info = container.find('.dataTables_info');
+            var paginate = container.find('.dataTables_paginate');
 
+            // 3. MOVER AL FOOTER (Usamos append para asegurar el trasplante del nodo)
             $('#dt-info-container').append(info);
             $('#dt-pagination-container').append(paginate);
-            
-            // 3. Forzar visibilidad si hay más de una página o si queremos ver el info
-            if (this.api().rows().count() > 0) {
-                info.show();
-                // Solo mostrar paginación si hay más de 1 página
-                if (this.api().page.info().pages > 1) {
-                    paginate.show();
+
+            // 4. FORZAR VISIBILIDAD
+            // Si hay datos, mostramos la info. Si hay más de una página, mostramos paginación.
+            if (api.rows().count() > 0) {
+                info.attr('style', 'display: block !important'); // Forzamos con CSS inline
+                if (api.page.info().pages > 1) {
+                    paginate.attr('style', 'display: block !important');
                 } else {
-                    paginate.hide();
+                    paginate.attr('style', 'display: none !important');
                 }
+            } else {
+                info.hide();
+                paginate.hide();
             }
         }
     });
 
-    // Función para agregar guía
+    // 3. Función Principal: Agregar Guía
     function agregarGuia() {
         const guiaValue = inputGuia.value.trim();
-        if (guiaValue === "") return;
 
-        // Verificar duplicados en los inputs ocultos
+        if (guiaValue === "") {
+            Swal.fire({ icon: 'warning', title: 'Campo vacío', text: 'Ingrese o escanee una guía' });
+            return;
+        }
+
         if (document.getElementById(`input-hidden-${guiaValue}`)) {
             Swal.fire({ icon: 'error', title: 'Duplicada', text: `La guía ${guiaValue} ya está en la lista.` });
             inputGuia.value = "";
@@ -221,19 +233,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         contadorOrden++;
 
-        // Añadir a la tabla
         tableGuias.row.add([
             contadorOrden,
             `<strong>${guiaValue}</strong>`,
             nombreComercio,
             fechaHoy,
             `<span class="badge bg-success-subtle text-success">Recepcionado</span>`,
-            `<button type="button" class="btn btn-sm btn-danger btn-eliminar" data-guia="${guiaValue}">
-                <i class="bx bx-trash"></i>
-            </button>`
+            `<button type="button" class="btn btn-sm btn-danger btn-eliminar" data-guia="${guiaValue}"><i class="bx bx-trash"></i></button>`
         ]).draw(false);
 
-        // Crear input oculto
         const hiddenInput = document.createElement('input');
         hiddenInput.type = 'hidden';
         hiddenInput.name = 'guias[]';
@@ -245,40 +253,73 @@ document.addEventListener('DOMContentLoaded', function() {
         inputGuia.focus();
     }
 
-    // Eventos
-    btnAgregar.addEventListener('click', agregarGuia);
-    inputGuia.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); agregarGuia(); } });
+    // 4. Lógica del Escáner QR (Cierre automático)
+    btnActivarQr.addEventListener('click', function() {
+        readerContainer.classList.remove('d-none');
+        btnActivarQr.disabled = true;
+        html5QrCode = new Html5Qrcode("reader");
+        const config = { fps: 15, qrbox: { width: 250, height: 250 } };
 
-    // Eliminar registro
-    $('#tabla-guias-body').on('click', '.btn-eliminar', function() {
-        const row = $(this).closest('tr');
-        const guia = $(this).data('guia');
-        tableGuias.row(row).remove().draw();
-        $(`#input-hidden-${guia}`).remove();
+        html5QrCode.start(
+            { facingMode: "environment" }, 
+            config,
+            (decodedText) => {
+                inputGuia.value = decodedText;
+                agregarGuia();
+                cerrarScanner();
+            }
+        ).catch(err => {
+            console.error("Error cámara:", err);
+            cerrarScanner();
+        });
     });
 
+    function cerrarScanner() {
+        if (html5QrCode && html5QrCode.isScanning) {
+            html5QrCode.stop().then(() => {
+                html5QrCode.clear();
+                readerContainer.classList.add('d-none');
+                btnActivarQr.disabled = false;
+            });
+        } else {
+            readerContainer.classList.add('d-none');
+            btnActivarQr.disabled = false;
+        }
+    }
 
-    // --- LÓGICA DE CÁLCULOS ---
-const inputSubtotal = document.getElementById('subtotal');
-const inputDescuento = document.getElementById('descuento');
-const inputTotal = document.getElementById('total');
+    btnCerrarCamara.addEventListener('click', cerrarScanner);
 
-function calcularTotal() {
-    // Obtenemos los valores y los convertimos a número (si están vacíos, usamos 0)
-    const sub = parseFloat(inputSubtotal.value) || 0;
-    const desc = parseFloat(inputDescuento.value) || 0;
+    // 5. Lógica de Cálculos
+    const inputSubtotal = document.getElementById('subtotal');
+    const inputDescuento = document.getElementById('descuento');
+    const inputTotal = document.getElementById('total');
+
+    function calcularTotal() {
+        const sub = parseFloat(inputSubtotal.value) || 0;
+        const desc = parseFloat(inputDescuento.value) || 0;
+        const resultado = sub - desc;
+        inputTotal.value = Math.max(0, resultado).toFixed(2);
+    }
+
+    inputSubtotal.addEventListener('input', calcularTotal);
+    inputDescuento.addEventListener('input', calcularTotal);
+
+    // 6. Eventos de Usuario
+    btnAgregar.addEventListener('click', agregarGuia);
     
-    // Calculamos la resta
-    const resultado = sub - desc;
-    
-    // Mostramos el resultado con 2 decimales en el campo Total
-   // inputTotal.value = resultado.toFixed(2);
-    inputTotal.value = Math.max(0, resultado).toFixed(2);
-}
+    inputGuia.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            agregarGuia();
+        }
+    });
 
-// Escuchamos cuando el usuario escribe en cualquiera de los dos campos
-inputSubtotal.addEventListener('input', calcularTotal);
-inputDescuento.addEventListener('input', calcularTotal);
+    $('#tabla-guias-body').on('click', '.btn-eliminar', function() {
+        const row = $(this).closest('tr');
+        const guiaABorrar = $(this).data('guia');
+        tableGuias.row(row).remove().draw();
+        $(`#input-hidden-${guiaABorrar}`).remove();
+    });
 });
 </script>
 
