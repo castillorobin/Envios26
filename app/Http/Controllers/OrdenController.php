@@ -94,7 +94,7 @@ class OrdenController extends Controller
     ]);
 
     // 4. Redirigir con mensaje de éxito
-    return redirect()->route('ordenes.inicio')->with('success', 'La orden ha sido completada y guardada exitosamente.');
+    return redirect()->route('ordenes.crear')->with('success', 'La orden ha sido completada y guardada exitosamente.');
     }
 
     public function vistaBusqueda() {

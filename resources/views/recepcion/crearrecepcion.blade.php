@@ -54,7 +54,18 @@
                             <div class="d-flex gap-2">
                                 <input type="text" id="input-guia" class="form-control" style="max-width: 300px;" placeholder="Ingresar guía" autofocus>
                                 <button type="button" id="btn-agregar" class="btn btn-primary">Agregar</button>
+                                <button type="button" id="btn-activar-qr" class="btn btn-outline-secondary">
+                                    <i class="bx bx-qr-scan fs-4"></i>
+                                </button>
                             </div>
+                                <div id="reader-container" class="d-none mt-3 border rounded bg-light" style="max-width: 400px;">
+                                    <div id="reader" style="width: 100%;"></div>
+                                    <div class="p-2 text-center">
+                                        <button type="button" id="btn-cerrar-camara" class="btn btn-sm btn-danger">
+                                            Cerrar Cámara
+                                        </button>
+                                    </div>
+                                </div>
                         </div>
                     </div>
                     <div class="table-responsive table-centered mt-3">
