@@ -27,10 +27,29 @@ class OrdenController extends Controller
      */
     public function create()
     {
-        $puntos = Punto::all();
-        $comercios = Comercio::all();
-        return view('orden.crearorden', compact('comercios', 'puntos'));
+        return view('orden.buscar_guia');
     }
+
+
+    public function buscarGuia($codigo)
+{
+    // Buscamos la orden/guia y cargamos la relación del comercio si existe
+    // Asumo que tu modelo se llama Orden y tiene relacion con Comercio
+    $guia = \App\Models\Orden::where('guia', $codigo)->first();
+
+    if ($guia) {
+        // Obtenemos los datos del comercio (ajusta según tus nombres de columna)
+        $comercio = \App\Models\Comercio::where('nombre', $guia->comercio)->first();
+        
+        return response()->json([
+            'success' => true,
+            'comercio' => $guia->comercio,
+            'direccion' => $comercio ? $comercio->direccion : ''
+        ]);
+    }
+
+    return response()->json(['success' => false, 'message' => 'Guía no encontrada']);
+}
 
     /**
      * Store a newly created resource in storage.
@@ -69,6 +88,31 @@ class OrdenController extends Controller
         // Redirigir a la lista de órdenes con un mensaje de éxito
         return redirect()->route('ordenes.inicio')->with('success', 'Orden creada exitosamente.');
     }
+
+    public function vistaBusqueda() {
+    return view('orden.buscar_guia');
+}
+
+public function procesarBusqueda(Request $request) {
+    
+    $request->validate(['guia' => 'required']);
+
+    $guia = \App\Models\Orden::where('guia', $request->guia)->first();
+
+    if (!$guia) {
+        return back()->with('error', 'La guía no existe en el sistema.');
+    }
+
+    $comercio = \App\Models\Comercio::where('id', $guia->comercio)->first();
+//dd($comercio);
+    // Redirigimos al formulario llevando los datos en la sesión
+
+     $guiaact = $guia->guia;
+        
+
+    $puntos = Punto::all();
+    return view('orden.crearorden', compact('puntos', 'comercio', 'guiaact'));
+}
 
     /**
      * Display the specified resource.

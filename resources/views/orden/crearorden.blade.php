@@ -31,17 +31,16 @@
                     <h5 class="card-title">Crear Orden</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('ordenes.store') }}" method="POST">
+                    <form action="{{ route('ordenes.guardar') }}" method="POST">
                         @csrf
 
                         <div class="row">
                             <div class="col-lg-6 mb-3">
-                                <div class="input-group">
-                                    <input type="text" name="guia" class="form-control" placeholder="Ingrese el numero de guia" required>
-                                    <span class="input-group-text">
-                                        <i class="bx bx-qr fs-2" style="cursor: pointer;"></i>
-                                    </span>
-                                </div>
+                                
+                                    <label class="form-label">Guía</label>
+                                    <input type="text" name="guia" class="form-control" 
+       value="{{ $guiaact }}" readonly>
+                                
                             </div>
                             
                         </div>
@@ -49,16 +48,13 @@
                         <div class="row">
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label">Comercio</label>
-                                <select name="comercio" id="comercio" class="form-control">
-                                    <option value="" disabled selected>Seleccione un comercio</option>
-                                    @foreach($comercios as $comercio)
-                                        <option value="{{ $comercio->nombre }}">{{ $comercio->nombre }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="text" name="comercio" class="form-control" 
+       value="{{ $comercio->nombre }}" readonly>
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label">Dirección de origen</label>
-                                <input type="text" name="direccion" class="form-control" placeholder="Ingrese la dirección de origen" >
+                                <input type="text" name="direccion" class="form-control" 
+       value="{{ $comercio->direccion }}">
                             </div>
                         </div>
 
@@ -146,6 +142,22 @@
     </div>
 </div>
 
+
+
+<div class="modal fade" id="qrModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Escanear Código QR</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="reader" style="width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Alerta de Éxito
@@ -195,17 +207,17 @@
             // Mostrar Dirección, Ocultar Puntos
             contenedorDireccion.classList.remove('d-none');
             contenedorPuntos.classList.add('d-none');
-            inputDestino.required = true;
-            selectPuntos.required = false;
+            //inputDestino.required = true;
+           // selectPuntos.required = false;
             selectPuntos.value = ""; 
         } 
         else if (valor === 'Punto fijo' || valor === 'Casillero') {
             // Mostrar Puntos, Ocultar Dirección
             contenedorDireccion.classList.add('d-none');
             contenedorPuntos.classList.remove('d-none');
-            inputDestino.required = false;
+           // inputDestino.required = false;
             inputDestino.value = "";
-            selectPuntos.required = true;
+         //   selectPuntos.required = true;
 
             // Determinar qué tipo de punto filtrar
             // Si el paquete es 'Punto fijo' busca tipo 'Punto'
@@ -229,6 +241,100 @@
             }
         });
     }
+});
+</script>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const inputGuia = document.getElementById('input_guia_id');
+    const inputComercio = document.getElementById('comercio');
+    const inputDireccionOrigen = document.querySelector('input[name="direccion"]');
+    const btnQr = document.getElementById('btn-scan-qr');
+    const qrModalElement = document.getElementById('qrModal');
+    const qrModal = new bootstrap.Modal(qrModalElement);
+    let html5QrCode;
+
+    // --- FUNCIÓN PARA BUSCAR LA GUÍA ---
+    async function buscarDatosGuia(codigo) {
+        const guiaLimpia = codigo.trim();
+        if (!guiaLimpia) return;
+        
+        try {
+            const response = await fetch(`/api/buscar-guia/${guiaLimpia}`);
+            const data = await response.json();
+
+            if (data.success) {
+                inputComercio.value = data.comercio;
+                inputDireccionOrigen.value = data.direccion;
+                inputComercio.style.backgroundColor = "#e9ecef";
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Guía encontrada',
+                    text: `Comercio: ${data.comercio}`,
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No encontrado',
+                    text: 'La guía no existe en el sistema.'
+                });
+            }
+        } catch (error) {
+            console.error("Error en la búsqueda:", error);
+        }
+    }
+
+    // --- PREVENIR ENVÍO POR ENTER ---
+    inputGuia.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Detiene el envío del formulario
+            buscarDatosGuia(this.value);
+            return false;
+        }
+    });
+
+    // --- EVENTO AL PERDER EL FOCO ---
+    inputGuia.addEventListener('blur', function() {
+        buscarDatosGuia(this.value);
+    });
+
+    // --- LÓGICA DEL SCANNER QR ---
+    btnQr.addEventListener('click', function() {
+        qrModal.show();
+        html5QrCode = new Html5Qrcode("reader");
+        
+        const qrConfig = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+        html5QrCode.start(
+            { facingMode: "environment" }, 
+            qrConfig,
+            (decodedText) => {
+                inputGuia.value = decodedText;
+                buscarDatosGuia(decodedText);
+                cerrarScanner();
+                qrModal.hide();
+            }
+        ).catch(err => {
+            console.error("Error cámara:", err);
+            Swal.fire('Error', 'No se pudo acceder a la cámara', 'error');
+        });
+    });
+
+    function cerrarScanner() {
+        if (html5QrCode && html5QrCode.isScanning) {
+            html5QrCode.stop().then(() => {
+                html5QrCode.clear();
+            }).catch(err => console.error("Error al detener:", err));
+        }
+    }
+
+    // Detener cámara al cerrar el modal
+    qrModalElement.addEventListener('hidden.bs.modal', cerrarScanner);
 });
 </script>
 

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ComercioController;
 use App\Http\Controllers\PuntoController;
 use App\Http\Controllers\RecepcionController;
+use App\Http\Controllers\OrdenController;
 
 
 
@@ -197,11 +198,23 @@ Route::delete('/puntos/{id}', [App\Http\Controllers\PuntoController::class, 'des
 //Usuarios
 Route::get('ordenes', [App\Http\Controllers\OrdenController::class, 'index'] )->name('ordenes.inicio') ;
 Route::get('/ordenes/crear', [App\Http\Controllers\OrdenController::class, 'create'])->name('ordenes.crear');
-Route::post('/ordenes/guardar', [App\Http\Controllers\OrdenController::class, 'store'])->name('ordenes.store');
+Route::post('/ordenes/guardar', [App\Http\Controllers\OrdenController::class, 'store'])->name('ordenes.guardar');
+
+// 1. Vista para ingresar la guía
+Route::get('ordenes/buscar', [App\Http\Controllers\OrdenController::class, 'vistaBusqueda'])->name('ordenes.buscar');
+
+// 2. Procesar la búsqueda y redirigir
+Route::post('ordenes/procesar-busqueda', [App\Http\Controllers\OrdenController::class, 'procesarBusqueda'])->name('ordenes.procesar_busqueda');
+
+// 3. El formulario (ahora recibe los datos por sesión o query)
+//Route::get('ordenes/crear', [App\Http\Controllers\OrdenController::class, 'create'])->name('ordenes.crear');
 
 //Recepción de paquetes
 Route::post('/recepcion/inicio', [App\Http\Controllers\RecepcionController::class, 'index'])->name('recepcion.inicio');
 Route::get('recepcion/crearrecepcion', [App\Http\Controllers\RecepcionController::class, 'crearrecepcion'] )->name('recepcion.crearrecepcion') ;
 Route::get('recepcion/elegircomercio', [App\Http\Controllers\RecepcionController::class, 'elegircomercio'] )->name('recepcion.elegircomercio') ;
 Route::post('/recepcion/guardar', [App\Http\Controllers\RecepcionController::class, 'guardar'])->name('recepcion.guardar');
+
+
+
 
