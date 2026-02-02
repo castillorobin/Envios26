@@ -20,5 +20,6 @@ class Orden extends Model
         'fecha_entrega',
         'total',
         'nota',
+        'estado',
     ];
 }

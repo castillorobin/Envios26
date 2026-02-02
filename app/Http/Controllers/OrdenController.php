@@ -59,34 +59,42 @@ class OrdenController extends Controller
      */
     public function store(Request $request)
     {
-        // Validar los datos recibidos
-        $request->validate([
+        // 1. Validar los datos recibidos
+    $request->validate([
+        'guia' => 'required|exists:ordens,guia', // Validamos que la guía exista en la BD
+        'comercio' => 'required|string|max:255',
+        'destinatario' => 'required|string|max:255',
+        'tipo' => 'required|string|max:255',
+        'destino' => 'required|string|max:255',
+        'telefono' => 'required|string',
+        'fecha_entrega' => 'required|date',
+        'total' => 'required|numeric',
+        'nota' => 'nullable|string|max:500',
+    ]);
 
-            'comercio' => 'required|string|max:255',
-            //'origen' => 'required|string|max:255',
-            'tipo' => 'required|string|max:255',
-            'destino' => 'required|string|max:255',
-            'nota' => 'nullable|string|max:500',
-        ]);
+    // 2. Buscar la orden existente por el número de guía
+    $orden = Orden::where('guia', $request->guia)->first();
 
-        // Crear una nueva orden
-        Orden::create([
-            'guia' => $request->input('guia'),
-            'comercio' => $request->input('comercio'),
-            'direccion' => $request->input('direccion'),
-            'destinatario' => $request->input('destinatario'),
-            'telefono' => $request->input('telefono'),
-            'whatsapp' => $request->input('whatsapp'),
-            'tipo' => $request->input('tipo'),
-            'destino' => $request->input('destino'),
-            'fecha_entrega' => $request->input('fecha_entrega'),
-            'total' => $request->input('total'),
-            'nota' => $request->input('nota'),
-            //cambios en 'estado' => 'Creado',
-        ]);
+    if (!$orden) {
+        return back()->with('error', 'No se encontró el registro de la guía para actualizar.');
+    }
 
-        // Redirigir a la lista de órdenes con un mensaje de éxito
-        return redirect()->route('ordenes.inicio')->with('success', 'Orden creada exitosamente.');
+    // 3. Actualizar los campos del registro existente
+    $orden->update([
+        'direccion' => $request->input('direccion'),
+        'destinatario' => $request->input('destinatario'),
+        'telefono' => $request->input('telefono'),
+        'whatsapp' => $request->input('whatsapp'),
+        'tipo' => $request->input('tipo'),
+        'destino' => $request->input('destino'),
+        'fecha_entrega' => $request->input('fecha_entrega'),
+        'total' => $request->input('total'),
+        'nota' => $request->input('nota'),
+        'estado' => 'Creado', // Cambiamos el estado de 'Recepcionado' a 'Creado'
+    ]);
+
+    // 4. Redirigir con mensaje de éxito
+    return redirect()->route('ordenes.inicio')->with('success', 'La orden ha sido completada y guardada exitosamente.');
     }
 
     public function vistaBusqueda() {
