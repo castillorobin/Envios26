@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+
+
+
 <div class="container-xxl">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -97,4 +100,20 @@ document.addEventListener('DOMContentLoaded', function() {
     btnCerrarCamara.addEventListener('click', cerrarScanner);
 });
 </script>
+
+@if(session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'error',
+                title: '¡Atención!',
+                text: "{{ session('error') }}",
+                confirmButtonText: 'Aceptar',
+                customClass: {
+                    confirmButton: 'btn btn-danger'
+                }
+            });
+        });
+    </script>
+@endif
 @endsection
