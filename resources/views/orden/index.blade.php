@@ -210,7 +210,14 @@
                                                 <td>
                                                     {{ $orden->guia }}
                                                 </td>
-                                                <td> {{ date('d/m/Y', strtotime($orden->fecha_entrega)) }} </td>
+                                                <td>
+                                                    
+                                                    @if($orden->hora_entrega != "NULL" && $orden->fecha_entrega != null)
+                                                         {{ date('d/m/Y', strtotime($orden->fecha_entrega)) }} 
+                                                    @else
+                                                         N/A
+                                                    @endif
+                                                </td>
                                                 <td>
                                                     {{ $orden->destinatario }}
                                                 </td>
