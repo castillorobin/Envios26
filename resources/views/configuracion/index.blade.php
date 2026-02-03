@@ -239,8 +239,9 @@
                                         <thead class="teble-light">
                                             <tr>
                                                 <th style="width: 5%;">ID</th>
-                                                <th style="width: 60%;">Punto</th>             
-                                                <th style="width: 20%;">Tipo</th>
+                                                <th style="width: 15%;">Ruta</th>
+                                                <th style="width: 50%;">Punto</th>             
+                                                <th style="width: 15%;">Tipo</th>
                                                 <th style="width: 15%;" class="text-center">Acción</th>
                                             </tr>
                                         </thead>
@@ -250,6 +251,12 @@
                                             @foreach ($puntos as $punto)
                                             <tr>
                                                 <td>{{ $punto->id }}</td>
+                                                <td>
+                                                    @if($punto->tipo == 'Punto fijo')
+                                                       Ruta {{ $punto->ruta }}
+                                                    @else
+                                                        N/A
+                                                    @endif
                                                 <td>
                                                     <div class="d-flex align-items-center gap-1">
                                                         

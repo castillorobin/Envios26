@@ -54,7 +54,7 @@
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label">Dirección de origen</label>
                                 <input type="text" name="direccion" class="form-control" 
-       value="{{ $comercio->direccion }}">
+       value="{{ $comercio->direccion }}" readonly>
                             </div>
                         </div>
 
@@ -109,6 +109,17 @@
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label">Fecha de entrega</label>
                                 <input type="date" name="fecha_entrega" class="form-control" placeholder="Ingrese la fecha de entrega">
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label class="form-label">Cobro del envío</label>
+                                <input type="text" name="cobro" class="form-control" placeholder="Ingrese el total a cobrar">
+                            </div>
+                            
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 mb-3">
+                                <label class="form-label">Precio del envío</label>
+                                <input type="text" name="precio" class="form-control" placeholder="Ingrese el precio del envío">
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label">Total a cobrar</label>
