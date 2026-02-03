@@ -111,6 +111,10 @@ public function procesarBusqueda(Request $request) {
         return back()->with('error', 'La guía no existe en el sistema.');
     }
 
+    if ($guia->estado !== 'Recepcionado') {
+        return back()->with('error', 'La guía ingresada ya ha sido Creada.');
+    }
+
     $comercio = \App\Models\Comercio::where('id', $guia->comercio)->first();
 //dd($comercio);
     // Redirigimos al formulario llevando los datos en la sesión
