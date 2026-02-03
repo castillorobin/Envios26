@@ -319,11 +319,17 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Tipo</label>
-                        <select name="tipo" class="form-select" required>
-                            <option value="Punto fijo">Punto fijo</option>
+                        <select name="tipo" id="tipo_punto" class="form-select" required>
                             <option value="Agencia">Agencia</option>
+                            <option value="Punto fijo">Punto fijo</option>
                         </select>
                     </div>
+
+                    <div class="mb-3" id="div_ruta" style="display: none;">
+                        <label class="form-label">Ruta</label>
+                        <input type="number" name="ruta" id="input_ruta" class="form-control" placeholder="Ingrese el número de ruta">
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label">Nombre</label>
                         <input type="text" name="nombre" class="form-control" placeholder="Ingrese el nombre" required>
@@ -355,10 +361,16 @@
                     <div class="mb-3">
                         <label class="form-label">Tipo</label>
                         <select name="tipo" id="edit_tipo" class="form-select" required>
-                            <option value="Punto fijo">Punto</option>
+                            <option value="Punto fijo">Punto fijo</option>
                             <option value="Agencia">Agencia</option>
                         </select>
                     </div>
+
+                    <div class="mb-3" id="edit_div_ruta" style="display: none;">
+                        <label class="form-label">Ruta</label>
+                        <input type="number" name="ruta" id="edit_ruta" class="form-control">
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label">Nombre</label>
                         <input type="text" name="nombre" id="edit_nombre" class="form-control" required>
@@ -381,6 +393,28 @@
 
 <script>
 $(document).ready(function() {
+
+    // --- Lógica para mostrar/ocultar Ruta en AGREGAR ---
+    $('#tipo_punto').on('change', function() {
+        if ($(this).val() === 'Punto fijo') {
+            $('#div_ruta').slideDown(); // Efecto visual suave
+            $('#input_ruta').attr('required', true); // Hacemos la ruta obligatoria si es Punto fijo
+        } else {
+            $('#div_ruta').slideUp();
+            $('#input_ruta').attr('required', false).val(''); // Limpiamos el valor
+        }
+    });
+
+    // --- Lógica para mostrar/ocultar Ruta en EDITAR (al cambiar el select) ---
+    $('#edit_tipo').on('change', function() {
+        if ($(this).val() === 'Punto fijo') {
+            $('#edit_div_ruta').show();
+        } else {
+            $('#edit_div_ruta').hide().find('input').val('');
+        }
+    });
+
+
     console.log("¡Configurando interfaz de Puntos!");
 
     // 1. Destruir instancia previa si existe
@@ -423,13 +457,20 @@ $(document).ready(function() {
         const id = $(this).data('id');
         const nombre = $(this).data('nombre');
         const tipo = $(this).data('tipo');
+        const ruta = $(this).data('ruta'); // Nuevo: capturamos la ruta del botón
 
-        console.log("Cargando datos para editar:", nombre);
-
-        // Actualizar el action del formulario y los campos
         $('#formEditarPunto').attr('action', '/puntos/' + id);
         $('#edit_nombre').val(nombre);
         $('#edit_tipo').val(tipo);
+        
+        // Lógica específica para el campo ruta al abrir el modal
+        if (tipo === 'Punto fijo') {
+            $('#edit_div_ruta').show();
+            $('#edit_ruta').val(ruta);
+        } else {
+            $('#edit_div_ruta').hide();
+            $('#edit_ruta').val('');
+        }
     });
 
     // 5. Lógica para ELIMINAR (SweetAlert2)

@@ -12,5 +12,6 @@ class Punto extends Model
     protected $fillable = [
         'tipo',
         'nombre',
+        'ruta',
     ];
 }

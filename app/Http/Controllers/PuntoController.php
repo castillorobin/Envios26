@@ -42,12 +42,14 @@ class PuntoController extends Controller
     $request->validate([
         'tipo'   => 'required|in:Punto fijo,Agencia',
         'nombre' => 'required|string|max:255',
+        'ruta'   => 'nullable|string|max:255',
     ]);
 
     // 2. Guardar
     Punto::create([
         'tipo'   => $request->tipo,
         'nombre' => $request->nombre,
+        'ruta'   => $request->ruta,
     ]);
 
     // 3. Redirigir con alerta
@@ -88,6 +90,7 @@ class PuntoController extends Controller
     $request->validate([
         'tipo'   => 'required|in:Punto fijo,Agencia',
         'nombre' => 'required|string|max:255',
+        'ruta'   => 'nullable|string|max:255',
     ]);
 
     $punto = Punto::findOrFail($id);
