@@ -6,6 +6,7 @@ use App\Models\Orden;
 use Illuminate\Http\Request;
 use App\Models\Comercio;
 use App\Models\Punto;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrdenController extends Controller
 {
@@ -57,41 +58,67 @@ class OrdenController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        // 1. Validar los datos recibidos
+   public function store(Request $request)
+{
+    // 1. Validación (La misma que ya tienes)
     $request->validate([
-        'guia' => 'required|exists:ordens,guia', // Validamos que la guía exista en la BD
-        'comercio' => 'required|string|max:255',
-        'destinatario' => 'required|string|max:255',
-        'tipo' => 'required|string|max:255',
-        'destino' => 'required|string|max:255',
+        'guia' => 'required|exists:ordens,guia',
+        'comercio' => 'required|string',
+        'destinatario' => 'required|string',
+        'tipo' => 'required|string',
+        'destino' => 'required|string',
         'telefono' => 'required|string',
         'fecha_entrega' => 'required|date',
         'total' => 'required|numeric',
-        'nota' => 'nullable|string|max:500',
     ]);
 
-    // 2. Buscar la orden existente por el número de guía
+    // 2. Buscar y Actualizar
     $orden = Orden::where('guia', $request->guia)->first();
 
-    if (!$orden) {
-        return back()->with('error', 'No se encontró el registro de la guía para actualizar.');
+    // Lógica del ID del Punto (La que ya tienes)
+    $puntoId = null;
+    if ($request->input('tipo') === 'Punto fijo') {
+        $puntoEncontrado = \App\Models\Punto::where('nombre', $request->input('destino'))->first();
+        if ($puntoEncontrado) $puntoId = $puntoEncontrado->id;
     }
 
-    // 3. Actualizar los campos del registro existente
     $orden->update([
-        'direccion' => $request->input('direccion'),
-        'destinatario' => $request->input('destinatario'),
-        'telefono' => $request->input('telefono'),
-        'whatsapp' => $request->input('whatsapp'),
-        'tipo' => $request->input('tipo'),
-        'destino' => $request->input('destino'),
+        'direccion'     => $request->input('direccion'),
+        'destinatario'  => $request->input('destinatario'),
+        'telefono'      => $request->input('telefono'),
+        'whatsapp'      => $request->input('whatsapp'),
+        'tipo'          => $request->input('tipo'),
+        'destino'       => $request->input('destino'),
         'fecha_entrega' => $request->input('fecha_entrega'),
-        'total' => $request->input('total'),
-        'nota' => $request->input('nota'),
-        'estado' => 'Creado', // Cambiamos el estado de 'Recepcionado' a 'Creado'
+        'total'         => $request->input('total'),
+        'estado'        => 'Creado',
+        'cobro'         => $request->input('cobro_envio'),
+        'precio'        => $request->input('precio_paquete'),
+        'envio'         => $request->input('precio_envio'),
+        'nota'          => $request->input('nota'),
+        'punto'         => $puntoId,
     ]);
+
+    // --- LÓGICA DE RESPUESTA ---
+    
+    // Si el usuario presionó "Guardar e Imprimir"
+    if ($request->input('accion') === 'imprimir') {
+        $puntoAsociado = null;
+
+    // Si es Punto fijo, cargamos los datos del punto usando el ID que guardamos
+    if ($orden->tipo === 'Punto fijo' && $orden->punto) {
+        $puntoAsociado = \App\Models\Punto::find($orden->punto);
+    }
+
+    // Pasamos tanto la orden como el punto (si existe) a la plantilla
+    $pdf = Pdf::loadView('orden.ticketguia', [
+        'orden' => $orden,
+        'punto' => $puntoAsociado
+    ]);
+        $pdf->setPaper([0, 0, 300, 400], 'landscape');
+        
+        return $pdf->stream('ticket_'.$orden->guia.'.pdf');
+    }
 
     // 4. Redirigir con mensaje de éxito
     return redirect()->route('ordenes.crear')->with('success', 'La orden ha sido completada y guardada exitosamente.');

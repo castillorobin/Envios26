@@ -21,5 +21,9 @@ class Orden extends Model
         'total',
         'nota',
         'estado',
+        'cobro',
+        'precio',
+        'envio',
+        'punto',
     ];
 }

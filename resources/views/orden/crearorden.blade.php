@@ -152,8 +152,11 @@
 
 
                         <div class="d-flex justify-content-end gap-2 mt-3">
-                            <a href="{{ route('ordenes.inicio') }}" class="btn btn-secondary">Cancelar</a>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <a href="{{ route('ordenes.inicio') }}" class="btn btn-secondary"> <i class="bx bx-x me-1"></i> Cancelar</a>
+                            <button type="submit" name="accion" value="guardar" class="btn btn-primary"><i class="bx bx-save me-1"></i>Guardar</button>
+                            <button type="submit" name="accion" value="imprimir" class="btn btn-success" onclick="this.form.target='_blank'; setTimeout(() => { window.location.href='{{ route('ordenes.buscar') }}'; }, 1000);">
+                                <i class="bx bx-printer me-1"></i> Guardar e Imprimir
+                            </button>
                         </div>
                     </form>
                 </div>
