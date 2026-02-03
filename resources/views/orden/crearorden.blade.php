@@ -112,18 +112,26 @@
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label">Cobro del envío</label>
-                                <input type="text" name="cobro" class="form-control" placeholder="Ingrese el total a cobrar">
+                                <select name="cobro_envio" id="cobro_envio" class="form-control">
+                                    <option value="" disabled selected>Seleccione una opción</option>
+                                    <option value="Cobrado">Cobrado</option>
+                                    <option value="Por cobrar">Por cobrar</option>
+                                </select>
                             </div>
                             
                         </div>
                         <div class="row">
-                            <div class="col-lg-6 mb-3">
-                                <label class="form-label">Precio del envío</label>
-                                <input type="text" name="precio" class="form-control" placeholder="Ingrese el precio del envío">
+                            <div class="col-lg-4 mb-3">
+                                <label class="form-label">Precio del paquete</label>
+                                <input type="text" name="precio_paquete" class="form-control" placeholder="Ingrese el precio del paquete">
                             </div>
-                            <div class="col-lg-6 mb-3">
-                                <label class="form-label">Total a cobrar</label>
-                                <input type="text" name="total" class="form-control" placeholder="Ingrese el total a cobrar">
+                            <div class="col-lg-4 mb-3">
+                                <label class="form-label">Precio del envío</label>
+                                <input type="text" name="precio_envio" class="form-control" placeholder="Ingrese el precio del envío">
+                            </div>
+                            <div class="col-lg-4 mb-3">
+                                <label class="form-label">Total a remunerar</label>
+                                <input type="text" name="total" class="form-control" placeholder="0.00" readonly>
                             </div>
                             
                         </div>
@@ -346,6 +354,52 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Detener cámara al cerrar el modal
     qrModalElement.addEventListener('hidden.bs.modal', cerrarScanner);
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Referencias
+    const selectTipo = document.getElementById('tipo');
+    const selectCobroEnvio = document.getElementById('cobro_envio');
+    const inputPrecioPaquete = document.querySelector('input[name="precio_paquete"]');
+    const inputPrecioEnvio = document.querySelector('input[name="precio_envio"]');
+    const inputTotalRemunerar = document.querySelector('input[name="total"]');
+
+    // 1. Automatización: Tipo de Paquete -> Cobro del Envío
+    selectTipo.addEventListener('change', function() {
+        if (this.value === 'Personalizado') {
+            selectCobroEnvio.value = 'Por cobrar';
+        } else {
+            selectCobroEnvio.value = 'Cobrado';
+        }
+        // Ejecutar cálculo inmediatamente al cambiar el tipo
+        calcularRemuneracion();
+    });
+
+    // 2. Función de Cálculo según la regla de negocio
+    function calcularRemuneracion() {
+        const modoCobro = selectCobroEnvio.value;
+        const precioPaquete = parseFloat(inputPrecioPaquete.value) || 0;
+        const precioEnvio = parseFloat(inputPrecioEnvio.value) || 0;
+        let totalCalculado = 0;
+
+        if (modoCobro === 'Por cobrar') {
+            // Regla: Precio Paquete + Precio Envío
+            totalCalculado = precioPaquete + precioEnvio;
+        } else if (modoCobro === 'Cobrado') {
+            // Regla: Solo Precio Paquete
+            totalCalculado = precioPaquete;
+        }
+
+        // Asignar al input total con 2 decimales
+        inputTotalRemunerar.value = totalCalculado.toFixed(2);
+    }
+
+    // 3. Listeners para actualización en tiempo real
+    inputPrecioPaquete.addEventListener('input', calcularRemuneracion);
+    inputPrecioEnvio.addEventListener('input', calcularRemuneracion);
+    selectCobroEnvio.addEventListener('change', calcularRemuneracion);
 });
 </script>
 
