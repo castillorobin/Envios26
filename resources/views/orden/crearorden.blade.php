@@ -108,7 +108,8 @@
                         <div class="row">
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label">Fecha de entrega</label>
-                                <input type="date" name="fecha_entrega" class="form-control" placeholder="Ingrese la fecha de entrega">
+                               <!-- <input type="text" name="fecha_entrega" class="form-control" placeholder="Ingrese la fecha de entrega">-->
+                                <input type="text" id="humanfd-datepicker" name="fecha_entrega" class="form-control" placeholder="{{ today()->format('F j, Y') }}">
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label">Cobro del envío</label>
@@ -386,7 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (modoCobro === 'Por cobrar') {
             // Regla: Precio Paquete + Precio Envío
-            totalCalculado = precioPaquete + precioEnvio;
+            totalCalculado = precioPaquete - precioEnvio;
         } else if (modoCobro === 'Cobrado') {
             // Regla: Solo Precio Paquete
             totalCalculado = precioPaquete;
@@ -401,6 +402,19 @@ document.addEventListener('DOMContentLoaded', function() {
     inputPrecioEnvio.addEventListener('input', calcularRemuneracion);
     selectCobroEnvio.addEventListener('change', calcularRemuneracion);
 });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+<script>
+    document.getElementById('humanfd-datepicker').flatpickr({
+        locale: "es", // <--- Esto activa el idioma español
+        altInput: true,
+        altFormat: "F j, Y", // Se verá como: "Febrero 3, 2026"
+        dateFormat: "Y-m-d", // Formato interno para la Base de Datos (Recomendado Y-m-d)
+        minDate: "today",    // Opcional: Evita seleccionar fechas pasadas
+        defaultDate: "today",
+    });
 </script>
 
 @endsection
