@@ -207,6 +207,7 @@ Route::get('ordenes/buscar', [App\Http\Controllers\OrdenController::class, 'vist
 Route::post('ordenes/procesar-busqueda', [App\Http\Controllers\OrdenController::class, 'procesarBusqueda'])->name('ordenes.procesar_busqueda');
 
 Route::get('/ordenes/toma-foto', [App\Http\Controllers\OrdenController::class, 'tomarfoto'])->name('ordenes.tomarfoto');
+Route::get('/ordenes/buscar-ajax', [App\Http\Controllers\OrdenController::class, 'buscarGuiaAjax'])->name('ordenes.buscar_ajax');
 
 // 3. El formulario (ahora recibe los datos por sesión o query)
 //Route::get('ordenes/crear', [App\Http\Controllers\OrdenController::class, 'create'])->name('ordenes.crear');

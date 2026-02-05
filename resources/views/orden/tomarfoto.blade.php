@@ -26,44 +26,58 @@
                                     
 
 
-                                    <div style="width: 40%;">
-                                        <form action="{{ route('ordenes.procesar_busqueda') }}" method="POST" id="form-busqueda">
-                                            @csrf
-                                            <div class="mb-3">
-                                                <label class="form-label">Escanear o Ingresar Guía</label>
-                                                <div class="input-group">
-                                                    <input type="text" name="guia" id="guia_input" 
-                                                        class="form-control form-control-lg" 
-                                                        placeholder="Código de guía..." 
-                                                        autofocus required>
-                                                    <button type="submit" class="btn btn-primary">
-                                                        <i class="bx bx-search-alt"></i>
-                                                    </button>
+                                    <div class="row">
+                                            <div class="col-12 col-lg-6"> 
+                                                <div class="mb-3">
+                                                    <label class="form-label">Escanear o Ingresar Guía</label>
+                                                    
+                                                    <div class="d-block d-sm-flex gap-2">
+                                                        
+                                                        <div class="flex-grow-1 mb-2 mb-sm-0">
+                                                            <input type="text" id="guia_input" class="form-control form-control-lg" placeholder="Código de guía..." autofocus>
+                                                        </div>
 
-                                                    <div class="d-grid gap-2" style="margin-left: 10px;">
-                                                        <button type="button" id="btn-activar-qr" class="btn btn-outline-secondary btn-lg">
-                                                            <i class="bx bx-qr-scan me-1"></i> Escanear por QR
-                                                        </button>
+                                                        <div class="d-flex gap-2">
+                                                            <button type="button" id="btn-buscar-guia" class="btn btn-primary px-3">
+                                                                <i class="bx bx-search-alt"></i>
+                                                            </button>
+                                                            <button type="button" id="btn-activar-qr" class="btn btn-outline-secondary px-3">
+                                                                <i class="bx bx-qr-scan"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div id="reader-container" class="d-none border rounded bg-light mt-3">
+                                                        <div id="reader" style="width: 100%;"></div>
+                                                        <div class="p-2 text-center">
+                                                            <button type="button" id="btn-cerrar-camara" class="btn btn-sm btn-danger w-100">
+                                                                Cerrar Cámara
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div id="info-guia-encontrada" class="alert alert-success d-none mt-3">
+                                                        <i class="bx bx-check-circle me-1"></i> 
+                                                        Guía encontrada: <strong id="texto-guia-confirmada"></strong> 
                                                     </div>
                                                 </div>
-
-                                                
-
-                                            </div>
 
                                             <div id="reader-container" class="d-none border rounded bg-light mb-3">
                                                 <div id="reader" style="width: 100%;"></div>
                                                 <div class="p-2 text-center">
-                                                    <button type="button" id="btn-cerrar-camara" class="btn btn-sm btn-danger">
+                                                    <button type="button" id="btn-cerrar-camara" class="btn btn-sm btn-danger w-100">
                                                         Cerrar Cámara
                                                     </button>
                                                 </div>
                                             </div>
 
-                                            
-                                        </form>
+                                        </div>
+
+                                        
                                     </div>
 
+
+                                    
 
 
 
@@ -119,7 +133,9 @@
                                         <div class="d-flex flex-wrap gap-2 wizard justify-content-between mt-3">
                                             
                                             <div class="last" style="margin-left: auto;">
+                                                <a href="/ordenes/toma-foto">
                                                 <button type="button" class="btn btn-secondary"><i class="bx bx-x me-1"></i> Cancelar</button>
+                                                </a>
                                                 <button type="submit" class="btn btn-primary"><i class="bx bx-save me-1"></i> Guardar</button>
                                             </div>
                                         </div>
@@ -138,25 +154,86 @@
 
 
 
-                <script>
-                    // Dropzone
-var dropzonePreviewNode = document.querySelector("#dropzone-preview-list");
-dropzonePreviewNode.id = "";
-if (dropzonePreviewNode) {
-     var previewTemplate = dropzonePreviewNode.parentNode.innerHTML;
-     dropzonePreviewNode.parentNode.removeChild(dropzonePreviewNode);
-     var dropzone = new Dropzone(".dropzone", {
-          url: 'https://httpbin.org/post',
-          method: "post",
-          previewTemplate: previewTemplate,
-          previewsContainer: "#dropzone-preview",
-     });
-}
-                </script>
+            
 
+                <script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const guiaInput = document.getElementById('guia_input');
+    const btnBuscar = document.getElementById('btn-buscar-guia');
+    const infoContainer = document.getElementById('info-guia-encontrada');
+    const textoGuia = document.getElementById('texto-guia-confirmada');
 
+    async function realizarBusqueda(codigo) {
+        if (!codigo.trim()) return;
 
+        // Limpiar estados previos
+        infoContainer.classList.add('d-none');
+        guiaInput.classList.remove('is-valid', 'is-invalid');
 
+        try {
+            const response = await fetch("{{ route('ordenes.buscar_ajax') }}?guia=" + encodeURIComponent(codigo));
+            const data = await response.json();
 
+            // Si el controlador devolvió success: true
+            if (data.success) {
+                infoContainer.classList.remove('d-none');
+                textoGuia.innerText = data.guia;
+                guiaInput.classList.add('is-valid');
+                
+                // Opcional: Sonido de éxito o vibración
+                if (navigator.vibrate) navigator.vibrate(50);
+            } 
+            // Si el controlador devolvió success: false (Guía no encontrada)
+            else {
+                mostrarError(data.message || 'La guía ingresada no existe.');
+            }
+
+        } catch (error) {
+            console.error("Error en la petición:", error);
+            mostrarError('Hubo un error de conexión con el servidor.');
+        }
+    }
+
+    function mostrarError(mensaje) {
+        guiaInput.classList.add('is-invalid');
+        Swal.fire({
+            icon: 'error',
+            title: 'No encontrado',
+            text: mensaje,
+            confirmButtonColor: '#3085d6',
+        });
+        guiaInput.value = ""; // Limpiar para re-intentar
+        guiaInput.focus();
+    }
+
+    // Eventos
+    btnBuscar.addEventListener('click', () => realizarBusqueda(guiaInput.value));
+    
+    guiaInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            realizarBusqueda(guiaInput.value);
+        }
+    });
+
+    // Lógica QR (Asegúrate de llamar a realizarBusqueda al detectar)
+    const html5QrCode = new Html5Qrcode("reader");
+    document.getElementById('btn-activar-qr').addEventListener('click', () => {
+        const reader = document.getElementById('reader-container');
+        reader.classList.remove('d-none');
+        html5QrCode.start(
+            { facingMode: "environment" }, 
+            { fps: 10, qrbox: 250 },
+            (decodedText) => {
+                guiaInput.value = decodedText;
+                realizarBusqueda(decodedText);
+                html5QrCode.stop().then(() => reader.classList.add('d-none'));
+            }
+        ).catch(err => console.error("Error cámara:", err));
+    });
+});
+</script>
 
 @endsection

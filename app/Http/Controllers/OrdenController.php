@@ -192,6 +192,24 @@ public function procesarBusqueda(Request $request) {
         return view('orden.tomarfoto');
     }
 
+    public function buscarGuiaAjax(Request $request)
+{
+    $guia = Orden::where('guia', $request->guia)->first();
+
+    if ($guia) {
+    return response()->json([
+        'success' => true,
+        'guia' => $guia->guia
+    ]);
+} else {
+    return response()->json([
+        'success' => false,
+        'message' => 'La guía ingresada no existe en el sistema.'
+    ]); // Quitamos el código 404 para manejarlo más fácil en el try/catch
+}
+
+}
+
     /**
      * Display the specified resource.
      *
