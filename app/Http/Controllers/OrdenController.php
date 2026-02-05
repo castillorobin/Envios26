@@ -108,16 +108,28 @@ class OrdenController extends Controller
     // Si es Punto fijo, cargamos los datos del punto usando el ID que guardamos
     if ($orden->tipo === 'Punto fijo' && $orden->punto) {
         $puntoAsociado = \App\Models\Punto::find($orden->punto);
-    }
-
-    // Pasamos tanto la orden como el punto (si existe) a la plantilla
-    $pdf = Pdf::loadView('orden.ticketguia', [
+        $pdf = Pdf::loadView('orden.ticketguia', [
         'orden' => $orden,
         'punto' => $puntoAsociado
     ]);
-        $pdf->setPaper([0, 0, 300, 400], 'landscape');
+        $pdf->setPaper([0, 0, 170, 320], 'landscape');
         
         return $pdf->stream('ticket_'.$orden->guia.'.pdf');
+    }
+
+    if ($orden->tipo === 'Personalizado') {
+        $pdf = Pdf::loadView('orden.ticketperso', [
+        'orden' => $orden
+    ]);
+        $pdf->setPaper([0, 0, 170, 320], 'landscape');
+        
+        return $pdf->stream('ticket_'.$orden->guia.'.pdf');
+    }
+    // Pasamos tanto la orden como el punto (si existe) a la plantilla
+    
+
+
+
     }
 
     // 4. Redirigir con mensaje de éxito

@@ -74,13 +74,11 @@
     <table class="tabla-principal">
         <tr>
             <td class="col-lateral">
-                <span class="texto-rotado">PUNTO FIJO</span>
+                <span class="texto-rotado">PERSONALIZADO</span>
             </td>
             <td class="col-contenido">
-                <div class="ruta">Ruta {{ $punto->ruta }}</div>
-                <br>
-                <hr>
-                <div class="ciudad">{{ $punto->nombre }}</div>
+                
+                <div class="ciudad">{{ $orden->destino }}</div>
                 <br>
                 <hr>
                 <div class="fecha">
