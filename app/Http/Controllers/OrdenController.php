@@ -186,7 +186,11 @@ public function procesarBusqueda(Request $request) {
 
     $puntos = Punto::all();
     return view('orden.crearorden', compact('puntos', 'comercio', 'guiaact'));
-}
+}   
+
+    public function tomarfoto() {
+        return view('orden.tomarfoto');
+    }
 
     /**
      * Display the specified resource.

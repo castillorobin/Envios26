@@ -1078,6 +1078,13 @@
                                     <li class="sub-nav-item">
                                         <a
                                             class="sub-nav-link"
+                                            href="/ordenes/toma-foto"
+                                            >Toma de fotografia</a
+                                        >
+                                    </li>
+                                    <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
                                             href="apps-ecommerce-product-detail.html"
                                             >Entrega de paqueteria</a
                                         >
