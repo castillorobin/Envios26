@@ -25,5 +25,8 @@ class Orden extends Model
         'precio',
         'envio',
         'punto',
+        'foto1', 
+        'foto2', 
+        'foto3',
     ];
 }

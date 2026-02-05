@@ -210,6 +210,56 @@ public function procesarBusqueda(Request $request) {
 
 }
 
+public function guardarFotos(Request $request)
+{
+    // Capturamos la guía sin filtros para ver qué llega
+    $guiaRecibida = $request->input('guia');
+    \Log::info('--- NUEVO INTENTO ---');
+    \Log::info('Guía pura del Request: ' . ($guiaRecibida ?? 'NULL'));
+
+    $request->validate([
+        'guia' => 'required|exists:ordens,guia',
+        'file' => 'required|image|max:2048'
+    ]);
+
+    $orden = Orden::where('guia', $request->guia)->first();
+
+    if ($request->hasFile('file')) {
+        $file = $request->file('file');
+        $filename = $orden->guia . '_' . time() . '_' . str_replace(' ', '_', $file->getClientOriginalName());
+        
+        // Mover archivo
+        $file->move(public_path('imgs'), $filename);
+        \Log::info('Archivo movido a /imgs/' . $filename);
+
+        // ASIGNACIÓN EXPLÍCITA
+        // Usamos trim() por si hay espacios en blanco accidentales en la BD
+        if ($orden->foto1 == null || trim($orden->foto1) == "") {
+            $orden->foto1 = $filename;
+            \Log::info('Asignado a foto1');
+        } elseif ($orden->foto2 == null || trim($orden->foto2) == "") {
+            $orden->foto2 = $filename;
+            \Log::info('Asignado a foto2');
+        } elseif ($orden->foto3 == null || trim($orden->foto3) == "") {
+            $orden->foto3 = $filename;
+            \Log::info('Asignado a foto3');
+        } else {
+            return response()->json(['error' => 'Límite de 3 fotos alcanzado'], 400);
+        }
+
+        // GUARDADO CON REFRESH
+        $guardado = $orden->save();
+        
+        if ($guardado) {
+            \Log::info('Base de datos actualizada con éxito');
+            return response()->json(['success' => true, 'file' => $filename]);
+        } else {
+            \Log::error('Fallo al ejecutar save() en el modelo');
+            return response()->json(['error' => 'No se pudo actualizar la orden en la BD'], 500);
+        }
+    }
+}
+
     /**
      * Display the specified resource.
      *
