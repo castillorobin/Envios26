@@ -77,7 +77,7 @@ class OrdenController extends Controller
 
     // Lógica del ID del Punto (La que ya tienes)
     $puntoId = null;
-    if ($request->input('tipo') === 'Punto fijo') {
+    if ($request->input('tipo') === 'Punto fijo' || $request->input('tipo') === 'Casillero') {
         $puntoEncontrado = \App\Models\Punto::where('nombre', $request->input('destino'))->first();
         if ($puntoEncontrado) $puntoId = $puntoEncontrado->id;
     }
@@ -117,6 +117,18 @@ class OrdenController extends Controller
         return $pdf->stream('ticket_'.$orden->guia.'.pdf');
     }
 
+    if ($orden->tipo === 'Casillero' && $orden->punto) {
+        
+        $puntoAsociado = \App\Models\Punto::find($orden->punto);
+        $pdf = Pdf::loadView('orden.ticketcasi', [
+        'orden' => $orden,
+        'punto' => $puntoAsociado
+    ]);
+        $pdf->setPaper([0, 0, 170, 320], 'landscape');
+        
+        return $pdf->stream('ticket_'.$orden->guia.'.pdf');
+    }
+
     if ($orden->tipo === 'Personalizado') {
         $pdf = Pdf::loadView('orden.ticketperso', [
         'orden' => $orden
@@ -125,6 +137,17 @@ class OrdenController extends Controller
         
         return $pdf->stream('ticket_'.$orden->guia.'.pdf');
     }
+
+    if ($orden->tipo === 'Personalizado departamental') {
+        $pdf = Pdf::loadView('orden.ticketdepar', [
+        'orden' => $orden
+    ]);
+        $pdf->setPaper([0, 0, 170, 320], 'landscape');
+        
+        return $pdf->stream('ticket_'.$orden->guia.'.pdf');
+    }
+
+   
     // Pasamos tanto la orden como el punto (si existe) a la plantilla
     
 
