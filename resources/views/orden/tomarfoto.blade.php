@@ -23,6 +23,54 @@
                         <div class="col">
                             <div class="card" id="horizontalwizard">
                                 <div class="card-header">
+                                    
+
+
+                                    <div style="width: 40%;">
+                                        <form action="{{ route('ordenes.procesar_busqueda') }}" method="POST" id="form-busqueda">
+                                            @csrf
+                                            <div class="mb-3">
+                                                <label class="form-label">Escanear o Ingresar Guía</label>
+                                                <div class="input-group">
+                                                    <input type="text" name="guia" id="guia_input" 
+                                                        class="form-control form-control-lg" 
+                                                        placeholder="Código de guía..." 
+                                                        autofocus required>
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <i class="bx bx-search-alt"></i>
+                                                    </button>
+
+                                                    <div class="d-grid gap-2" style="margin-left: 10px;">
+                                                        <button type="button" id="btn-activar-qr" class="btn btn-outline-secondary btn-lg">
+                                                            <i class="bx bx-qr-scan me-1"></i> Escanear por QR
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                
+
+                                            </div>
+
+                                            <div id="reader-container" class="d-none border rounded bg-light mb-3">
+                                                <div id="reader" style="width: 100%;"></div>
+                                                <div class="p-2 text-center">
+                                                    <button type="button" id="btn-cerrar-camara" class="btn btn-sm btn-danger">
+                                                        Cerrar Cámara
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            
+                                        </form>
+                                    </div>
+
+
+
+
+
+
+
+
                                     <ul class="nav nav-tabs card-header-tabs border-0" role="tablist">
                                        
                                         <!-- end nav item -->
