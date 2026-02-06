@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Comercio;
 use App\Models\Punto;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Cajon;
 
 class OrdenController extends Controller
 {
@@ -265,19 +266,29 @@ public function guardarFotos(Request $request)
         return view('orden.buscarmercancia');
     }
     public function procesarAsignacion(Request $request)
-    {
-        $request->validate([
-            'caja' => 'required|string',
-            'tipo' => 'required|string',
-            
-        ]);
+{
+    // 1. Validación básica de campos presentes
+    $request->validate([
+        'caja' => 'required|string',
+        'tipo' => 'required|string',
+    ]);
 
-        $caja = $request->input('caja');
-        $tipo = $request->input('tipo');
+    $caja = $request->input('caja');
+    $tipo = $request->input('tipo');
 
-       
-        return view('orden.asignacion', compact('caja', 'tipo'));
+    // 2. Validación lógica: Si es tipo Caja, debe existir en el modelo Cajon
+    if ($tipo === 'Caja') {
+        // Buscamos si existe el registro con ese número (asumiendo que la columna se llama 'numero')
+        $existeCaja = Cajon::where('numero', $caja)->exists();
+
+        if (!$existeCaja) {
+            return back()->with('error', "La caja #{$caja} no está registrada en el sistema. Por favor, verifique el número o cree la caja primero.");
+        }
     }
+
+    // 3. Si pasa la validación (o si es "Suelto"), procedemos a la vista de asignación
+    return view('orden.asignacion', compact('caja', 'tipo'));
+}
 
     public function buscarGuiaAsignacion(Request $request)
 {

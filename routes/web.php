@@ -223,5 +223,9 @@ Route::get('recepcion/elegircomercio', [App\Http\Controllers\RecepcionController
 Route::post('/recepcion/guardar', [App\Http\Controllers\RecepcionController::class, 'guardar'])->name('recepcion.guardar');
 
 
-
+//Cajones
+Route::get('/cajones', [App\Http\Controllers\CajonController::class, 'index'] )->name('cajones.inicio') ;
+Route::post('/cajones/crear', [App\Http\Controllers\CajonController::class, 'store'])->name('cajones.store');
+Route::put('/cajones/{id}', [App\Http\Controllers\CajonController::class, 'update'])->name('cajones.update');
+Route::delete('/cajones/{id}', [App\Http\Controllers\CajonController::class, 'destroy'])->name('cajones.destroy');
 

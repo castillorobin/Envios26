@@ -1207,8 +1207,8 @@
                                     <li class="sub-nav-item">
                                         <a
                                             class="sub-nav-link"
-                                            href="/rutas"
-                                            >Rutas</a
+                                            href="/cajones"
+                                            >Cajas</a
                                         >
                                     </li>
                                    

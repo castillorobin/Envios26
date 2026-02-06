@@ -207,13 +207,18 @@
                                     </table>
                                     <!-- end table -->
 
-                                   
+                                    
                                 </div>
 
-                                <div class="card-footer bg-transparent border-top">
+         <div class="card-footer bg-transparent border-top">
                                     <div class="d-flex flex-wrap align-items-center justify-content-between">
                                         <div id="dt-info-container"></div>
                                         <div id="dt-pagination-container"></div>
+                                    </div>
+                                </div>
+          
+          
+                               
                                     </div>
                                 </div>
                                
