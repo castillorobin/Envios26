@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+use App\Models\Comercio;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,4 +30,8 @@ class Orden extends Model
         'foto2', 
         'foto3',
     ];
+
+    public function comercioRel() {
+    return $this->belongsTo(Comercio::class, 'comercio'); // 'comercio' es el FK en tu tabla ordens
+}
 }

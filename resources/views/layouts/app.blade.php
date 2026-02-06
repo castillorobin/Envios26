@@ -1082,6 +1082,16 @@
                                             >Toma de fotografia</a
                                         >
                                     </li>
+
+                                    <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
+                                            href="/ordenes/asignar-mercancia"
+                                            >Asignar mercancia</a
+                                        >
+                                    </li>
+
+
                                     <li class="sub-nav-item">
                                         <a
                                             class="sub-nav-link"
@@ -1097,13 +1107,7 @@
                                         >
                                     </li>
 
-                                    <li class="sub-nav-item">
-                                        <a
-                                            class="sub-nav-link"
-                                            href="apps-ecommerce-customer-list.html"
-                                            >Ubicaciones</a
-                                        >
-                                    </li>
+                                    
 
                                     <li class="sub-nav-item">
                                         <a

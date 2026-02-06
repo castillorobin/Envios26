@@ -260,6 +260,57 @@ public function guardarFotos(Request $request)
     }
 }
 
+    public function asignarMercancia(Request $request)
+    {
+        return view('orden.buscarmercancia');
+    }
+    public function procesarAsignacion(Request $request)
+    {
+        $request->validate([
+            'caja' => 'required|string',
+            'tipo' => 'required|string',
+            
+        ]);
+
+        $caja = $request->input('caja');
+        $tipo = $request->input('tipo');
+
+       
+        return view('orden.asignacion', compact('caja', 'tipo'));
+    }
+
+    public function buscarGuiaAsignacion(Request $request)
+{
+    $guia = $request->guia;
+    
+    // Buscamos la orden y cargamos la relación del comercio para obtener el nombre
+    $orden = Orden::where('guia', $guia)
+        ->with('comercioRel') // Asegúrate de tener esta relación en el modelo Orden
+        ->first();
+
+    if (!$orden) {
+        return response()->json(['success' => false, 'message' => 'La guía no existe.']);
+    }
+
+    if ($orden->caja) {
+        return response()->json(['success' => false, 'message' => "Ya asignada a caja #{$orden->caja}"]);
+    }
+
+    return response()->json([
+        'success' => true,
+        'data' => [
+            'guia' => $orden->guia,
+            // Si usas relación: $orden->comercioRel->nombre
+            // Si el campo se llama igual pero quieres el nombre del objeto:
+            'comercio' => $orden->comercioRel ? $orden->comercioRel->nombre : 'Sin Comercio', 
+            'destinatario' => $orden->destinatario,
+            'destino' => $orden->destino,
+            'fecha_entrega' => $orden->fecha_entrega,
+            'estado' => $orden->estado
+        ]
+    ]);
+}
+
     /**
      * Display the specified resource.
      *

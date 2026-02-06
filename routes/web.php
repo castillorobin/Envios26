@@ -209,6 +209,9 @@ Route::post('ordenes/procesar-busqueda', [App\Http\Controllers\OrdenController::
 Route::get('/ordenes/toma-foto', [App\Http\Controllers\OrdenController::class, 'tomarfoto'])->name('ordenes.tomarfoto');
 Route::get('/ordenes/buscar-ajax', [App\Http\Controllers\OrdenController::class, 'buscarGuiaAjax'])->name('ordenes.buscar_ajax');
 Route::post('/ordenes/guardar-fotos', [App\Http\Controllers\OrdenController::class, 'guardarFotos'])->name('ordenes.guardar_fotos');
+Route::get('/ordenes/asignar-mercancia', [App\Http\Controllers\OrdenController::class, 'asignarMercancia'])->name('ordenes.asignar_mercancia');
+Route::post('/ordenes/procesar-asignacion', [App\Http\Controllers\OrdenController::class, 'procesarAsignacion'])->name('ordenes.asignacion');
+Route::get('/ordenes/buscar-guia-ajax', [App\Http\Controllers\OrdenController::class, 'buscarGuiaAsignacion'])->name('ordenes.buscar_guia_ajax');
 
 // 3. El formulario (ahora recibe los datos por sesión o query)
 //Route::get('ordenes/crear', [App\Http\Controllers\OrdenController::class, 'create'])->name('ordenes.crear');
