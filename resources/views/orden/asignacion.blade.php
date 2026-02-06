@@ -193,6 +193,7 @@
                                                 <th>Destino</th>
                                                 <th>Fecha de entrega</th>
                                                 <th>Status</th>
+                                                <th class="text-center">Acción</th>
                                                 
                                             </tr>
                                         </thead>
@@ -235,6 +236,8 @@
         const readerContainer = document.getElementById('reader-container');
         let html5QrCode;
 
+
+
         // 1. Inicializar DataTable
         var table = $('#tabla-asignacion').DataTable({
             "dom": 'tip',
@@ -270,23 +273,26 @@
 
                 if (res.success) {
                     const d = res.data;
-                    // Agregar fila a DataTable
+                    
+                    // Agregamos la fila incluyendo el botón de eliminar al final
                     table.row.add([
                         d.guia,
                         d.comercio,
                         d.destinatario,
                         d.destino,
                         d.fecha_entrega,
-                        `<span class="badge bg-soft-primary text-primary">${d.estado}</span>`
+                        `<span class="badge bg-soft-primary text-primary">${d.estado}</span>`,
+                        `<div class="text-center">
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar" title="Quitar de la lista">
+                                <i class="bx bx-trash"></i>
+                            </button>
+                        </div>`
                     ]).draw(false);
 
                     inputGuia.value = '';
                     inputGuia.focus();
-                    
-                    // Sonido o feedback visual de éxito
-                    if (navigator.vibrate) navigator.vibrate(100);
-
-                } else {
+                }
+                else {
                     Swal.fire('Error', res.message, 'error');
                     inputGuia.value = '';
                 }
@@ -328,6 +334,33 @@
                 });
             }
         });
+
+        // Evento para eliminar fila de la tabla
+$('#tabla-asignacion tbody').on('click', '.btn-eliminar', function () {
+    const row = table.row($(this).parents('tr'));
+    
+    Swal.fire({
+        title: '¿Quitar guía?',
+        text: "La guía será eliminada de esta lista de asignación.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3e60d5',
+        cancelButtonColor: '#f1536e',
+        confirmButtonText: 'Sí, quitar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            row.remove().draw(); // Elimina la fila de DataTables
+            Swal.fire({
+                title: 'Eliminado',
+                text: 'La guía ha sido removida.',
+                icon: 'success',
+                timer: 1000,
+                showConfirmButton: false
+            });
+        }
+    });
+});
     });
 </script>
 
