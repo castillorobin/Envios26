@@ -181,7 +181,15 @@
                         <div class="tab-pane show active" id="team-list" role="tabpanel">
                             
                             <div class="card overflow-hidden">
-                                <label for="" style="font-weight: bold; padding: 10px;">Procesando Caja #: {{ $caja }}</label>
+                                <div class="bg-light-subtle border-bottom p-2">
+                                    <label style="font-weight: bold; margin-bottom: 0;">
+                                        @if($tipo === 'Caja')
+                                            <i class="bx bx-package me-1 text-primary"></i> Procesando Caja # <span class="text-primary">{{ $caja }}</span>
+                                        @else
+                                            <i class="bx bx-loader-alt me-1 text-info"></i> Procesando mercancía en suelto
+                                        @endif
+                                    </label>
+                                </div>
                                 <div class="table-responsive table-centered p-3">
                                     <table class="table text-nowrap mb-0" id="tabla-asignacion">
                                         <thead class="teble-light">
@@ -217,7 +225,11 @@
                                     </div>
                                 </div>
           
-          
+                                        <div class="d-flex justify-content-end mt-3 p-3">
+                                            <button type="button" id="btn-finalizar-asignacion" class="btn btn-success btn-lg">
+                                                <i class="bx bx-save me-1"></i> Guardar
+                                            </button>
+                                        </div>
                                
                                     </div>
                                 </div>
@@ -229,6 +241,43 @@
                        
                     </div>
                 </div>
+
+
+
+
+
+
+
+                <div class="modal fade" id="modalSuelto" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalles de Ubicación (Suelto)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form-datos-suelto">
+                    <div class="mb-3">
+                        <label class="form-label">Rack</label>
+                        <input type="text" id="rack" class="form-control" placeholder="Ej: A1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nivel</label>
+                        <input type="text" id="nivel" class="form-control" placeholder="Ej: 2" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Góndola</label>
+                        <input type="text" id="gondola" class="form-control" placeholder="Ej: 5" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" id="btn-confirmar-suelto" class="btn btn-primary">Confirmar y Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -366,6 +415,106 @@ $('#tabla-asignacion tbody').on('click', '.btn-eliminar', function () {
         }
     });
 });
+
+
+
+
+// Referencias a elementos
+const btnFinalizar = document.getElementById('btn-finalizar-asignacion');
+const modalSuelto = new bootstrap.Modal(document.getElementById('modalSuelto'));
+const btnConfirmarSuelto = document.getElementById('btn-confirmar-suelto');
+
+// Función para enviar los datos al servidor
+async function enviarAsignacion(datosExtra = {}) {
+    // 1. Obtener todas las guías actuales de la tabla
+    let guias = [];
+    table.rows().every(function() {
+        guias.push(this.data()[0]); // El índice 0 es el código de guía
+    });
+
+    if (guias.length === 0) {
+        Swal.fire('Error', 'La lista de guías está vacía.', 'error');
+        return;
+    }
+
+    // 2. Preparar el paquete de datos
+    const payload = {
+        guias: guias,
+        tipo: "{{ $tipo }}",
+        caja: "{{ $caja }}",
+        ...datosExtra // rack, nivel, gondola si vienen
+    };
+
+    try {
+        const response = await fetch("{{ route('ordenes.confirmar_asignacion') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const res = await response.json();
+
+        if (res.success) {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Proceso Completado!',
+                text: res.message,
+                confirmButtonText: 'Aceptar'
+            }).then(() => {
+                window.location.href = "{{ route('ordenes.asignar_mercancia') }}";
+            });
+        } else {
+            Swal.fire('Error', res.message, 'error');
+        }
+    } catch (error) {
+        Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error');
+    }
+}
+
+// Evento principal del botón Guardar
+btnFinalizar.addEventListener('click', function() {
+    const tipo = "{{ $tipo }}";
+
+    if (tipo === 'Caja') {
+        // Confirmación directa para caja
+        Swal.fire({
+            title: '¿Confirmar asignación?',
+            text: `Se asignarán ${table.rows().count()} guías a la caja #{{ $caja }}`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, guardar'
+        }).then((result) => {
+            if (result.isConfirmed) enviarAsignacion();
+        });
+    } else {
+        // Abrir modal para Suelto
+        modalSuelto.show();
+    }
+});
+
+// Evento dentro del modal para Suelto
+btnConfirmarSuelto.addEventListener('click', function() {
+    const rack = document.getElementById('rack').value.trim();
+    const nivel = document.getElementById('nivel').value.trim();
+    const gondola = document.getElementById('gondola').value.trim();
+
+    if (!rack || !nivel || !gondola) {
+        Swal.fire('Campos requeridos', 'Por favor complete todos los datos de ubicación.', 'warning');
+        return;
+    }
+
+    modalSuelto.hide();
+    enviarAsignacion({ rack, nivel, gondola });
+});
+
+
+
+
+
+
     });
 </script>
 

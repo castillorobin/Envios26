@@ -276,6 +276,8 @@ public function guardarFotos(Request $request)
     $caja = $request->input('caja');
     $tipo = $request->input('tipo');
 
+    //dd("Caja: {$caja}, Tipo: {$tipo}");
+
     // 2. Validación lógica: Si es tipo Caja, debe existir en el modelo Cajon
     if ($tipo === 'Caja') {
         // Buscamos si existe el registro con ese número (asumiendo que la columna se llama 'numero')
@@ -320,6 +322,44 @@ public function guardarFotos(Request $request)
             'estado' => $orden->estado
         ]
     ]);
+}
+
+
+
+public function confirmarAsignacion(Request $request)
+{
+    $guias = $request->input('guias');
+    $tipo = $request->input('tipo');
+
+    if (empty($guias)) {
+        return response()->json(['success' => false, 'message' => 'No hay guías para procesar.']);
+    }
+
+    try {
+        if ($tipo === 'Caja') {
+            // Actualización masiva para Caja
+            Orden::whereIn('guia', $guias)->update([
+                'caja' => $request->input('caja'),
+                'estado' => 'Asignado' // O el estado que manejes
+            ]);
+            $mensaje = "Mercancía asignada a la caja correctamente.";
+        } else {
+            // Actualización masiva para Suelto
+            Orden::whereIn('guia', $guias)->update([
+                'rack' => $request->input('rack'),
+                'nivel' => $request->input('nivel'),
+                'gondola' => $request->input('gondola'),
+                'caja' => null, // Aseguramos que no tenga caja
+                'estado' => 'En Bodega'
+            ]);
+            $mensaje = "Mercancía ubicada en estantería correctamente.";
+        }
+
+        return response()->json(['success' => true, 'message' => $mensaje]);
+
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => 'Error al guardar: ' . $e->getMessage()]);
+    }
 }
 
     /**

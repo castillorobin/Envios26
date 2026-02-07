@@ -29,6 +29,10 @@ class Orden extends Model
         'foto1', 
         'foto2', 
         'foto3',
+        'caja',
+        'rack',
+        'nivel',
+        'gondola',  
     ];
 
     public function comercioRel() {
