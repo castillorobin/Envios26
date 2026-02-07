@@ -457,16 +457,22 @@ async function enviarAsignacion(datosExtra = {}) {
 
         const res = await response.json();
 
-        if (res.success) {
-            Swal.fire({
-                icon: 'success',
-                title: '¡Proceso Completado!',
-                text: res.message,
-                confirmButtonText: 'Aceptar'
-            }).then(() => {
-                window.location.href = "{{ route('ordenes.asignar_mercancia') }}";
-            });
-        } else {
+        // Dentro de enviarAsignacion()
+if (res.success) {
+    Swal.fire({
+        icon: 'success',
+        title: '¡Proceso Completado!',
+        text: res.message,
+        confirmButtonColor: '#198754', // Color btn-success
+        confirmButtonText: 'Aceptar',
+        customClass: {
+            confirmButton: 'btn btn-success'
+        },
+        buttonsStyling: false
+    }).then(() => {
+        window.location.href = "{{ route('ordenes.asignar_mercancia') }}";
+    });
+} else {
             Swal.fire('Error', res.message, 'error');
         }
     } catch (error) {
@@ -479,18 +485,24 @@ btnFinalizar.addEventListener('click', function() {
     const tipo = "{{ $tipo }}";
 
     if (tipo === 'Caja') {
-        // Confirmación directa para caja
         Swal.fire({
             title: '¿Confirmar asignación?',
             text: `Se asignarán ${table.rows().count()} guías a la caja #{{ $caja }}`,
             icon: 'question',
             showCancelButton: true,
-            confirmButtonText: 'Sí, guardar'
+            confirmButtonColor: '#198754', // Color btn-success de Bootstrap 5
+            cancelButtonColor: '#6c757d',  // Color btn-secondary
+            confirmButtonText: 'Sí, guardar',
+            cancelButtonText: 'Cancelar',
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-secondary'
+            },
+            buttonsStyling: false // Permite que las clases de Bootstrap tengan prioridad
         }).then((result) => {
             if (result.isConfirmed) enviarAsignacion();
         });
     } else {
-        // Abrir modal para Suelto
         modalSuelto.show();
     }
 });
