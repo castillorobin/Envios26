@@ -226,6 +226,12 @@
                                 </div>
           
                                         <div class="d-flex justify-content-end mt-3 p-3">
+                                            <a href="/ordenes/asignar-mercancia">
+                                             <button type="button" id="btn-cancelar-asignacion" class="btn btn-secondary btn-lg" style="margin-right: 10px;">
+                                                 <i class="bx bx-x me-1"></i> Cancelar
+                                          
+                                            </button>
+                                            </a>
                                             <button type="button" id="btn-finalizar-asignacion" class="btn btn-success btn-lg">
                                                 <i class="bx bx-save me-1"></i> Guardar
                                             </button>
