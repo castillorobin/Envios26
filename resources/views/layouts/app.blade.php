@@ -1091,6 +1091,14 @@
                                         >
                                     </li>
 
+                                    <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
+                                            href="/ubicacion/buscar"
+                                            >Asignación Ubicación</a
+                                        >
+                                    </li>
+
 
                                     <li class="sub-nav-item">
                                         <a
@@ -1109,13 +1117,7 @@
 
                                     
 
-                                    <li class="sub-nav-item">
-                                        <a
-                                            class="sub-nav-link"
-                                            href="apps-ecommerce-seller-list.html"
-                                            >Asignación</a
-                                        >
-                                    </li>
+                                    
                                 </ul>
                             </div>
                         </li>

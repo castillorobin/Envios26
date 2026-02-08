@@ -231,5 +231,13 @@ Route::post('/cajones/crear', [App\Http\Controllers\CajonController::class, 'sto
 Route::put('/cajones/{id}', [App\Http\Controllers\CajonController::class, 'update'])->name('cajones.update');
 Route::delete('/cajones/{id}', [App\Http\Controllers\CajonController::class, 'destroy'])->name('cajones.destroy');
 
+//Ubicacion
+Route::get('/ubicacion/buscar', [App\Http\Controllers\OrdenController::class, 'vistaBusquedaubicacion'])->name('ubicacion.buscar') ;
+Route::post('/ubicacion/procesar-busqueda', [App\Http\Controllers\OrdenController::class, 'procesarBusquedaubicacion'])->name('ubicacion.procesar_busqueda') ;
+Route::get('/ubicacion/asignar-mercancia', [App\Http\Controllers\OrdenController::class, 'asignarMercanciaubicacion'])->name('ubicacion.asignar_mercancia') ;
+Route::post('/ubicacion/procesar-asignacion', [App\Http\Controllers\OrdenController::class, 'procesarAsignacionubicacion'])->name('ubicacion.asignacion') ;
+Route::get('/ubicacion/buscar-guia-ajax', [App\Http\Controllers\OrdenController::class, 'buscarGuiaAsignacionubicacion'])->name('ubicacion.buscar_guia_ajax') ;
+Route::post('/ubicacion/confirmar-asignacion', [App\Http\Controllers\OrdenController::class, 'confirmarAsignacionubicacion'])->name('ubicacion.confirmar_asignacion') ;
+
 
 
