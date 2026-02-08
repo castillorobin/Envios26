@@ -191,7 +191,7 @@
                                 <div class="bg-light-subtle border-bottom p-2">
                                     <label style="font-weight: bold; margin-bottom: 0;">
                                         @if($tipo === 'Caja')
-                                            <i class="bx bx-package me-1 text-primary"></i> Procesando Caja # <span class="text-primary">{{ $tipo }}</span>
+                                            <i class="bx bx-package me-1 text-primary"></i> Procesando <span class="text-primary">{{ $tipo }}</span>
                                         @else
                                             <i class="bx bx-loader-alt me-1 text-info"></i> Procesando mercancía en suelto
                                         @endif
