@@ -102,6 +102,7 @@ public function confirmarUbicacionCajas(Request $request)
 
         Cajon::create([
             'numero' => $request->numero,
+            'usuario' => auth()->user()->name, // Asumiendo que tienes autenticación
         ]);
 
         return redirect()->route('cajones.inicio')->with('success', 'Caja creada exitosamente.');
