@@ -240,4 +240,8 @@ Route::get('/ubicacion/buscar-guia-ajax', [App\Http\Controllers\OrdenController:
 Route::post('/ubicacion/confirmar-asignacion', [App\Http\Controllers\OrdenController::class, 'confirmarAsignacionubicacion'])->name('ubicacion.confirmar_asignacion') ;
 
 
+Route::get('/cajas/buscar-ajax', [App\Http\Controllers\CajonController::class, 'buscarCajaAjax'])->name('cajas.buscar_ajax');
+Route::post('/cajas/confirmar-ubicacion', [App\Http\Controllers\CajonController::class, 'confirmarUbicacionCajas'])->name('cajas.confirmar_ubicacion');
+
+
 
