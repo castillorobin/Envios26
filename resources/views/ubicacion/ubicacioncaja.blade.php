@@ -143,17 +143,10 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
                                         <div>
                                             <div class="d-flex gap-2">
-                                <select name="input-guia" id="input-guia" class="form-select">
-                                    <option value="seleccionar caja" disabled selected>Seleccionar caja</option>
-                                    @foreach($cajas as $caja)
-                                        <option value="{{ $caja->numero }}">{{ $caja->numero }}</option>
-                                    @endforeach
-                                </select>
-
-
+                                <input type="text" id="input-guia" class="form-control" style="max-width: 400px;" placeholder="Ingresar caja" autofocus>
                                 <button type="button" id="btn-agregar" class="btn btn-primary">Agregar</button>
                                 <button type="button" id="btn-activar-qr" class="btn btn-outline-secondary">
                                     <i class="bx bx-qr-scan fs-4"></i>
@@ -201,13 +194,11 @@
                                     <table class="table text-nowrap mb-0" id="tabla-asignacion">
                                         <thead class="teble-light">
                                             <tr>
-                                                <td>Guia</td>
-                                                <th>Comercio</th>
+                                                <td>Número</td>
+                                                <th>Fecha de creacion</th>
                                                 
-                                                <th>Destinatario</th>
-                                                <th>Destino</th>
-                                                <th>Fecha de entrega</th>
-                                                <th>Status</th>
+                                                <th>Usuario</th>
+                                             
                                                 <th class="text-center">Acción</th>
                                                 
                                             </tr>
@@ -328,14 +319,14 @@
             });
 
             if (duplicado) {
-                Swal.fire('¡Atención!', 'Esta guía ya fue agregada a la lista actual.', 'warning');
+                Swal.fire('¡Atención!', 'Esta caja ya fue agregada a la lista actual.', 'warning');
                 inputGuia.value = '';
                 return;
             }
 
             try {
                 // Consultar al servidor
-                const response = await fetch(`{{ route('ordenes.buscar_guia_ajax') }}?guia=${guiaLimpia}`);
+                const response = await fetch(`{{ route('ordenes.buscar_caja_ajax') }}?caja=${guiaLimpia}`);
                 const res = await response.json();
 
                 if (res.success) {
@@ -343,9 +334,9 @@
                     
                     // Agregamos la fila incluyendo el botón de eliminar al final
                     table.row.add([
-                        d.guia,
-                        d.comercio,
-                        d.destinatario,
+                        d.caja,
+                        d.fecha_creacion,
+                        d.usuario,
                         d.destino,
                         d.fecha_entrega,
                         `<span class="badge bg-soft-primary text-primary">${d.estado}</span>`,
