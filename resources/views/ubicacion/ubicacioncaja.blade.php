@@ -76,7 +76,7 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-end mt-3 p-3">
-                    <a href="{{ route('cajas.buscar_ajax') }}" class="btn btn-secondary btn-lg me-2">
+                    <a href="{{ route('ubicacion.buscar') }}" class="btn btn-secondary btn-lg me-2">
                         <i class="bx bx-x me-1"></i> Cancelar
                     </a>
                     <button type="button" id="btn-finalizar-asignacion" class="btn btn-success btn-lg">
