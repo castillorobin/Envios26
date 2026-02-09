@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cajon extends Model
 {
-    protected $fillable = ['numero'];
+    protected $fillable = ['numero', 'usuario', 'rack', 'nivel', 'ubicacion'];
     use HasFactory;
 }

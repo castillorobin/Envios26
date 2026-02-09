@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cajon;
 use Illuminate\Http\Request;
 
+
 class CajonController extends Controller
 {
     /**
@@ -100,9 +101,13 @@ public function confirmarUbicacionCajas(Request $request)
             'numero' => 'required|integer',
         ]);
 
+        $user = Auth()->user()->name; // Obtener el usuario autenticado
+
+        //dd($user);
+
         Cajon::create([
             'numero' => $request->numero,
-            'usuario' => auth()->user()->name, // Asumiendo que tienes autenticación
+            'usuario' => $user // Asumiendo que tienes autenticación
         ]);
 
         return redirect()->route('cajones.inicio')->with('success', 'Caja creada exitosamente.');
