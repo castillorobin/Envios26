@@ -1097,25 +1097,7 @@
                                             href="/ubicacion/buscar"
                                             >Asignación Ubicación</a
                                         >
-                                    </li>
-
-
-                                    <li class="sub-nav-item">
-                                        <a
-                                            class="sub-nav-link"
-                                            href="apps-ecommerce-product-detail.html"
-                                            >Entrega de paqueteria</a
-                                        >
-                                    </li>
-                                    <li class="sub-nav-item">
-                                        <a
-                                            class="sub-nav-link"
-                                            href="apps-ecommerce-product-add.html"
-                                            >Entrega múltiple</a
-                                        >
-                                    </li>
-
-                                    
+                                    </li>         
 
                                     
                                 </ul>
@@ -1148,6 +1130,20 @@
                                             class="sub-nav-link"
                                             href="/recepcion/elegircomercio"
                                             >Recepción</a
+                                        >
+                                    </li>
+                                    <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
+                                            href="apps-ecommerce-product-detail.html"
+                                            >Entrega de paqueteria</a
+                                        >
+                                    </li>
+                                    <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
+                                            href="apps-ecommerce-product-add.html"
+                                            >Entrega múltiple</a
                                         >
                                     </li>
                                     
@@ -1211,6 +1207,14 @@
                                             class="sub-nav-link"
                                             href="/cajones"
                                             >Cajas</a
+                                        >
+                                    </li>
+
+                                    <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
+                                            href="/unidades"
+                                            >Unidades</a
                                         >
                                     </li>
                                    

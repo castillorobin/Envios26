@@ -244,4 +244,8 @@ Route::get('/cajas/buscar-ajax', [App\Http\Controllers\CajonController::class, '
 Route::post('/cajas/confirmar-ubicacion', [App\Http\Controllers\CajonController::class, 'confirmarUbicacionCajas'])->name('cajas.confirmar_ubicacion');
 
 
-
+//Unidades
+Route::get('/unidades', [App\Http\Controllers\UnidadController::class, 'index'] )->name('unidades.inicio') ;
+Route::post('/unidades/crear', [App\Http\Controllers\UnidadController::class,   'store'])->name('unidades.store');
+Route::put('/unidades/{id}', [App\Http\Controllers\UnidadController::class, 'update'])->name('unidades.update');
+Route::delete('/unidades/{id}', [App\Http\Controllers\UnidadController::class, 'destroy'])->name('unidades.destroy');
