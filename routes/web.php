@@ -249,3 +249,8 @@ Route::get('/unidades', [App\Http\Controllers\UnidadController::class, 'index'] 
 Route::post('/unidades/crear', [App\Http\Controllers\UnidadController::class,   'store'])->name('unidades.store');
 Route::put('/unidades/{id}', [App\Http\Controllers\UnidadController::class, 'update'])->name('unidades.update');
 Route::delete('/unidades/{id}', [App\Http\Controllers\UnidadController::class, 'destroy'])->name('unidades.destroy');
+
+//Carga
+Route::get('/carga/buscar', [App\Http\Controllers\UnidadController::class, 'vistaBusqueda'])->name('carga.buscar') ;
+Route::post('/carga/procesar-busqueda', [App\Http\Controllers\UnidadController::class, 'procesarBusqueda'])->name('carga.procesar_busqueda') ;
+Route::get('/carga/asignar-mercancia', [App\Http\Controllers\UnidadController::class, 'asignarMercancia'])->name('carga.asignar_mercancia') ;

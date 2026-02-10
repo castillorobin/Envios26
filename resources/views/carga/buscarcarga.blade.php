@@ -7,10 +7,10 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header text-center">
-                    <h5 class="card-title mb-0">Asignar Ubicación</h5>
+                    <h5 class="card-title mb-0">Asignación de carga</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('ubicacion.procesar_busqueda') }}" method="POST" id="form-busqueda">
+                    <form action="{{ route('carga.procesar_busqueda') }}" method="POST" id="form-busqueda">
                         @csrf
 
                         <div class="mb-3">

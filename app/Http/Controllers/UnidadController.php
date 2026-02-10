@@ -18,6 +18,43 @@ class UnidadController extends Controller
         return view('unidades.index', compact('unidades'));
     }
 
+    public function vistaBusqueda()
+    {
+        return view('carga.buscarcarga');
+    }
+
+    public function procesarBusqueda(Request $request)
+{
+    // Validamos que el campo 'tipo' esté presente
+    // Si eliges 'Caja', validamos que el campo 'caja' también venga
+    $request->validate([
+        'tipo' => 'required|string',
+       // 'caja' => 'required_if:tipo,Caja' 
+    ]);
+
+    $unidades = Unidad::all(); // Si necesitas pasar unidades a la vista, puedes hacerlo aquí
+
+    $tipo = $request->input('tipo');
+   // $cajaSeleccionada = $request->input('caja'); // El número de caja ingresado/escaneado
+$caja = $request->input('caja'); // El número de caja ingresado/escaneado
+    // Lógica de redirección por tipo
+    if ($tipo === 'Suelto') {
+        // Opción Suelto: Va a la vista de guías individuales
+        return view('carga.asignacioncargaguia', compact('tipo', 'caja', 'unidades'));
+    }
+/*
+    // Opción Caja: Validamos que la caja exista antes de ir a la siguiente vista
+    $cajaInfo = Cajon::where('numero', $cajaSeleccionada)->first();
+
+    if (!$cajaInfo) {
+        return back()->with('error', "La caja #{$cajaSeleccionada} no existe en el sistema.");
+    }
+        */
+
+    // Retorna la vista que ya tenías para Cajas
+    return view('carga.ubicacioncargacaja', compact('tipo', 'unidades'));
+}
+
     /**
      * Show the form for creating a new resource.
      *

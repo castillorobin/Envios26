@@ -397,24 +397,7 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
     return view('ubicacion.ubicacioncaja', compact('tipo'));
 }
 
-    /*
-
-    public function procesarBusquedaubicacion(Request $request)
-    {
-        // Validamos que el campo 'tipo' esté presente
-        $request->validate([
-            'tipo' => 'required|string'
-        ]);
- 
-        $tipo = $request->input('tipo');
-
-        $cajas = Cajon::all();
-
-        // Redirigimos a la vista de asignación pasando el tipo seleccionado
-        return view('ubicacion.ubicacioncaja', compact('tipo', 'cajas'));
-    }
-
-    */
+   
 
     /**
      * Display the specified resource.
