@@ -131,7 +131,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="page-title-box">
-                                <h4 class="mb-0 fw-semibold">Asignación de mercancía</h4>
+                                <h4 class="mb-0 fw-semibold">Asignación de Carga (Guias)</h4>
                                 
                             </div>
                         </div>
@@ -256,30 +256,33 @@
 
                 <div class="modal fade" id="modalSuelto" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Detalles de Ubicación (Suelto)</h5>
+                <h5 class="modal-title">Especificar Carga de Guias</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="form-datos-suelto">
                     <div class="mb-3">
-                        <label class="form-label">Rack</label>
-                        <input type="text" id="rack" class="form-control" placeholder="Ej: A1" required>
+                        <label class="form-label">Unidad</label>
+                        <select id="unidad" class="form-select" required>
+                            <option value="" disabled selected>Seleccione una unidad</option>
+                            @foreach($unidades as $unidad)
+                                <option value="{{ $unidad->id }}">{{ $unidad->nombre }} - {{ $unidad->tipo }}</option>
+                            @endforeach
+                        </select>
                     </div>
+                    
                     <div class="mb-3">
-                        <label class="form-label">Nivel</label>
-                        <input type="text" id="nivel" class="form-control" placeholder="Ej: 2" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Góndola</label>
-                        <input type="text" id="gondola" class="form-control" placeholder="Ej: 5" required>
+                        <label class="form-label">Fecha de ruta</label>
+                        <input type="text" id="humanfd-datepicker" name="fecha" class="form-control" placeholder="{{ today()->format('F j, Y') }}">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" id="btn-confirmar-suelto" class="btn btn-primary">Confirmar y Guardar</button>
+                <button type="button" id="btn-confirmar-guardado" class="btn btn-success">Confirmar y Guardar</button>
             </div>
         </div>
     </div>
@@ -533,6 +536,19 @@ btnConfirmarSuelto.addEventListener('click', function() {
 
 
 
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+<script>
+    document.getElementById('humanfd-datepicker').flatpickr({
+        locale: "es", // <--- Esto activa el idioma español
+        altInput: true,
+        altFormat: "F j, Y", // Se verá como: "Febrero 3, 2026"
+        dateFormat: "Y-m-d", // Formato interno para la Base de Datos (Recomendado Y-m-d)
+        minDate: "today",    // Opcional: Evita seleccionar fechas pasadas
+        defaultDate: "today",
     });
 </script>
 
