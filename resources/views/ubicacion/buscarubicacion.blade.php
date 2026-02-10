@@ -18,11 +18,12 @@
                             <select name="tipo" id="tipo" class="form-select" required>
                                 <option value="" disabled selected>Seleccione tipo</option>
                                 <option value="Caja">Caja</option>
+                                <option value="Suelto">Suelto</option>
                                
                             </select>
                         </div>
 
-                        <div id="contenedor-caja" class="d-none">
+                        <div  class="d-none">
                             <div class="mb-3">
                                 <label class="form-label">Escanear o Ingresar Número de Caja</label>
                                 <div class="input-group">
@@ -40,9 +41,20 @@
                            
                         </div>
 
-                        <div id="contenedor-suelto" class="d-none">
+                        <div id="contenedor-caja" class="d-none">
                             <div class="alert alert-info border-0 shadow-sm">
                                 <i class="bx bx-info-circle me-1"></i> Usted está procesando la ubicación de una Caja.
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    Continuar a Asignación <i class="bx bx-right-arrow-alt ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="contenedor-suelto" class="d-none">
+                            <div class="alert alert-info border-0 shadow-sm">
+                                <i class="bx bx-info-circle me-1"></i> Se procesará la mercancía de forma Suelto.
                             </div>
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-primary btn-lg">
@@ -64,18 +76,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const selectTipo = document.getElementById('tipo');
     const contenedorCaja = document.getElementById('contenedor-caja');
     const contenedorSuelto = document.getElementById('contenedor-suelto');
-    const inputCaja = document.getElementById('guia_input');
-    
+   
     // --- LÓGICA DE INTERFAZ DINÁMICA ---
     selectTipo.addEventListener('change', function() {
         if (this.value === 'Caja') {
-            contenedorCaja.classList.add('d-none');
-            contenedorSuelto.classList.remove('d-none');
-            inputCaja.required = false;
+            contenedorCaja.classList.remove('d-none');
+            contenedorSuelto.classList.add('d-none');
+           
             inputCaja.value = "Caja"; // Valor por defecto para el backend
            
         } else if (this.value === 'Suelto') {
-            
+            contenedorCaja.classList.add('d-none');
+            contenedorSuelto.classList.remove('d-none');
+         
+            inputCaja.value = "Suelto"; 
         }
     });
 

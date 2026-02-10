@@ -368,12 +368,44 @@ public function confirmarAsignacion(Request $request)
     }
 
     public function procesarBusquedaubicacion(Request $request)
+{
+    // Validamos que el campo 'tipo' esté presente
+    // Si eliges 'Caja', validamos que el campo 'caja' también venga
+    $request->validate([
+        'tipo' => 'required|string',
+       // 'caja' => 'required_if:tipo,Caja' 
+    ]);
+
+    $tipo = $request->input('tipo');
+   // $cajaSeleccionada = $request->input('caja'); // El número de caja ingresado/escaneado
+$caja = $request->input('caja'); // El número de caja ingresado/escaneado
+    // Lógica de redirección por tipo
+    if ($tipo === 'Suelto') {
+        // Opción Suelto: Va a la vista de guías individuales
+        return view('ubicacion.asignacionsuelto', compact('tipo', 'caja'));
+    }
+/*
+    // Opción Caja: Validamos que la caja exista antes de ir a la siguiente vista
+    $cajaInfo = Cajon::where('numero', $cajaSeleccionada)->first();
+
+    if (!$cajaInfo) {
+        return back()->with('error', "La caja #{$cajaSeleccionada} no existe en el sistema.");
+    }
+        */
+
+    // Retorna la vista que ya tenías para Cajas
+    return view('ubicacion.ubicacioncaja', compact('tipo'));
+}
+
+    /*
+
+    public function procesarBusquedaubicacion(Request $request)
     {
         // Validamos que el campo 'tipo' esté presente
         $request->validate([
             'tipo' => 'required|string'
         ]);
-
+ 
         $tipo = $request->input('tipo');
 
         $cajas = Cajon::all();
@@ -381,6 +413,8 @@ public function confirmarAsignacion(Request $request)
         // Redirigimos a la vista de asignación pasando el tipo seleccionado
         return view('ubicacion.ubicacioncaja', compact('tipo', 'cajas'));
     }
+
+    */
 
     /**
      * Display the specified resource.

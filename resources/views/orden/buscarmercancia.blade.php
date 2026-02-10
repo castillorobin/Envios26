@@ -18,7 +18,7 @@
                             <select name="tipo" id="tipo" class="form-select" required>
                                 <option value="" disabled selected>Seleccione tipo</option>
                                 <option value="Caja">Caja</option>
-                                <option value="Suelto">Suelto</option>
+                                
                             </select>
                         </div>
 
