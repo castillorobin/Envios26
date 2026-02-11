@@ -255,3 +255,4 @@ Route::get('/carga/buscar', [App\Http\Controllers\UnidadController::class, 'vist
 Route::post('/carga/procesar-busqueda', [App\Http\Controllers\UnidadController::class, 'procesarBusqueda'])->name('carga.procesar_busqueda') ;
 Route::get('/carga/asignar-mercancia', [App\Http\Controllers\UnidadController::class, 'asignarMercancia'])->name('carga.asignar_mercancia') ;
 Route::post('/carga/confirmar_carga', [App\Http\Controllers\UnidadController::class, 'confirmarCarga'])->name('carga.confirmar_carga') ;
+Route::post('/carga/confirmar_carga_guias', [App\Http\Controllers\UnidadController::class, 'confirmarCargaGuias'])->name('carga.confirmar_carga_guias') ;

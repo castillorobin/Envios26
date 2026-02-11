@@ -108,6 +108,51 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
         }
     }
 
+
+
+    public function confirmarCargaGuias(Request $request)
+{
+    $request->validate([
+        'guias' => 'required|array',
+        'unidad_id' => 'required|exists:unidads,id', // Usando 'unidads' por tu base de datos
+        'fecha' => 'required|date',
+    ]);
+
+    try {
+        \DB::beginTransaction();
+
+        $unidadId = $request->unidad_id;
+        $fecha = $request->fecha;
+        $codigosGuias = $request->guias;
+
+        // 1. Actualizar la Unidad seleccionada
+        $unidad = \App\Models\Unidad::findOrFail($unidadId);
+        $unidad->fecharuta = $fecha;
+        $unidad->save();
+
+        // 2. Actualizar las Ordenes (Guias)
+        // Asignamos el ID de la unidad a cada orden
+        \App\Models\Orden::whereIn('guia', $codigosGuias)->update([
+            'unidad' => $unidadId,
+            'estado' => 'En Ruta' // Cambiamos el estado opcionalmente
+        ]);
+
+        \DB::commit();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Se han asignado ' . count($codigosGuias) . ' guías a la unidad ' . $unidad->nombre
+        ]);
+
+    } catch (\Exception $e) {
+        \DB::rollback();
+        return response()->json([
+            'success' => false,
+            'message' => 'Error en la base de datos: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
     /**
      * Show the form for creating a new resource.
      *

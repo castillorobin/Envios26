@@ -254,16 +254,15 @@
 
 
 
-                <div class="modal fade" id="modalSuelto" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalSuelto" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Especificar Carga de Guias</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="form-datos-suelto">
+                <form id="form-datos-ubicacion">
                     <div class="mb-3">
                         <label class="form-label">Unidad</label>
                         <select id="unidad" class="form-select" required>
@@ -287,9 +286,9 @@
         </div>
     </div>
 </div>
-
-<script src="https://unpkg.com/html5-qrcode"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -297,47 +296,53 @@
         const btnAgregar = document.getElementById('btn-agregar');
         const btnActivarQr = document.getElementById('btn-activar-qr');
         const readerContainer = document.getElementById('reader-container');
+        const modalSuelto = new bootstrap.Modal(document.getElementById('modalSuelto'));
         let html5QrCode;
 
+        // 1. Inicializar Flatpickr
+        flatpickr("#humanfd-datepicker", {
+            locale: "es",
+            altInput: true,
+            altFormat: "F j, Y",
+            dateFormat: "Y-m-d",
+            minDate: "today",
+            defaultDate: "today",
+           
+        });
 
-
-        // 1. Inicializar DataTable
+        // 2. Inicializar DataTable
         var table = $('#tabla-asignacion').DataTable({
             "dom": 'tip',
             "language": { "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json" },
             "drawCallback": function() {
                 $('.dataTables_paginate > ul.pagination').addClass('pagination-rounded');
-                $('#dt-info-container').append($(this.api().table().container()).find('.dataTables_info'));
-                $('#dt-pagination-container').append($(this.api().table().container()).find('.dataTables_paginate'));
+                $('#dt-info-container').empty().append($(this.api().table().container()).find('.dataTables_info'));
+                $('#dt-pagination-container').empty().append($(this.api().table().container()).find('.dataTables_paginate'));
             }
         });
 
-        // 2. Función principal para agregar a la lista
+        // 3. Función para agregar Guía a la lista
         async function agregarGuiaALista(codigo) {
             const guiaLimpia = codigo.trim();
             if (!guiaLimpia) return;
 
-            // Verificar si ya está en la tabla (lado del cliente)
             let duplicado = false;
             table.rows().every(function() {
                 if (this.data()[0] === guiaLimpia) duplicado = true;
             });
 
             if (duplicado) {
-                Swal.fire('¡Atención!', 'Esta guía ya fue agregada a la lista actual.', 'warning');
+                Swal.fire('¡Atención!', 'Esta guía ya fue agregada.', 'warning');
                 inputGuia.value = '';
                 return;
             }
 
             try {
-                // Consultar al servidor
                 const response = await fetch(`{{ route('ordenes.buscar_guia_ajax') }}?guia=${guiaLimpia}`);
                 const res = await response.json();
 
                 if (res.success) {
                     const d = res.data;
-                    
-                    // Agregamos la fila incluyendo el botón de eliminar al final
                     table.row.add([
                         d.guia,
                         d.comercio,
@@ -346,7 +351,7 @@
                         d.fecha_entrega,
                         `<span class="badge bg-soft-primary text-primary">${d.estado}</span>`,
                         `<div class="text-center">
-                            <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar" title="Quitar de la lista">
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar">
                                 <i class="bx bx-trash"></i>
                             </button>
                         </div>`
@@ -354,201 +359,77 @@
 
                     inputGuia.value = '';
                     inputGuia.focus();
-                }
-                else {
+                } else {
                     Swal.fire('Error', res.message, 'error');
-                    inputGuia.value = '';
                 }
             } catch (error) {
-                console.error(error);
-                Swal.fire('Error', 'Hubo un problema al consultar la guía.', 'error');
+                Swal.fire('Error', 'Problema al consultar la guía.', 'error');
             }
         }
 
-        // 3. Eventos de Entrada
+        // 4. Eventos
         btnAgregar.addEventListener('click', () => agregarGuiaALista(inputGuia.value));
+        inputGuia.addEventListener('keypress', (e) => { if (e.key === 'Enter') agregarGuiaALista(inputGuia.value); });
+        $('#tabla-asignacion tbody').on('click', '.btn-eliminar', function () { table.row($(this).parents('tr')).remove().draw(); });
 
-        inputGuia.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                agregarGuiaALista(this.value);
+        document.getElementById('btn-finalizar-asignacion').addEventListener('click', function() {
+            if (table.rows().count() === 0) {
+                Swal.fire('Atención', 'Agregue al menos una guía a la lista.', 'info');
+                return;
+            }
+            modalSuelto.show();
+        });
+
+        // 5. Confirmar Guardado (Carga de Guías)
+        document.getElementById('btn-confirmar-guardado').addEventListener('click', async function() {
+            const unidadId = document.getElementById('unidad').value;
+            const fechaRuta = document.getElementById('humanfd-datepicker').value;
+
+            if (!unidadId || !fechaRuta) {
+                Swal.fire('Atención', 'Seleccione unidad y fecha.', 'warning');
+                return;
+            }
+
+            let guias = [];
+            table.rows().every(function() { guias.push(this.data()[0]); });
+
+            try {
+                const response = await fetch("{{ route('carga.confirmar_carga_guias') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({ guias: guias, unidad_id: unidadId, fecha: fechaRuta })
+                });
+
+                const res = await response.json();
+                if (res.success) {
+                    Swal.fire({
+                        icon: 'success', title: '¡Guardado!', text: res.message,
+                        confirmButtonColor: '#198754', confirmButtonText: 'Aceptar',
+                        customClass: { confirmButton: 'btn btn-success' }, buttonsStyling: false
+                    }).then(() => { window.location.href = "{{ route('carga.buscar'') }}"; });
+                } else {
+                    throw new Error(res.message);
+                }
+            } catch (error) {
+                Swal.fire('Error', 'Error al procesar: ' + error.message, 'error');
             }
         });
 
-        // 4. Lógica QR
+        // Lógica QR...
         btnActivarQr.addEventListener('click', function() {
             readerContainer.classList.remove('d-none');
             html5QrCode = new Html5Qrcode("reader");
-            html5QrCode.start(
-                { facingMode: "environment" },
-                { fps: 15, qrbox: 250 },
-                (decodedText) => {
-                    agregarGuiaALista(decodedText);
-                    // Opcional: No cerrar la cámara para seguir escaneando rápido
-                }
-            ).catch(err => Swal.fire('Error', 'No se pudo acceder a la cámara', 'error'));
-        });
-
-        document.getElementById('btn-cerrar-camara').addEventListener('click', function() {
-            if (html5QrCode) {
-                html5QrCode.stop().then(() => {
-                    html5QrCode.clear();
-                    readerContainer.classList.add('d-none');
-                });
-            }
-        });
-
-        // Evento para eliminar fila de la tabla
-$('#tabla-asignacion tbody').on('click', '.btn-eliminar', function () {
-    const row = table.row($(this).parents('tr'));
-    
-    Swal.fire({
-        title: '¿Quitar guía?',
-        text: "La guía será eliminada de esta lista de asignación.",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3e60d5',
-        cancelButtonColor: '#f1536e',
-        confirmButtonText: 'Sí, quitar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            row.remove().draw(); // Elimina la fila de DataTables
-            Swal.fire({
-                title: 'Eliminado',
-                text: 'La guía ha sido removida.',
-                icon: 'success',
-                timer: 1000,
-                showConfirmButton: false
+            html5QrCode.start({ facingMode: "environment" }, { fps: 15, qrbox: 250 }, (text) => {
+                agregarGuiaALista(text);
             });
-        }
-    });
-});
-
-
-
-
-// Referencias a elementos
-const btnFinalizar = document.getElementById('btn-finalizar-asignacion');
-const modalSuelto = new bootstrap.Modal(document.getElementById('modalSuelto'));
-const btnConfirmarSuelto = document.getElementById('btn-confirmar-suelto');
-
-// Función para enviar los datos al servidor
-async function enviarAsignacion(datosExtra = {}) {
-    // 1. Obtener todas las guías actuales de la tabla
-    let guias = [];
-    table.rows().every(function() {
-        guias.push(this.data()[0]); // El índice 0 es el código de guía
-    });
-
-    if (guias.length === 0) {
-        Swal.fire('Error', 'La lista de guías está vacía.', 'error');
-        return;
-    }
-
-    // 2. Preparar el paquete de datos
-    const payload = {
-        guias: guias,
-        tipo: "{{ $tipo }}",
-        caja: "{{ $caja }}",
-        ...datosExtra // rack, nivel, gondola si vienen
-    };
-
-    try {
-        const response = await fetch("{{ route('ordenes.confirmar_asignacion') }}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': "{{ csrf_token() }}"
-            },
-            body: JSON.stringify(payload)
         });
-
-        const res = await response.json();
-
-        // Dentro de enviarAsignacion()
-if (res.success) {
-    Swal.fire({
-        icon: 'success',
-        title: '¡Proceso Completado!',
-        text: res.message,
-        confirmButtonColor: '#198754', // Color btn-success
-        confirmButtonText: 'Aceptar',
-        customClass: {
-            confirmButton: 'btn btn-success'
-        },
-        buttonsStyling: false
-    }).then(() => {
-        window.location.href = "{{ route('ordenes.asignar_mercancia') }}";
-    });
-} else {
-            Swal.fire('Error', res.message, 'error');
-        }
-    } catch (error) {
-        Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error');
-    }
-}
-
-// Evento principal del botón Guardar
-btnFinalizar.addEventListener('click', function() {
-    const tipo = "{{ $tipo }}";
-
-    if (tipo === 'Caja') {
-        Swal.fire({
-            title: '¿Confirmar asignación?',
-            text: `Se asignarán ${table.rows().count()} guías a la caja #{{ $caja }}`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#198754', // Color btn-success de Bootstrap 5
-            cancelButtonColor: '#6c757d',  // Color btn-secondary
-            confirmButtonText: 'Sí, guardar',
-            cancelButtonText: 'Cancelar',
-            customClass: {
-                confirmButton: 'btn btn-success',
-                cancelButton: 'btn btn-secondary'
-            },
-            buttonsStyling: false // Permite que las clases de Bootstrap tengan prioridad
-        }).then((result) => {
-            if (result.isConfirmed) enviarAsignacion();
+        document.getElementById('btn-cerrar-camara').addEventListener('click', () => {
+            if(html5QrCode) html5QrCode.stop().then(() => readerContainer.classList.add('d-none'));
         });
-    } else {
-        modalSuelto.show();
-    }
-});
-
-// Evento dentro del modal para Suelto
-btnConfirmarSuelto.addEventListener('click', function() {
-    const rack = document.getElementById('rack').value.trim();
-    const nivel = document.getElementById('nivel').value.trim();
-    const gondola = document.getElementById('gondola').value.trim();
-
-    if (!rack || !nivel || !gondola) {
-        Swal.fire('Campos requeridos', 'Por favor complete todos los datos de ubicación.', 'warning');
-        return;
-    }
-
-    modalSuelto.hide();
-    enviarAsignacion({ rack, nivel, gondola });
-});
-
-
-
-
-
-
-    });
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
-<script>
-    document.getElementById('humanfd-datepicker').flatpickr({
-        locale: "es", // <--- Esto activa el idioma español
-        altInput: true,
-        altFormat: "F j, Y", // Se verá como: "Febrero 3, 2026"
-        dateFormat: "Y-m-d", // Formato interno para la Base de Datos (Recomendado Y-m-d)
-        minDate: "today",    // Opcional: Evita seleccionar fechas pasadas
-        defaultDate: "today",
     });
 </script>
 
