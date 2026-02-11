@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Unidad;
 use Illuminate\Http\Request;
+use App\Models\Cajon;
+use DB;
 
 class UnidadController extends Controller
 {
@@ -42,6 +44,10 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
         // Opción Suelto: Va a la vista de guías individuales
         return view('carga.asignacioncargaguia', compact('tipo', 'caja', 'unidades'));
     }
+
+
+
+
 /*
     // Opción Caja: Validamos que la caja exista antes de ir a la siguiente vista
     $cajaInfo = Cajon::where('numero', $cajaSeleccionada)->first();
@@ -54,6 +60,53 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
     // Retorna la vista que ya tenías para Cajas
     return view('carga.ubicacioncargacaja', compact('tipo', 'unidades'));
 }
+
+
+    public function confirmarCarga(Request $request)
+    {
+        $request->validate([
+        'cajas' => 'required|array',
+        // Cambiamos 'unidades' por 'unidads' para que coincida con tu base de datos
+        'unidad_id' => 'required|exists:unidads,id', 
+        'fecha' => 'required|date',
+    ]);
+
+        try {
+            // Iniciamos una transacción para asegurar que todo se guarde o nada se guarde
+            DB::beginTransaction();
+
+            $unidadId = $request->unidad_id;
+            $fecha = $request->fecha;
+            $numerosCajas = $request->cajas;
+
+            // 1. Buscamos la unidad y actualizamos su fecha de ruta
+            $unidad = Unidad::findOrFail($unidadId);
+            $unidad->fecharuta = $fecha;
+            $unidad->save();
+
+            // 2. Actualizamos los registros de las cajas (Modelo Cajon)
+            // Asignamos el ID de la unidad a cada caja que esté en el array
+            Cajon::whereIn('numero', $numerosCajas)->update([
+                'unidad' => $unidadId,
+                // Opcional: puedes actualizar el estado de la caja aquí si lo necesitas
+                // 'estado' => 'En Ruta' 
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'La carga se ha asignado correctamente a la unidad ' . $unidad->nombre
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al procesar la carga: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
     /**
      * Show the form for creating a new resource.

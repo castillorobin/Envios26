@@ -133,7 +133,7 @@
         const modalUbicacion = new bootstrap.Modal(document.getElementById('modalUbicacion'));
         let html5QrCode;
 
-        // 1. DataTable inicializado para Cajas
+        // 1. Inicializar DataTable
         var table = $('#tabla-asignacion').DataTable({
             "dom": 'tip',
             "language": { "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json" },
@@ -144,12 +144,11 @@
             }
         });
 
-        // 2. Función para buscar y agregar caja a la lista
+        // 2. Función para buscar y agregar caja a la lista (RESTAURADA)
         async function agregarCajaALista(numero) {
             const numLimpio = numero.trim();
             if (!numLimpio) return;
 
-            // Verificar duplicados en la tabla
             let duplicado = false;
             table.rows().every(function() {
                 if (this.data()[0] === numLimpio) duplicado = true;
@@ -162,7 +161,6 @@
             }
 
             try {
-                // LLAMADA AJAX (Debes crear esta ruta y método que busque en el modelo Cajon)
                 const response = await fetch(`{{ route('cajas.buscar_ajax') }}?numero=${numLimpio}`);
                 const res = await response.json();
 
@@ -187,16 +185,27 @@
             }
         }
 
-        // Eventos de entrada
-        btnAgregar.addEventListener('click', () => agregarCajaALista(inputCaja.value));
-        inputCaja.addEventListener('keypress', (e) => { if(e.key === 'Enter') agregarCajaALista(inputCaja.value); });
+        // --- ESTO ES LO QUE HACIA FALTA: VINCULAR LOS EVENTOS ---
+        
+        // Clic en el botón Agregar
+        btnAgregar.addEventListener('click', function() {
+            agregarCajaALista(inputCaja.value);
+        });
 
-        // Eliminar de la lista
+        // Tecla Enter en el Input
+        inputCaja.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                agregarCajaALista(this.value);
+            }
+        });
+
+        // Eliminar fila de la tabla
         $('#tabla-asignacion tbody').on('click', '.btn-eliminar', function () {
             table.row($(this).parents('tr')).remove().draw();
         });
 
-        // 3. Proceso de Guardado Final
+        // 3. Lógica para abrir el Modal
         document.getElementById('btn-finalizar-asignacion').addEventListener('click', function() {
             if (table.rows().count() === 0) {
                 Swal.fire('Lista vacía', 'Agregue al menos una caja.', 'info');
@@ -205,65 +214,60 @@
             modalUbicacion.show();
         });
 
+        // 4. Lógica de Confirmar y Guardar (Tu código mejorado)
         document.getElementById('btn-confirmar-guardado').addEventListener('click', async function() {
-    // 1. Capturar datos del modal
-    const rack = document.getElementById('rack').value.trim();
-    const nivel = document.getElementById('nivel').value.trim();
-    const gondola = document.getElementById('gondola').value.trim();
+            const unidadId = document.getElementById('unidad').value;
+            const inputFecha = document.getElementById('humanfd-datepicker');
+            const fechaRuta = inputFecha.value; 
 
-    // 2. Validación simple
-    if (!rack || !nivel || !gondola) {
-        Swal.fire('Atención', 'Todos los campos de ubicación son obligatorios.', 'warning');
-        return;
-    }
+            if (!unidadId || !fechaRuta) {
+                Swal.fire('Atención', 'Debe seleccionar una unidad y una fecha de ruta.', 'warning');
+                return;
+            }
 
-    // 3. Obtener los números de cajas de la tabla DataTable
-    let cajas = [];
-    table.rows().every(function() {
-        cajas.push(this.data()[0]); // El índice 0 es el "Número de Caja"
-    });
+            let cajas = [];
+            table.rows().every(function() {
+                cajas.push(this.data()[0]); 
+            });
 
-    // 4. Enviar al servidor
-    try {
-        const response = await fetch("{{ route('cajas.confirmar_ubicacion') }}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': "{{ csrf_token() }}"
-            },
-            body: JSON.stringify({
-                cajas: cajas,
-                rack: rack,
-                nivel: nivel,
-                gondola: gondola
-            })
+            try {
+                const response = await fetch("{{ route('carga.confirmar_carga') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        cajas: cajas,
+                        unidad_id: unidadId,
+                        fecha: fechaRuta
+                    })
+                });
+
+                const res = await response.json();
+
+                if (res.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Carga Exitosa!',
+                        text: res.message,
+                        confirmButtonColor: '#198754',
+                        confirmButtonText: 'Aceptar',
+                        customClass: { confirmButton: 'btn btn-success' },
+                        buttonsStyling: false
+                    }).then(() => {
+                        window.location.href = "{{ route('ubicacion.buscar') }}"; 
+                    });
+                } else {
+                    throw new Error(res.message);
+                }
+            } catch (error) {
+                Swal.fire('Error', 'No se pudo procesar: ' + error.message, 'error');
+            }
         });
 
-        const res = await response.json();
-
-        if (res.success) {
-            Swal.fire({
-                icon: 'success',
-                title: '¡Éxito!',
-                text: res.message,
-                confirmButtonColor: '#198754',
-                confirmButtonText: 'Aceptar',
-                customClass: { confirmButton: 'btn btn-success' },
-                buttonsStyling: false
-            }).then(() => {
-                // Redirigir al inicio del proceso o limpiar
-                window.location.href = "/ubicacion/buscar"; 
-            });
-        } else {
-            Swal.fire('Error', res.message, 'error');
-        }
-    } catch (error) {
-        console.error(error);
-        Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error');
-    }
-});
-
-        // QR Logic (Simplificada para brevedad)
+        // QR Logic
         btnActivarQr.addEventListener('click', function() {
             readerContainer.classList.remove('d-none');
             html5QrCode = new Html5Qrcode("reader");
@@ -271,8 +275,14 @@
                 agregarCajaALista(text);
             });
         });
+
         document.getElementById('btn-cerrar-camara').addEventListener('click', () => {
-            if(html5QrCode) html5QrCode.stop().then(() => readerContainer.classList.add('d-none'));
+            if(html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    html5QrCode.clear();
+                    readerContainer.classList.add('d-none');
+                });
+            }
         });
     });
 </script>

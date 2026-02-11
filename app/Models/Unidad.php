@@ -10,5 +10,5 @@ class Unidad extends Model
    
     use HasFactory;
 
-    protected $fillable = ['nombre', 'placas', 'marca', 'modelo', 'tipo', 'color'];
+    protected $fillable = ['nombre', 'placas', 'marca', 'modelo', 'tipo', 'color', 'fecharuta'];
 }
