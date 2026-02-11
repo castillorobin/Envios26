@@ -257,7 +257,7 @@
                         customClass: { confirmButton: 'btn btn-success' },
                         buttonsStyling: false
                     }).then(() => {
-                        window.location.href = "{{ route('ubicacion.buscar') }}"; 
+                        window.location.href = "{{ route('carga.buscar') }}"; 
                     });
                 } else {
                     throw new Error(res.message);
