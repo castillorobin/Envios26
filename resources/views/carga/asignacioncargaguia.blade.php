@@ -410,7 +410,7 @@
                         icon: 'success', title: '¡Guardado!', text: res.message,
                         confirmButtonColor: '#198754', confirmButtonText: 'Aceptar',
                         customClass: { confirmButton: 'btn btn-success' }, buttonsStyling: false
-                    }).then(() => { window.location.href = "{{ route('carga.buscar'') }}"; });
+                    }).then(() => { window.location.href = "{{ route('carga.buscar') }}"; });
                 } else {
                     throw new Error(res.message);
                 }
