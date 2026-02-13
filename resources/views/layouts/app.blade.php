@@ -1107,6 +1107,22 @@
                                         >
                                     </li>
 
+                                    <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
+                                            href="/carga/asignar-reparto"
+                                            >Asignación de reparto </a
+                                        >
+                                    </li>
+
+                                    <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
+                                            href="/carga/lista-reparto"
+                                            >Lista de reparto </a
+                                        >
+                                    </li>
+
                                     
                                 </ul>
                             </div>

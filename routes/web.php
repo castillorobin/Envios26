@@ -256,3 +256,7 @@ Route::post('/carga/procesar-busqueda', [App\Http\Controllers\UnidadController::
 Route::get('/carga/asignar-mercancia', [App\Http\Controllers\UnidadController::class, 'asignarMercancia'])->name('carga.asignar_mercancia') ;
 Route::post('/carga/confirmar_carga', [App\Http\Controllers\UnidadController::class, 'confirmarCarga'])->name('carga.confirmar_carga') ;
 Route::post('/carga/confirmar_carga_guias', [App\Http\Controllers\UnidadController::class, 'confirmarCargaGuias'])->name('carga.confirmar_carga_guias') ;
+
+
+Route::get('/carga/asignar-reparto', [App\Http\Controllers\UnidadController::class, 'asignarReparto'])->name('carga.asignar_reparto') ;
+Route::get('/carga/lista-reparto', [App\Http\Controllers\UnidadController::class, 'listaReparto'])->name('carga.lista_reparto') ;

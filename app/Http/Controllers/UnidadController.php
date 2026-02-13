@@ -89,7 +89,7 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
             Cajon::whereIn('numero', $numerosCajas)->update([
                 'unidad' => $unidadId,
                 // Opcional: puedes actualizar el estado de la caja aquí si lo necesitas
-                // 'estado' => 'En Ruta' 
+                'estado' => 'En transito' // Ejemplo de estado, ajusta según tu lógica de negocio
             ]);
 
             DB::commit();
@@ -134,7 +134,7 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
         // Asignamos el ID de la unidad a cada orden
         \App\Models\Orden::whereIn('guia', $codigosGuias)->update([
             'unidad' => $unidadId,
-            'estado' => 'En Ruta' // Cambiamos el estado opcionalmente
+            'estado' => 'En transito' // Cambiamos el estado opcionalmente
         ]);
 
         \DB::commit();
@@ -158,10 +158,13 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function listaReparto()
     {
-        //
+        $unidades = Unidad::all();
+        return view('carga.listareparto', compact('unidades'));
     }
+
+
 
    
    
