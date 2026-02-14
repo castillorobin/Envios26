@@ -152,6 +152,12 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
         ], 500);
     }
 }
+public function asignarReparto()
+    {
+        $unidades = Unidad::all();
+        $usuarios = \App\Models\User::all(); // Obtener solo usuarios con rol de repartidor
+        return view('carga.asignarreparto', compact('unidades', 'usuarios'));
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -163,6 +169,31 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
         $unidades = Unidad::all();
         return view('carga.listareparto', compact('unidades'));
     }
+
+
+    public function procesarAsignacionRepartidor(Request $request)
+{
+    $request->validate([
+        'unidad_id' => 'required|exists:unidads,id',
+        'repartidor_id' => 'required|exists:users,id',
+    ]);
+
+    //dd($request->all());
+
+    try {
+        $unidad = \App\Models\Unidad::findOrFail($request->unidad_id);
+        //dd($unidad);
+        $unidad->update([
+            'repartidor' => $request->repartidor_id,
+            'estado' => 'En transito'
+        ]);
+
+        return back()->with('success', "Repartidor asignado correctamente a la unidad {$unidad->nombre}.");
+
+    } catch (\Exception $e) {
+        return back()->with('error', 'Error al asignar repartidor: ' . $e->getMessage());
+    }
+}
 
 
 

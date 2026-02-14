@@ -260,3 +260,5 @@ Route::post('/carga/confirmar_carga_guias', [App\Http\Controllers\UnidadControll
 
 Route::get('/carga/asignar-reparto', [App\Http\Controllers\UnidadController::class, 'asignarReparto'])->name('carga.asignar_reparto') ;
 Route::get('/carga/lista-reparto', [App\Http\Controllers\UnidadController::class, 'listaReparto'])->name('carga.lista_reparto') ;
+Route::get('/carga/asignar-repartidor', [App\Http\Controllers\UnidadController::class, 'asignarRepartidor'])->name('carga.asignar_repartidor') ;
+Route::post('/carga/procesar-asignacion-repartidor', [App\Http\Controllers\UnidadController::class, 'procesarAsignacionRepartidor'])->name('unidades.confirmar_repartidor') ; 
