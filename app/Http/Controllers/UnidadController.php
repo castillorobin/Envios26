@@ -166,7 +166,7 @@ public function asignarReparto()
      */
     public function listaReparto()
     {
-        $unidades = Unidad::all();
+        $unidades = Unidad::where('repartidor', auth()->id())->get(); 
         return view('carga.listareparto', compact('unidades'));
     }
 
