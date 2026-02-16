@@ -228,8 +228,13 @@
         </td>
         
         <td>
-            {{ $repartidor->unidadAsignada ? $repartidor->unidadAsignada->fecharuta : '---' }}
-        </td>
+    @if($repartidor->unidadAsignada->fecharuta == \Carbon\Carbon::today()->toDateString())
+        <span class="badge bg-info-subtle text-info">Hoy</span>
+    @else
+        <span class="badge bg-warning-subtle text-warning">Mañana</span>
+    @endif
+    {{ \Carbon\Carbon::parse($repartidor->unidadAsignada->fecharuta)->format('d/m/Y') }}
+</td>
         
         <td>
             @if($repartidor->unidadAsignada)

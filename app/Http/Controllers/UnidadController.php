@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Cajon;
 use DB;
 use App\Models\User;
+use Carbon\Carbon;
 
 class UnidadController extends Controller
 {
@@ -154,23 +155,22 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
     }
 }
 public function asignarReparto()
-    {
-        $unidades = Unidad::all();
-       // $usuarios = \App\Models\User::all(); // Obtener solo usuarios con rol de repartidor
+{
+    // 1. Definir fechas: Hoy y Mañana
+    $hoy = Carbon::today()->toDateString();
+    $manana = Carbon::tomorrow()->toDateString();
 
+    // 2. Obtener solo usuarios que TIENEN unidad asignada 
+    // y cuya fecharuta sea hoy o mañana
+    $usuarios = User::whereHas('unidadAsignada', function($query) use ($hoy, $manana) {
+        $query->whereIn('fecharuta', [$hoy, $manana]);
+    })->with('unidadAsignada')->get();
 
-        $usuarios = User::with('unidadAsignada')->get();
-   // $unidades = Unidad::whereNull('repartidor')->get(); // Solo unidades libres para el modal
-   // return view('tu_vista', compact('usuarios', 'unidades'));
+    // 3. Unidades disponibles para el modal (opcional: solo las que no tienen repartidor)
+    $unidades = Unidad::whereNull('repartidor')->get();
 
-
-
-
-
-
-        return view('carga.asignarreparto', compact('unidades', 'usuarios'));
-    }
-
+    return view('carga.asignarreparto', compact('unidades', 'usuarios'));
+}
     /**
      * Show the form for creating a new resource.
      *
