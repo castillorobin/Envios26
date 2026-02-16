@@ -294,7 +294,7 @@
                         <label class="form-label">Seleccionar Repartidor</label>
                         <select name="repartidor_id" class="form-select select2-modal" required>
                             <option value="" disabled selected>Elija un usuario...</option>
-                            @foreach($usuarios as $usuario)
+                            @foreach($usuariosall as $usuario)
                                 <option value="{{ $usuario->id }}">{{ $usuario->name }}</option>
                             @endforeach
                         </select>
@@ -303,7 +303,7 @@
                         <label class="form-label">Seleccionar unidad</label>
                         <select name="unidad_id" class="form-select select2-modal" required>
                             <option value="" disabled selected>Elija una unidad...</option>
-                            @foreach($unidades as $unidad)
+                            @foreach($unidadesall as $unidad)
                                 <option value="{{ $unidad->id }}">{{ $unidad->nombre }}</option>
                             @endforeach
                         </select>

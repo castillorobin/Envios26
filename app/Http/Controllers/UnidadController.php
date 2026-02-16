@@ -169,7 +169,10 @@ public function asignarReparto()
     // 3. Unidades disponibles para el modal (opcional: solo las que no tienen repartidor)
     $unidades = Unidad::whereNull('repartidor')->get();
 
-    return view('carga.asignarreparto', compact('unidades', 'usuarios'));
+    $usuariosall = User::all();
+    $unidadesall = Unidad::all();
+
+    return view('carga.asignarreparto', compact('unidades', 'usuarios', 'usuariosall', 'unidadesall'));
 }
     /**
      * Show the form for creating a new resource.
