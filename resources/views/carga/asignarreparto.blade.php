@@ -176,12 +176,21 @@
                                                 <label for="inputPassword2" class="visually-hidden">Asignacion de repartidor</label>
                                                 <div class="search-bar me-3">
                                                     <span><i class="bx bx-search-alt"></i></span>
-                                                    <input type="search" class="form-control" id="search" placeholder="Buscar unidad ...">
+                                                    <input type="search" class="form-control" id="search" placeholder="Buscar repartidor...">
                                                 </div>
 
                                                 
                                             </form>
                                         </div>
+
+                                        <button type="button" 
+                                                        class="btn btn-sm btn-primary btn-asignar" 
+                                                        data-id="" 
+                                                        data-nombre=""
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#modalAsignarRepartidor">
+                                                    Asignar Repartidor
+                                                </button>
 
                                         
                                     </div>
@@ -192,12 +201,11 @@
                                         <thead class="bg-light bg-opacity-50">
                                            
                                             <tr>
-                                                <th>Nombre</th>
-                                                <th>Placa</th>
-                                                <th>Tipo</th>
+                                                <th>Repartidor</th>
+                                                <th>Unidada Asignada</th>
                                                 <th>Fecha de ruta</th>
-                                                <th>Estado</th>
-                                                <th>Acción</th>
+                                                <th>Status</th>
+                                                
                                                 
                                                 
                                             </tr>
@@ -205,29 +213,36 @@
                                         </thead>
                                         <!-- end thead-->
                                         <tbody>
-                                            @foreach($unidades as $unidad)
-                                            
-                                            <tr>
-                                                <td>{{ $unidad->nombre }}</td>
-                                                <td>{{ $unidad->placas }}</td>
-                                                <td>{{ $unidad->tipo }}</td>
-                                                <td>{{ $unidad->fecharuta }}</td>
-                                                <td>{{ $unidad->estado }}</td>
-                                                <td>
-                                                <button type="button" 
-                                                        class="btn btn-sm btn-primary btn-asignar" 
-                                                        data-id="{{ $unidad->id }}" 
-                                                        data-nombre="{{ $unidad->nombre }}"
-                                                        data-bs-toggle="modal" 
-                                                        data-bs-target="#modalAsignarRepartidor">
-                                                    Asignar Repartidor
-                                                </button>
-                                                </td>
-                                                
-                                            </tr>
-                                            @endforeach
-                                             
-                                        </tbody>
+    @foreach($usuarios as $repartidor)
+    <tr>
+        <td class="fw-medium text-dark">{{ $repartidor->name }}</td>
+        
+        <td>
+            @if($repartidor->unidadAsignada)
+                <span class="text-primary fw-bold">
+                    <i class="bx bx-car me-1"></i> {{ $repartidor->unidadAsignada->nombre }}
+                </span>
+            @else
+                <span class="text-muted small">Sin asignar</span>
+            @endif
+        </td>
+        
+        <td>
+            {{ $repartidor->unidadAsignada ? $repartidor->unidadAsignada->fecharuta : '---' }}
+        </td>
+        
+        <td>
+            @if($repartidor->unidadAsignada)
+                <span class="badge bg-soft-success text-success border border-success border-opacity-25 px-2">
+                    {{ $repartidor->unidadAsignada->estado }}
+                </span>
+            @else
+                <span class="badge bg-soft-secondary text-secondary px-2">Disponible</span>
+            @endif
+        </td>
+    </tr>
+    @endforeach
+</tbody>
                                         <!-- end tbody -->
                                     </table>
                                     <!-- end table -->
@@ -279,6 +294,16 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Seleccionar unidad</label>
+                        <select name="unidad_id" class="form-select select2-modal" required>
+                            <option value="" disabled selected>Elija una unidad...</option>
+                            @foreach($unidades as $unidad)
+                                <option value="{{ $unidad->id }}">{{ $unidad->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>

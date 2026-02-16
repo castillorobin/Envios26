@@ -6,6 +6,7 @@ use App\Models\Unidad;
 use Illuminate\Http\Request;
 use App\Models\Cajon;
 use DB;
+use App\Models\User;
 
 class UnidadController extends Controller
 {
@@ -155,7 +156,18 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
 public function asignarReparto()
     {
         $unidades = Unidad::all();
-        $usuarios = \App\Models\User::all(); // Obtener solo usuarios con rol de repartidor
+       // $usuarios = \App\Models\User::all(); // Obtener solo usuarios con rol de repartidor
+
+
+        $usuarios = User::with('unidadAsignada')->get();
+   // $unidades = Unidad::whereNull('repartidor')->get(); // Solo unidades libres para el modal
+   // return view('tu_vista', compact('usuarios', 'unidades'));
+
+
+
+
+
+
         return view('carga.asignarreparto', compact('unidades', 'usuarios'));
     }
 

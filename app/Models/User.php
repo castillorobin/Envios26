@@ -35,6 +35,12 @@ class User extends Authenticatable
     'status',
 ];
 
+public function unidadAsignada()
+{
+    // Un usuario tiene una unidad donde el campo 'repartidor' coincide con su 'id'
+    return $this->hasOne(Unidad::class, 'repartidor', 'id');
+}
+
     /**
      * The attributes that should be hidden for serialization.
      *
