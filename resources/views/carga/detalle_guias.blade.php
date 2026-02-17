@@ -165,11 +165,21 @@
     }
 </style>
 
+
+
 <div class="container-xxl">
-        <div class="row">
-                        <div class="col">
-                            <div class="card">
-                                <div class="card-body">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-flex align-items-center justify-content-between">
+                <h4 class="mb-0 fw-semibold">Detalle de Guías - Unidad: {{ $unidad->nombre }}</h4>
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+
+     <div class="card-body">
                                     <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
                                         <div>
                                             <form class="d-flex flex-wrap align-items-center gap-2">
@@ -186,82 +196,63 @@
                                         
                                     </div>
                                 </div>
-                                <!-- end card body -->
-                                <div class="table-responsive table-centered">
-                                    <table class="table text-nowrap mb-0" id="tabla-usuarios">
-                                        <thead class="bg-light bg-opacity-50">
-                                           
-                                            <tr>
-                                                <th>Unidad</th>
-                                                <th>Total de caja</th>
-                                                <th>Total de Guia</th>
-                                                <th>Fecha de ruta</th>
-                                                <th>Estado</th>
-                                                
-                                                
-                                            </tr>
-                                            
-                                        </thead>
-                                        <!-- end thead-->
-                                        <tbody>
-                                            @foreach($unidades as $unidad)
-                                            
-                                            
-                                            <tr>
-                                                <td>
-                                                    <a href="{{ route('unidades.detalle_guias', $unidad->id) }}" class="fw-bold text-primary">
-                                                        <i class="bx bx-search-alt-2"></i> {{ $unidad->nombre }}
-                                                    </a>
-                                                </td>
-                                                <td>{{ $unidad->cajas_count }}</td> 
-                                                <td>
-                                                    <span class="badge bg-info">
-                                                        {{ $unidad->total_real_guias }}
-                                                    </span>
-                                                </td>
-                                                <td>{{ $unidad->fecharuta }}</td>
-                                                <td>{{ $unidad->estado }}</td>
-                                                
-                                            </tr>
-                                           
-                                            @endforeach
-                                             
-                                        </tbody>
-                                        <!-- end tbody -->
-                                    </table>
-                                    <!-- end table -->
-                                </div>
-
-                                <div class="card-footer bg-transparent border-top">
-                                    <div class="d-flex flex-wrap align-items-center justify-content-between">
-                                        <div id="dt-info-container"></div>
-                                        <div id="dt-pagination-container"></div>
-                                    </div>
-                                </div>
-                                <!-- table responsive -->
-                                <div class="align-items-center justify-content-between row g-0 text-center text-sm-start p-3 border-top">
-                                    
-                                   
-                                </div>
-                            </div>
-                            <!-- end card -->
-                        </div>
-                        <!-- end col -->
-                    </div>          
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-centered mb-0" id="tabla-detalle-guias">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Guía</th>  
+                            <th>Unidad</th>
+                            <th>Comercio</th>
+                            <th>Destinatario</th>
+                            <th>Destino</th> 
+                            <th>Status</th>
+                            <th>Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($guias as $guia)
+                        <tr>
+                            <td class="fw-medium text-primary">{{ $guia->guia }}</td>
+                            <td>{{ $unidad->nombre }}</td>
+                            <td>{{ $guia->comercioRel ? $guia->comercioRel->nombre : '---' }}</td>
+                            <td>{{ $guia->destinatario }}</td>
+                            <td>{{ $guia->destino }}</td>
+                            <td>
+                            {{ $guia->estado}}
+                            </td>
+                            
+                            <td>{{ number_format($guia->precio, 2) }}</td>
+                            
+                        </tr>
+                        @endforeach
+                    </tbody>
+                    
+                </table>
+                <a href="{{ route('carga.lista_reparto') }}" class="btn btn-secondary mt-3">
+                    <i class="bx bx-arrow-back me-1"></i> Volver al listado
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
-            
+
+
+
+
+           
 <script>
 $(document).ready(function() {
     console.log("¡Configurando interfaz de Comercios!");
 
     // 1. Destruir si existe para evitar conflictos
-    if ($.fn.DataTable.isDataTable('#tabla-usuarios')) {
-        $('#tabla-usuarios').DataTable().destroy();
+    if ($.fn.DataTable.isDataTable('#tabla-detalle-guias')) {
+        $('#tabla-detalle-guias').DataTable().destroy();
     }
 
     // 2. Inicialización limpia
-    var table = $('#tabla-usuarios').DataTable({
+    var table = $('#tabla-detalle-guias').DataTable({
         "paging": true,
         "info": true,
         "pageLength": 10,
@@ -330,6 +321,3 @@ $(document).ready(function() {
 });
 </script>
 @endsection
-
-
-

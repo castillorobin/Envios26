@@ -226,6 +226,23 @@ public function asignarReparto()
 }
 
 
+public function detalleGuias($id)
+{
+    $unidad = Unidad::findOrFail($id);
+
+    // 1. Obtener números de cajas asignadas a esta unidad
+    $numerosCajas = Cajon::where('unidad', $id)->pluck('numero');
+
+    // 2. Obtener las guías:
+    // - Las que están directamente en la unidad (Suelto)
+    // - O las que pertenecen a las cajas de arriba
+    $guias = \App\Models\Orden::where('unidad', $id)
+        ->orWhereIn('caja', $numerosCajas)
+        ->with('comercioRel') // Para mostrar el nombre del comercio
+        ->get();
+
+    return view('carga.detalle_guias', compact('unidad', 'guias'));
+}
 
    
    
