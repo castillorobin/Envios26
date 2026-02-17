@@ -263,3 +263,7 @@ Route::get('/carga/lista-reparto', [App\Http\Controllers\UnidadController::class
 Route::get('/carga/asignar-repartidor', [App\Http\Controllers\UnidadController::class, 'asignarRepartidor'])->name('carga.asignar_repartidor') ;
 Route::post('/carga/procesar-asignacion-repartidor', [App\Http\Controllers\UnidadController::class, 'procesarAsignacionRepartidor'])->name('unidades.confirmar_repartidor') ; 
 Route::get('/unidades/{id}/detalle-guias', [App\Http\Controllers\UnidadController::class, 'detalleGuias'])->name('unidades.detalle_guias');
+
+//Cuadre de paqueteria
+Route::get('/orden/cuadre-paqueteria', [App\Http\Controllers\OrdenController::class, 'cuadrePaqueteria'])->name('cuadre.paqueteria') ;
+Route::post('/orden/procesar-cuadre', [App\Http\Controllers\OrdenController::class, 'procesarCuadrePaqueteria'])->name('cuadre.procesar_cuadre') ;

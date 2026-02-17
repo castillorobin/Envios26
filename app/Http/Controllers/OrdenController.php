@@ -8,6 +8,7 @@ use App\Models\Comercio;
 use App\Models\Punto;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Cajon;
+use App\Models\Unidad;
 
 class OrdenController extends Controller
 {
@@ -442,5 +443,44 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
     public function destroy(Orden $orden)
     {
         //
+    }
+
+    public function cuadrePaqueteria()
+    {
+        $unidades = \App\Models\Unidad::all();
+        return view('cuadre.buscarunidad', compact('unidades'));
+    }
+
+        public function procesarCuadrePaqueteria(Request $request)
+    {
+        $request->validate([
+        'unidad_id' => 'required|exists:unidads,id'
+    ]);
+
+    $unidad = Unidad::findOrFail($request->unidad_id);
+
+    // 1. Obtener números de cajas asignadas a esta unidad
+    $numerosCajas = Cajon::where('unidad', $unidad->id)->pluck('numero');
+
+    // 2. Obtener todas las guías de la unidad (Sueltas + En Cajas)
+    $guiasQuery = \App\Models\Orden::where(function($query) use ($unidad, $numerosCajas) {
+        $query->where('unidad', $unidad->id)
+              ->orWhereIn('caja', $numerosCajas);
+    });
+
+    $unidadactual = $unidad->nombre;
+
+    // 3. Hacer las sumatorias por estado
+    // Usamos clone para no afectar la consulta original si necesitas el listado completo luego
+    $totales = [
+        'entregados'    => (clone $guiasQuery)->where('estado', 'Entregado')->count(),
+        'no_entregados' => (clone $guiasQuery)->where('estado', 'No entregado')->count(),
+        'cambios'       => (clone $guiasQuery)->where('estado', 'Cambio')->count(),
+    ];
+
+    // Si también necesitas pasar el listado de guías para mostrarlas abajo:
+    $guias = $guiasQuery->get();
+
+    return view('cuadre.iniciar_cuadre', compact('unidad', 'guias', 'totales', 'unidadactual'));
     }
 }
