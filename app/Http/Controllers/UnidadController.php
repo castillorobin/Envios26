@@ -180,10 +180,25 @@ public function asignarReparto()
      * @return \Illuminate\Http\Response
      */
     public function listaReparto()
-    {
-        $unidades = Unidad::where('repartidor', auth()->id())->get(); 
-        return view('carga.listareparto', compact('unidades'));
+{
+    // Obtenemos las unidades con el conteo de cajas y guías directas
+    $unidades = Unidad::withCount(['cajas', 'guiasDirectas'])
+        ->with(['cajas.guias']) // Cargamos las guías de cada caja
+        ->where('estado', 'En transito')
+        ->get();
+
+    // Calculamos el gran total de guías para cada unidad
+    foreach ($unidades as $unidad) {
+        // Sumamos: guías sueltas + guías dentro de cada caja cargada
+        $totalGuiasEnCajas = $unidad->cajas->sum(function($caja) {
+            return $caja->guias->count();
+        });
+
+        $unidad->total_real_guias = $unidad->guias_directas_count + $totalGuiasEnCajas;
     }
+
+    return view('carga.listareparto', compact('unidades'));
+}
 
 
     public function procesarAsignacionRepartidor(Request $request)

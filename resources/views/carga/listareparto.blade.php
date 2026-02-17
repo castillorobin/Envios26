@@ -192,9 +192,9 @@
                                         <thead class="bg-light bg-opacity-50">
                                            
                                             <tr>
-                                                <th>Nombre</th>
-                                                <th>Placa</th>
-                                                <th>Tipo</th>
+                                                <th>Unidad</th>
+                                                <th>Total de caja</th>
+                                                <th>Total de Guia</th>
                                                 <th>Fecha de ruta</th>
                                                 <th>Estado</th>
                                                 
@@ -206,14 +206,20 @@
                                         <tbody>
                                             @foreach($unidades as $unidad)
                                             
+                                            
                                             <tr>
                                                 <td>{{ $unidad->nombre }}</td>
-                                                <td>{{ $unidad->placas }}</td>
-                                                <td>{{ $unidad->tipo }}</td>
+                                                <td>{{ $unidad->cajas_count }}</td> 
+                                                <td>
+                                                    <span class="badge bg-info">
+                                                        {{ $unidad->total_real_guias }}
+                                                    </span>
+                                                </td>
                                                 <td>{{ $unidad->fecharuta }}</td>
                                                 <td>{{ $unidad->estado }}</td>
                                                 
                                             </tr>
+                                           
                                             @endforeach
                                              
                                         </tbody>
