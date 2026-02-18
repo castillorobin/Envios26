@@ -154,9 +154,6 @@ Route::get('reportes/repofiltrobodegafecha', [App\Http\Controllers\PedidoControl
 
 
 
-//Entregas
-
-Route::get('entrega', [App\Http\Controllers\EntregaController::class, 'index'] )->name('entrega');
 
 
 //Usuarios
@@ -269,3 +266,9 @@ Route::get('/orden/cuadre-paqueteria', [App\Http\Controllers\OrdenController::cl
 Route::post('/orden/procesar-cuadre', [App\Http\Controllers\OrdenController::class, 'procesarCuadrePaqueteria'])->name('cuadre.procesar_cuadre') ;
 Route::get('/cuadre/detalle/{unidad_id}/{estado}', [App\Http\Controllers\OrdenController::class, 'detalleEstado'])->name('cuadre.detalle_estado');
 
+
+//Entregas
+
+Route::get('entrega', [App\Http\Controllers\EntregaController::class, 'index'] )->name('entrega');
+Route::post('entrega/guardar', [App\Http\Controllers\EntregaController::class, 'guardar'] )->name('entrega.guardar');
+Route::get('/ordenes/buscar-guia-entrega', [App\Http\Controllers\EntregaController::class, 'buscarGuiaEntrega'])->name('ordenes.buscar_guia_entrega');

@@ -1167,17 +1167,11 @@
                                     <li class="sub-nav-item">
                                         <a
                                             class="sub-nav-link"
-                                            href="apps-ecommerce-product-detail.html"
+                                            href="/entrega"
                                             >Entrega de paqueteria</a
                                         >
                                     </li>
-                                    <li class="sub-nav-item">
-                                        <a
-                                            class="sub-nav-link"
-                                            href="apps-ecommerce-product-add.html"
-                                            >Entrega múltiple</a
-                                        >
-                                    </li>
+                                  
                                     
                                    
 
