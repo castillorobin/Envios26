@@ -469,6 +469,7 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
     });
 
     $unidadactual = $unidad->nombre;
+    $unidadid = $unidad->id;
 
     // 3. Hacer las sumatorias por estado
     // Usamos clone para no afectar la consulta original si necesitas el listado completo luego
@@ -481,6 +482,25 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
     // Si también necesitas pasar el listado de guías para mostrarlas abajo:
     $guias = $guiasQuery->get();
 
-    return view('cuadre.iniciar_cuadre', compact('unidad', 'guias', 'totales', 'unidadactual'));
+    return view('cuadre.iniciar_cuadre', compact('unidad', 'guias', 'totales', 'unidadactual', 'unidadid'));
+    }
+
+    public function detalleEstado($unidad_id, $estado)
+    {
+        $unidad = Unidad::findOrFail($unidad_id);
+
+        // 1. Obtener números de cajas asignadas a esta unidad
+        $numerosCajas = Cajon::where('unidad', $unidad_id)->pluck('numero');
+
+        // 2. Obtener las guías filtradas por el estado específico
+        $guias = \App\Models\Orden::where(function($query) use ($unidad_id, $numerosCajas) {
+                $query->where('unidad', $unidad_id)
+                    ->orWhereIn('caja', $numerosCajas);
+            })
+            ->where('estado', $estado) // Filtro por el estado cliqueado
+            ->with('comercioRel')      // Cargar relación de comercio
+            ->get();
+
+        return view('cuadre.detalle_paquete', compact('unidad', 'guias', 'estado'));
     }
 }

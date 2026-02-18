@@ -208,18 +208,24 @@
                                         <tbody>
                                             <tr>
                                                 <td class="text-center">
-                                                    <h4 class="mt-2 text-success fw-bold">{{ $totales['entregados'] }}</h4>
-                                                    <span class="text-muted small">Paquetes</span>
+                                                    <a href="{{ route('cuadre.detalle_estado', ['unidad_id' => $unidadid, 'estado' => 'Entregado']) }}" class="text-decoration-none">
+                                                        <h4 class="mt-2 text-success fw-bold">{{ $totales['entregados'] }}</h4>
+                                                        <span class="badge bg-success-subtle text-success">Ver Entregados</span>
+                                                    </a>
                                                 </td>
 
                                                 <td class="text-center">
-                                                    <h4 class="mt-2 text-danger fw-bold">{{ $totales['no_entregados'] }}</h4>
-                                                    <span class="text-muted small">Paquetes</span>
+                                                    <a href="{{ route('cuadre.detalle_estado', ['unidad_id' => $unidadid, 'estado' => 'No entregado']) }}" class="text-decoration-none">
+                                                        <h4 class="mt-2 text-danger fw-bold">{{ $totales['no_entregados'] }}</h4>
+                                                        <span class="badge bg-danger-subtle text-danger">Ver No Entregados</span>
+                                                    </a>
                                                 </td>
 
                                                 <td class="text-center">
-                                                    <h4 class="mt-2 text-warning fw-bold">{{ $totales['cambios'] }}</h4>
-                                                    <span class="text-muted small">Paquetes</span>
+                                                    <a href="{{ route('cuadre.detalle_estado', ['unidad_id' => $unidadid, 'estado' => 'Cambio']) }}" class="text-decoration-none">
+                                                        <h4 class="mt-2 text-warning fw-bold">{{ $totales['cambios'] }}</h4>
+                                                        <span class="badge bg-warning-subtle text-warning">Ver Cambios</span>
+                                                    </a>
                                                 </td>
                                             </tr>
                                         </tbody>

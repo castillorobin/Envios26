@@ -267,3 +267,5 @@ Route::get('/unidades/{id}/detalle-guias', [App\Http\Controllers\UnidadControlle
 //Cuadre de paqueteria
 Route::get('/orden/cuadre-paqueteria', [App\Http\Controllers\OrdenController::class, 'cuadrePaqueteria'])->name('cuadre.paqueteria') ;
 Route::post('/orden/procesar-cuadre', [App\Http\Controllers\OrdenController::class, 'procesarCuadrePaqueteria'])->name('cuadre.procesar_cuadre') ;
+Route::get('/cuadre/detalle/{unidad_id}/{estado}', [App\Http\Controllers\OrdenController::class, 'detalleEstado'])->name('cuadre.detalle_estado');
+
