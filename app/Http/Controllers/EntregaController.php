@@ -28,6 +28,7 @@ class EntregaController extends Controller
             'data' => [
                 'guia' => $guia->guia,
                 'comercio' => $guia->comercioRel ? $guia->comercioRel->nombre : 'S/C',
+                'destinatario' => $guia->destinatario,
                 'precio' => $guia->total, // Asumiendo que este es el campo total de la orden
                 'fecha' => \Carbon\Carbon::parse($guia->fecha_entrega)->format('d/m/Y'),
                 'estado' => $guia->estado

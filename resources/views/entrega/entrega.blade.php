@@ -74,6 +74,7 @@
                                 <tr>
                                     <th style="width: 35%;">Guia</th>
                                     <th>Comercio</th>
+                                    <th>Destinatario</th>
                                     <th>Total a cobrar</th>
                                     <th>Fecha de entrega</th>
                                     <th>Status</th>
@@ -235,6 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 table.row.add([
                     res.data.guia,
                     res.data.comercio,
+                    res.data.destinatario,
                     res.data.precio,
                     res.data.fecha,
                     `<span class="badge bg-soft-primary text-primary">${res.data.estado}</span>`,
