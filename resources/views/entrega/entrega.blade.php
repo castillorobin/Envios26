@@ -18,7 +18,7 @@
     /* Ocultar los controles originales que quedan dentro del wrapper de la tabla */
     .dataTables_wrapper .dataTables_info, 
     .dataTables_wrapper .dataTables_paginate {
-        display: none;
+        display: none; 
     }
 </style>
 <div class="container-xxl">
@@ -180,23 +180,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 2. Función para calcular totales
     function calcularTotales() {
-        let subtotal = 0;
-        // Sumar los valores de la columna "Total a cobrar" (índice 2)
-        table.rows().every(function() {
-            let data = this.data();
-            // Limpiar el valor de moneda si tuviera símbolos
-            let valor = parseFloat(data[2]) || 0;
-            subtotal += valor;
-        });
+    let subtotal = 0;
+    // IMPORTANTE: El total a cobrar es el índice 3 en tu nueva estructura de tabla
+    table.rows().every(function() {
+        let data = this.data();
+        let valor = parseFloat(data[3]) || 0; 
+        subtotal += valor;
+    });
 
-        const descuento = parseFloat(inputDescuento.value) || 0;
-        const total = subtotal - descuento;
+    const descuento = parseFloat(inputDescuento.value) || 0;
+    const total = subtotal - descuento;
 
-        inputSubtotal.value = subtotal.toFixed(2);
-        inputTotal.value = total.toFixed(2);
-        
-        actualizarInputsOcultos();
-    }
+    inputSubtotal.value = subtotal.toFixed(2);
+    inputTotal.value = total.toFixed(2);
+    
+    actualizarInputsOcultos();
+}
 
     // 3. Actualizar inputs ocultos para el envío del formulario
     function actualizarInputsOcultos() {
@@ -298,6 +297,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ... tu código anterior ...
+
+        // Detectar mensaje de éxito de Laravel y mostrar SweetAlert
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: '¡Operación Exitosa!',
+                text: "{{ session('success') }}",
+                confirmButtonColor: '#3e60d5',
+                timer: 3000 // Se cierra solo tras 3 segundos si no le dan clic
+            });
+        @endif
+    });
 </script>
 
 @endsection
