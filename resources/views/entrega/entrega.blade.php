@@ -142,7 +142,7 @@
                                     </div>
                         <div class="row">
                             <div class="col-6">
-                               <a href="#" class="btn btn-outline-primary w-100">
+                               <a href="/entrega" class="btn btn-outline-primary w-100">
                                     Cancelar
                                 </a>
                             </div>

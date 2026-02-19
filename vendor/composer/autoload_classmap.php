@@ -48,6 +48,7 @@ return array(
     'App\\Models\\Facturacion' => $baseDir . '/app/Models/Facturacion.php',
     'App\\Models\\Filtroganan' => $baseDir . '/app/Models/Filtroganan.php',
     'App\\Models\\Orden' => $baseDir . '/app/Models/Orden.php',
+    'App\\Models\\Pago' => $baseDir . '/app/Models/Pago.php',
     'App\\Models\\Pedido' => $baseDir . '/app/Models/Pedido.php',
     'App\\Models\\Punto' => $baseDir . '/app/Models/Punto.php',
     'App\\Models\\Recepcion' => $baseDir . '/app/Models/Recepcion.php',

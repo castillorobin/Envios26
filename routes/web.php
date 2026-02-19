@@ -16,6 +16,7 @@ use App\Http\Controllers\ComercioController;
 use App\Http\Controllers\PuntoController;
 use App\Http\Controllers\RecepcionController;
 use App\Http\Controllers\OrdenController;
+use App\Http\Controllers\PagoController;
 
 
 
@@ -272,3 +273,8 @@ Route::get('/cuadre/detalle/{unidad_id}/{estado}', [App\Http\Controllers\OrdenCo
 Route::get('entrega', [App\Http\Controllers\EntregaController::class, 'index'] )->name('entrega');
 Route::post('entrega/guardar', [App\Http\Controllers\EntregaController::class, 'guardar'] )->name('entrega.guardar');
 Route::get('/ordenes/buscar-guia-entrega', [App\Http\Controllers\EntregaController::class, 'buscarGuiaEntrega'])->name('ordenes.buscar_guia_entrega');
+
+
+//Pago de tickets
+Route::get('pago', [App\Http\Controllers\PagoController::class, 'index'] )->name('pagos.inicio') ;
+Route::get('/pago/crearpago', [PagoController::class, 'crearPago'])->name('pago.crearpago');
