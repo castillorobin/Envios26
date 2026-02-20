@@ -6,6 +6,8 @@ use App\Models\Pago;
 use Illuminate\Http\Request;
 use App\Models\Recepcion;
 use App\Models\Orden;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class PagoController extends Controller
 {
@@ -53,6 +55,53 @@ class PagoController extends Controller
         return response()->json(['success' => true, 'message' => 'Datos de la guía actualizados.']);
     } catch (\Exception $e) {
         return response()->json(['success' => false, 'message' => $e->getMessage()]);
+    }
+}
+
+    public function guardarRegistro(Request $request)
+{
+    $request->validate([
+        'ids_ordenes' => 'required',
+        'subtotal'    => 'required|numeric',
+        'total'       => 'required|numeric',
+        'estado_pago' => 'required|in:Pagado,Revisado' // Validación de las nuevas opciones
+    ]);
+
+    try {
+        DB::beginTransaction();
+
+        $ids = json_decode($request->ids_ordenes);
+
+        if (empty($ids)) {
+            return back()->with('error', 'No se seleccionaron órdenes.');
+        }
+
+        // 1. Crear el registro de Pago
+        $pago = new Pago();
+        $pago->usuario_id     = Auth::id();
+        $pago->fecha_pago     = now();
+        $pago->subtotal       = $request->subtotal;
+        $pago->descuento      = $request->descuento ?? 0;
+        $pago->nota_descuento = $request->nota_descuento;
+        $pago->total          = $request->total;
+        $pago->estado         = $request->estado_pago; // Aquí guarda "Pagado" o "Revisado"
+        $pago->save();
+
+        // 2. Actualizar las Órdenes de forma masiva
+        // Si el estado del pago es 'Pagado', marcamos las órdenes como 'Cobrado'
+        $estadoCobro = ($request->estado_pago === 'Pagado') ? 'Cobrado' : 'Pendiente';
+
+        Orden::whereIn('id', $ids)->update([
+            'cobro' => $estadoCobro
+        ]);
+
+        DB::commit();
+
+        return redirect()->route('pagos.inicio')->with('success', 'El registro se ha guardado como ' . $request->estado_pago);
+
+    } catch (\Exception $e) {
+        DB::rollback();
+        return back()->with('error', 'Error: ' . $e->getMessage());
     }
 }
 

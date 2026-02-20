@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Pago extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+    'usuario_id',
+    'fecha_pago',
+    'subtotal',
+    'descuento',
+    'nota_descuento',
+    'total',
+    'estado'
+];
 }

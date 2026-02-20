@@ -125,7 +125,37 @@
         padding: 0 !important;
     }
 </style>
+<style>
+    /* FORZAR GRIS CLARO: Atacamos el TD para que el fondo azul de la fila no se vea */
+    #tabla-usuarios tbody tr.selected td {
+        background-color: #f2f2f2 !important;
+        color: #333 !important;
+        box-shadow: none !important;
+    }
 
+    /* ICONO DE CHECK */
+    #tabla-usuarios tbody tr.selected td:first-child {
+        padding-left: 30px !important;
+        position: relative;
+    }
+
+    #tabla-usuarios tbody tr.selected td:first-child::before {
+        content: '\eb21'; 
+        font-family: 'boxicons';
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #198754;
+        font-size: 1.1rem;
+    }
+
+    /* Quitar el azul de selección de texto */
+    #tabla-usuarios {
+        user-select: none;
+        -webkit-user-select: none;
+    }
+</style>
 <div >
                     <!-- ========== Page Title Start ========== -->
                     <div class="row">
@@ -223,7 +253,9 @@
                                                 <td class="col-cobro" data-value="{{ $orden->cobro }}">{{ $orden->cobro }}</td>
                                                 <td class="col-precio" data-value="{{ $orden->precio }}">{{ number_format($orden->precio, 2) }}</td>
                                                 <td class="col-envio" data-value="{{ $orden->envio }}">{{ number_format($orden->envio, 2) }}</td>
-                                                <td class="col-total" data-value="{{ $orden->total }}">{{ number_format($orden->total, 2) }}</td>
+                                                <td class="col-total-valor" data-valor="{{ $orden->total }}">
+                                                    {{ number_format($orden->total, 2) }}
+                                                </td>
                                                 
                                                 <td class="acciones">
                                                     <button class="btn btn-sm btn-warning btn-editar">Editar</button>
@@ -264,18 +296,101 @@
                     </div>
                 </div>
 
+
+
+
+
+
+
+
+
+
+
+                <div class="modal fade" id="modalConfirmarPago" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-success text-white">
+                                <h5 class="modal-title text-white"><i class="bx bx-check-shield me-1"></i> Confirmar Registro de Pago</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form action="{{ route('pago.guardar_registro') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="ids_ordenes" id="modal_ids_ordenes">
+                                <div class="modal-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Usuario</label>
+                                            <input type="text" class="form-control bg-light" value="{{ Auth::user()->name }}" readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Fecha y Hora</label>
+                                            <input type="text" name="fecha_pago" class="form-control bg-light" value="{{ now()->format('d/m/Y H:i') }}" readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Subtotal</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">$</span>
+                                                <input type="number" step="0.01" name="subtotal" id="modal_subtotal" class="form-control fw-bold" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label text-danger">Descuento</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">$</span>
+                                                <input type="number" step="0.01" name="descuento" id="modal_descuento" class="form-control" value="0.00">
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Nota de descuento</label>
+                                            <textarea name="nota_descuento" class="form-control" rows="2" placeholder="Motivo del descuento (opcional)"></textarea>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label text-success fw-bold">Total a Cobrar</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-success text-white border-success">$</span>
+                                                <input type="number" step="0.01" name="total" id="modal_total_final" class="form-control form-control-lg border-success fw-bold text-success" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Estado de Pago</label>
+                                            <select name="estado_pago" class="form-select border-primary" required>
+                                                <option value="Pagado" selected>Pagado</option>
+                                                <option value="Revisado">Revisado</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-success px-4">Registrar Pago</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
 <script>
     window.onload = function() {
         if (typeof jQuery !== 'undefined') {
             $(document).ready(function() {
+                // 1. Inicializar DataTable
                 var table = $('#tabla-usuarios').DataTable({
                     "paging": true,
                     "info": true,
                     "pageLength": 10,
                     "lengthMenu": [5, 10, 25, 50],
                     "order": [[ 0, "asc" ]],
-                    // 't' es tabla, 'i' es info, 'p' es paginación. 
-                    // Los incluimos para que se generen y podamos moverlos.
                     "dom": 'tip', 
                     "language": {
                         "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json",
@@ -285,87 +400,133 @@
                         }
                     },
                     "drawCallback": function(settings) {
-                        // 1. Aplicamos el diseño redondeado de Reback
                         $('.dataTables_paginate > ul.pagination').addClass('pagination-rounded');
-                        
-                        // 2. MOVER los controles a tus contenedores externos
-                        var api = this.api();
-                        var container = $(api.table().container());
-                        
-                        // Inyectamos los elementos dentro de tus contenedores específicos
-                        $('#dt-info-container').append(container.find('.dataTables_info'));
-                        $('#dt-pagination-container').append(container.find('.dataTables_paginate'));
+                        var container = $(this.api().table().container());
+                        $('#dt-info-container').empty().append(container.find('.dataTables_info'));
+                        $('#dt-pagination-container').empty().append(container.find('.dataTables_paginate'));
                     }
                 });
 
-                // Buscador personalizado
+                // 2. Estado inicial del botón pagar
+                $('#btn-pagar').prop('disabled', true).addClass('btn-secondary').removeClass('btn-success');
+
+                // 3. Buscador personalizado
                 $('#search').on('keyup', function() {
                     table.search(this.value).draw();
                 });
 
-                $(document).on('click', '.btn-editar', function() {
-        let row = $(this).closest('tr');
-        
-        // Transformar Cobro EV en Select
-        let cobroVal = row.find('.col-cobro').data('value');
-        row.find('.col-cobro').html(`
-            <select class="form-select form-select-sm edit-cobro">
-                <option value="Pendiente" ${cobroVal == 'Pendiente' ? 'selected' : ''}>Pendiente</option>
-                <option value="Cobrado" ${cobroVal == 'Cobrado' ? 'selected' : ''}>Cobrado</option>
-            </select>
-        `);
+                // --- LÓGICA DE SELECCIÓN DE FILA (ESTO ES LO QUE FALTABA) ---
+                $('#tabla-usuarios tbody').on('click', 'tr', function(e) {
+                    // Si el clic fue en botones de acción o inputs, ignorar selección de fila
+                    if ($(e.target).closest('.acciones, input, select').length) {
+                        return;
+                    }
 
-        // Transformar Precio, Envio y Total en Inputs numéricos
-        transformToInput(row, '.col-precio', 'edit-precio');
-        transformToInput(row, '.col-envio', 'edit-envio');
-        transformToInput(row, '.col-total', 'edit-total');
+                    // Alternar clase selected
+                    $(this).toggleClass('selected');
+                    
+                    // Actualizar sumatoria
+                    actualizarTotalSeleccionado();
+                });
 
-        // Alternar botones
-        row.find('.btn-editar').addClass('d-none');
-        row.find('.btn-guardar, .btn-cancelar').removeClass('d-none');
-    });
+                // --- LÓGICA DE TOTALES ---
+                let subtotalActual = 0;
 
-    function transformToInput(row, selector, className) {
-        let val = row.find(selector).data('value');
-        row.find(selector).html(`<input type="number" step="0.01" class="form-control form-control-sm ${className}" value="${val}">`);
-    }
+                function actualizarTotalSeleccionado() {
+                    subtotalActual = 0;
+                    // Recorrer filas con clase 'selected'
+                    $('#tabla-usuarios tbody tr.selected').each(function() {
+                        let valor = parseFloat($(this).find('.col-total-valor').data('valor')) || 0;
+                        subtotalActual += valor;
+                    });
 
-    // EVENTO CANCELAR (Recargar la página o restaurar valores)
-    $(document).on('click', '.btn-cancelar', function() {
-        location.reload(); // La forma más segura de restaurar el estado original del DataTable
-    });
-
-    // EVENTO GUARDAR
-    $(document).on('click', '.btn-guardar', function() {
-        let row = $(this).closest('tr');
-        let id = row.data('id');
-        
-        let datos = {
-            _token: "{{ csrf_token() }}",
-            id: id,
-            cobro: row.find('.edit-cobro').val(),
-            precio: row.find('.edit-precio').val(),
-            envio: row.find('.edit-envio').val(),
-            total: row.find('.edit-total').val()
-        };
-
-        // Enviar vía AJAX al controlador
-        $.ajax({
-            url: "{{ route('pago.actualizar_orden_inline') }}", // Debes crear esta ruta
-            method: 'POST',
-            data: datos,
-            success: function(res) {
-                if(res.success) {
-                    Swal.fire('¡Actualizado!', res.message, 'success').then(() => location.reload());
-                } else {
-                    Swal.fire('Error', res.message, 'error');
+                    // Mostrar en el label de abajo
+                    $('#total-pagar').text('$ ' + subtotalActual.toLocaleString('en-US', { minimumFractionDigits: 2 }));
+                    
+                    // Habilitar/Deshabilitar botón pagar
+                    if (subtotalActual > 0) {
+                        $('#btn-pagar').prop('disabled', false).removeClass('btn-secondary').addClass('btn-success');
+                    } else {
+                        $('#btn-pagar').prop('disabled', true).addClass('btn-secondary').removeClass('btn-success');
+                    }
                 }
-            },
-            error: function() {
-                Swal.fire('Error', 'No se pudo conectar con el servidor', 'error');
-            }
-        });
-    });
+
+                // --- LÓGICA DEL MODAL ---
+                $('#btn-pagar').on('click', function() {
+                    let idsSeleccionados = [];
+                    $('#tabla-usuarios tbody tr.selected').each(function() {
+                        idsSeleccionados.push($(this).data('id'));
+                    });
+
+                    if (idsSeleccionados.length === 0) return;
+
+                    $('#modal_ids_ordenes').val(JSON.stringify(idsSeleccionados));
+                    $('#modal_subtotal').val(subtotalActual.toFixed(2));
+                    calcularTotalModal();
+
+                    const modalPago = new bootstrap.Modal(document.getElementById('modalConfirmarPago'));
+                    modalPago.show();
+                });
+
+                $('#modal_descuento').on('input', function() {
+                    calcularTotalModal();
+                });
+
+                function calcularTotalModal() {
+                    const subtotal = parseFloat($('#modal_subtotal').val()) || 0;
+                    const descuento = parseFloat($('#modal_descuento').val()) || 0;
+                    const total = subtotal - descuento;
+                    $('#modal_total_final').val(total.toFixed(2));
+                }
+
+                // --- LÓGICA DE EDICIÓN INLINE ---
+                $(document).on('click', '.btn-editar', function() {
+                    let row = $(this).closest('tr');
+                    let cobroVal = row.find('.col-cobro').data('value');
+                    
+                    row.find('.col-cobro').html(`
+                        <select class="form-select form-select-sm edit-cobro">
+                            <option value="Pendiente" ${cobroVal == 'Pendiente' ? 'selected' : ''}>Pendiente</option>
+                            <option value="Cobrado" ${cobroVal == 'Cobrado' ? 'selected' : ''}>Cobrado</option>
+                        </select>
+                    `);
+
+                    transformToInput(row, '.col-precio', 'edit-precio');
+                    transformToInput(row, '.col-envio', 'edit-envio');
+                    transformToInput(row, '.col-total-valor', 'edit-total');
+
+                    row.find('.btn-editar').addClass('d-none');
+                    row.find('.btn-guardar, .btn-cancelar').removeClass('d-none');
+                });
+
+                function transformToInput(row, selector, className) {
+                    let val = row.find(selector).data('value');
+                    row.find(selector).html(`<input type="number" step="0.01" class="form-control form-control-sm ${className}" value="${val}">`);
+                }
+
+                $(document).on('click', '.btn-cancelar', function() {
+                    location.reload();
+                });
+
+                $(document).on('click', '.btn-guardar', function() {
+                    let row = $(this).closest('tr');
+                    let datos = {
+                        _token: "{{ csrf_token() }}",
+                        id: row.data('id'),
+                        cobro: row.find('.edit-cobro').val(),
+                        precio: row.find('.edit-precio').val(),
+                        envio: row.find('.edit-envio').val(),
+                        total: row.find('.edit-total').val()
+                    };
+
+                    $.post("{{ route('pago.actualizar_orden_inline') }}", datos, function(res) {
+                        if(res.success) {
+                            Swal.fire('¡Éxito!', res.message, 'success').then(() => location.reload());
+                        } else {
+                            Swal.fire('Error', res.message, 'error');
+                        }
+                    });
+                });
             });
         }
     };
