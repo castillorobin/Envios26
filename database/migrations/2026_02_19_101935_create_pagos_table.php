@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('nota_descuento')->nullable();
             $table->decimal('total', 10, 2);
             $table->string('estado')->nullable(); 
+            $table->string('comercio')->nullable(); 
             $table->timestamps();
         });
     }

@@ -49,7 +49,7 @@ class OrdenController extends Controller
             'comercio' => $guia->comercio,
             'direccion' => $comercio ? $comercio->direccion : ''
         ]);
-    }
+    } 
 
     return response()->json(['success' => false, 'message' => 'Guía no encontrada']);
 }
@@ -99,6 +99,7 @@ class OrdenController extends Controller
         'envio'         => $request->input('precio_envio'),
         'nota'          => $request->input('nota'),
         'punto'         => $puntoId,
+        'pago'          => $request->input('estado_pago') // Guardamos el estado del pago
     ]);
 
     // --- LÓGICA DE RESPUESTA ---

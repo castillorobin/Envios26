@@ -33,7 +33,8 @@ class Orden extends Model
         'rack',
         'nivel',
         'gondola',
-        'entrega',  
+        'entrega',
+        'pago' // Nuevo campo para el estado del pago  
     ];
 
     public function comercioRel() {

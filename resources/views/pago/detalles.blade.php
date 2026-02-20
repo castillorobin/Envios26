@@ -226,7 +226,8 @@
                                                 <th>Cobro EV</th>
                                                 <th>Precio</th>
                                                 <th>Envio</th>
-                                                <th>Total a remunerar</th>
+                                                <th>To. a remunerar</th>
+                                                <th>Est. del pago</th>
                                                 <th>Acciones</th>
 
                                             </tr>
@@ -256,6 +257,14 @@
                                                 <td class="col-total-valor" data-valor="{{ $orden->total }}">
                                                     {{ number_format($orden->total, 2) }}
                                                 </td>
+                                                <td>
+                                                    @switch($orden->pago)
+                                                        @case('Por pagar') <span class="badge text-bg-danger">Por pagar</span> @break
+                                                        @case('Pagado') <span class="badge text-bg-success">Pagado</span> @break
+                                                        @default <span class="badge text-bg-light">{{ $orden->pago }}</span>
+                                                    @endswitch  
+                                                </td>
+
                                                 
                                                 <td class="acciones">
                                                     <button class="btn btn-sm btn-warning btn-editar">Editar</button>
@@ -283,8 +292,8 @@
                                         <div id="dt-pagination-container"></div>
                                     </div>
                                     <div style="margin-top: 10px; float: right; font-size: 1.25rem;">
-                                    Total a pagar: <strong id="total-pagar">$ 0.00</strong>
-                                    <button class="btn btn-md btn-success" id="btn-pagar" style="margin-left: 10px;">Pagar</button>
+                                    Total a remunerar: <strong id="total-pagar">$ 0.00</strong>
+                                    <button class="btn btn-md btn-success" id="btn-pagar" style="margin-left: 10px;">Pago</button>
                                     </div>
                                 </div>
                                 
@@ -345,7 +354,7 @@
                                             <textarea name="nota_descuento" class="form-control" rows="2" placeholder="Motivo del descuento (opcional)"></textarea>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label text-success fw-bold">Total a Cobrar</label>
+                                            <label class="form-label text-success fw-bold">Total a Remunerar</label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-success text-white border-success">$</span>
                                                 <input type="number" step="0.01" name="total" id="modal_total_final" class="form-control form-control-lg border-success fw-bold text-success" readonly>
@@ -358,6 +367,7 @@
                                                 <option value="Revisado">Revisado</option>
                                             </select>
                                         </div>
+                                        <input type="text" name="comercio" value="{{ $recepcion->datosComercio ? $recepcion->datosComercio->nombre : 'Comercio no encontrado' }}" class="d-none">
                                     </div>
                                 </div>
                                 <div class="modal-footer">

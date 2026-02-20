@@ -106,17 +106,26 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-lg-6 mb-3">
+                            <div class="col-lg-4 mb-3">
                                 <label class="form-label">Fecha de entrega</label>
                                <!-- <input type="text" name="fecha_entrega" class="form-control" placeholder="Ingrese la fecha de entrega">-->
                                 <input type="text" id="humanfd-datepicker" name="fecha_entrega" class="form-control" placeholder="{{ today()->format('F j, Y') }}">
                             </div>
-                            <div class="col-lg-6 mb-3">
+                            <div class="col-lg-4 mb-3">
                                 <label class="form-label">Cobro del envío</label>
                                 <select name="cobro_envio" id="cobro_envio" class="form-control">
                                     <option value="" disabled selected>Seleccione una opción</option>
                                     <option value="Cobrado">Cobrado</option>
                                     <option value="Por cobrar">Por cobrar</option>
+                                </select>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <label class="form-label">Estado del pago</label>
+                                <select name="estado_pago" id="estado_pago" class="form-control">
+                                    <option value="" disabled selected>Seleccione una opción</option>
+                                    <option value="Pagado">Pagado</option>
+                                    <option value="Por pagar">Por pagar</option>
                                 </select>
                             </div>
                             

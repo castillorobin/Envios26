@@ -85,6 +85,7 @@ class PagoController extends Controller
         $pago->nota_descuento = $request->nota_descuento;
         $pago->total          = $request->total;
         $pago->estado         = $request->estado_pago; // Aquí guarda "Pagado" o "Revisado"
+        $pago->comercio       = $request->comercio; // Guardar el nombre del comercio
         $pago->save();
 
         // 2. Actualizar las Órdenes de forma masiva
@@ -92,7 +93,7 @@ class PagoController extends Controller
         $estadoCobro = ($request->estado_pago === 'Pagado') ? 'Cobrado' : 'Pendiente';
 
         Orden::whereIn('id', $ids)->update([
-            'cobro' => $estadoCobro
+            'pago' => $estadoCobro
         ]);
 
         DB::commit();
@@ -104,6 +105,20 @@ class PagoController extends Controller
         return back()->with('error', 'Error: ' . $e->getMessage());
     }
 }
+
+    public function reparto()
+    {
+        //$repartos = Pago::with('usuario')->where('estado', 'Pagado')->get();
+        return view('pago.reparto');
+    }
+    public function crearreparto(Request $request)
+    {
+        // Aquí puedes implementar la lógica para crear un nuevo reparto
+        // Por ejemplo, podrías mostrar un formulario para ingresar los detalles del reparto
+        $idticket = $request->query('caja'); // Obtener el número de ticket desde la URL
+        $ticket = Pago::where('id', $idticket)->first(); // Buscar el ticket en la base de datos
+        return view('pago.crearreparto', compact('ticket')  );
+    }
 
     /**
      * Show the form for creating a new resource.

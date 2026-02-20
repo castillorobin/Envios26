@@ -280,3 +280,7 @@ Route::get('pago', [App\Http\Controllers\PagoController::class, 'index'] )->name
 Route::get('/pago/crearpago', [PagoController::class, 'crearPago'])->name('pago.crearpago');
 Route::post('/pago/actualizar-orden-inline', [App\Http\Controllers\PagoController::class, 'actualizarOrdenInline'])->name('pago.actualizar_orden_inline');
 Route::post('/pago/guardar-registro', [App\Http\Controllers\PagoController::class, 'guardarRegistro'])->name('pago.guardar_registro');
+
+//Reparto
+Route::get('/reparto', [App\Http\Controllers\PagoController::class, 'reparto'])->name('reparto.inicio');
+Route::get('/reparto/crearpago', [PagoController::class, 'crearreparto'])->name('reparto.crearreparto');
