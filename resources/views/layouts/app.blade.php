@@ -1180,19 +1180,47 @@
                                         >
                                     </li>
 
-                                    <li class="sub-nav-item">
-                                        <a
-                                            class="sub-nav-link"
-                                            href="/reparto"
-                                            >Reparto</a
-                                        >
-                                    </li>
+                                    
                                   
                                     
                                    
 
                                     
                                 </ul>
+
+                                 <li class="nav-item">
+                            <a
+                                class="nav-link menu-arrow"
+                                href="#sidebarEcommerce4"
+                                data-bs-toggle="collapse"
+                                role="button"
+                                aria-expanded="false"
+                                aria-controls="sidebarEcommerce4"
+                            >
+                                <span class="nav-icon">
+                                    <iconify-icon
+                                        icon="iconamoon:delivery-fill"
+                                    ></iconify-icon>
+                                </span>
+                                <span class="nav-text"> Repartidores </span>
+                            </a>
+                            <div class="collapse" id="sidebarEcommerce4">
+                                <ul class="nav sub-navbar-nav">
+                                    <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
+                                            href="/reparto"
+                                            >Pagos</a
+                                        >
+                                    </li>
+                                   
+                                   
+
+                                    
+                                </ul>
+                            </div>
+                        </li>
+
 
                         <li class="nav-item">
                             <a class="nav-link" href="/usuarios">
