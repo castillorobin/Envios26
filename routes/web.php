@@ -278,3 +278,4 @@ Route::get('/ordenes/buscar-guia-entrega', [App\Http\Controllers\EntregaControll
 //Pago de tickets
 Route::get('pago', [App\Http\Controllers\PagoController::class, 'index'] )->name('pagos.inicio') ;
 Route::get('/pago/crearpago', [PagoController::class, 'crearPago'])->name('pago.crearpago');
+Route::post('/pago/actualizar-orden-inline', [App\Http\Controllers\PagoController::class, 'actualizarOrdenInline'])->name('pago.actualizar_orden_inline');

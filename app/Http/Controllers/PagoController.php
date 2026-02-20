@@ -39,6 +39,23 @@ class PagoController extends Controller
         return view('pago.detalles', compact('recepcion', 'ordenes'));
     }
 
+    public function actualizarOrdenInline(Request $request)
+{
+    try {
+        $orden = \App\Models\Orden::findOrFail($request->id);
+        $orden->update([
+            'cobro'  => $request->cobro,
+            'precio' => $request->precio,
+            'envio'  => $request->envio,
+            'total'  => $request->total,
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Datos de la guía actualizados.']);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()]);
+    }
+}
+
     /**
      * Show the form for creating a new resource.
      *

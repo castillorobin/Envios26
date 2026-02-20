@@ -126,7 +126,7 @@
     }
 </style>
 
-<div class="container-xxl">
+<div >
                     <!-- ========== Page Title Start ========== -->
                     <div class="row">
                         <div class="col-12">
@@ -190,30 +190,47 @@
                                                 <td># de guia</td>
                                                 <th>Destinatario</th>                                                
                                                 <th>Destino</th>
-                                                <th>Direccion</th>
+                                                <th>Fecha de entrega</th>
                                                 <th>Tipo</th>
                                                 <th>Status</th>
-                                                <th>Cobro del envio</th>
+                                                <th>Cobro EV</th>
                                                 <th>Precio</th>
                                                 <th>Envio</th>
                                                 <th>Total a remunerar</th>
+                                                <th>Acciones</th>
 
                                             </tr>
                                         </thead>
                                         <!-- end thead-->
                                         <tbody>
                                             @foreach($ordenes as $orden)
-                                            <tr>    
+                                            <tr data-id="{{ $orden->id }}">    
                                                 <td>{{ $orden->guia }}</td>
                                                 <td>{{ $orden->destinatario }}</td>
                                                 <td>{{ $orden->destino }}</td>
-                                                <td>{{ $orden->direccion }}</td>
-                                                <td>{{ $orden->tipo }}</td>
-                                                <td>{{ $orden->estado }}</td>
-                                                <td>{{ $orden->cobro }}</td>
-                                                <td>{{ $orden->precio }}</td>
-                                                <td>{{ $orden->envio }}</td>
-                                                <td>{{ $orden->total }}</td>
+                                                <td>{{ $orden->fecha_entrega }}</td>
+                                                <td><span class="badge text-bg-dark">{{ $orden->tipo }}</span></td>
+                                                <td>
+                                                    @switch($orden->estado)
+                                                        @case('Recepcionado') <span class="badge text-bg-secondary">Recepcionado</span> @break
+                                                        @case('Creado') <span class="badge text-bg-primary">Creado</span> @break
+                                                        @case('No entregado') <span class="badge text-bg-danger">No entregado</span> @break
+                                                        @case('Fallido') <span class="badge text-bg-warning">Fallido</span> @break
+                                                        @case('Entregado') <span class="badge text-bg-success">Entregado</span> @break
+                                                        @default <span class="badge text-bg-light">{{ $orden->estado }}</span>
+                                                    @endswitch
+                                                </td>
+                                                <td class="col-cobro" data-value="{{ $orden->cobro }}">{{ $orden->cobro }}</td>
+                                                <td class="col-precio" data-value="{{ $orden->precio }}">{{ number_format($orden->precio, 2) }}</td>
+                                                <td class="col-envio" data-value="{{ $orden->envio }}">{{ number_format($orden->envio, 2) }}</td>
+                                                <td class="col-total" data-value="{{ $orden->total }}">{{ number_format($orden->total, 2) }}</td>
+                                                
+                                                <td class="acciones">
+                                                    <button class="btn btn-sm btn-warning btn-editar">Editar</button>
+                                                    <button class="btn btn-sm btn-success btn-guardar d-none">Guardar</button>
+                                                    <button class="btn btn-sm btn-secondary btn-cancelar d-none">Cancelar</button>
+
+                                                </td>
                                             </tr>
                                             @endforeach
 
@@ -279,6 +296,70 @@
                 $('#search').on('keyup', function() {
                     table.search(this.value).draw();
                 });
+
+                $(document).on('click', '.btn-editar', function() {
+        let row = $(this).closest('tr');
+        
+        // Transformar Cobro EV en Select
+        let cobroVal = row.find('.col-cobro').data('value');
+        row.find('.col-cobro').html(`
+            <select class="form-select form-select-sm edit-cobro">
+                <option value="Pendiente" ${cobroVal == 'Pendiente' ? 'selected' : ''}>Pendiente</option>
+                <option value="Cobrado" ${cobroVal == 'Cobrado' ? 'selected' : ''}>Cobrado</option>
+            </select>
+        `);
+
+        // Transformar Precio, Envio y Total en Inputs numéricos
+        transformToInput(row, '.col-precio', 'edit-precio');
+        transformToInput(row, '.col-envio', 'edit-envio');
+        transformToInput(row, '.col-total', 'edit-total');
+
+        // Alternar botones
+        row.find('.btn-editar').addClass('d-none');
+        row.find('.btn-guardar, .btn-cancelar').removeClass('d-none');
+    });
+
+    function transformToInput(row, selector, className) {
+        let val = row.find(selector).data('value');
+        row.find(selector).html(`<input type="number" step="0.01" class="form-control form-control-sm ${className}" value="${val}">`);
+    }
+
+    // EVENTO CANCELAR (Recargar la página o restaurar valores)
+    $(document).on('click', '.btn-cancelar', function() {
+        location.reload(); // La forma más segura de restaurar el estado original del DataTable
+    });
+
+    // EVENTO GUARDAR
+    $(document).on('click', '.btn-guardar', function() {
+        let row = $(this).closest('tr');
+        let id = row.data('id');
+        
+        let datos = {
+            _token: "{{ csrf_token() }}",
+            id: id,
+            cobro: row.find('.edit-cobro').val(),
+            precio: row.find('.edit-precio').val(),
+            envio: row.find('.edit-envio').val(),
+            total: row.find('.edit-total').val()
+        };
+
+        // Enviar vía AJAX al controlador
+        $.ajax({
+            url: "{{ route('pago.actualizar_orden_inline') }}", // Debes crear esta ruta
+            method: 'POST',
+            data: datos,
+            success: function(res) {
+                if(res.success) {
+                    Swal.fire('¡Actualizado!', res.message, 'success').then(() => location.reload());
+                } else {
+                    Swal.fire('Error', res.message, 'error');
+                }
+            },
+            error: function() {
+                Swal.fire('Error', 'No se pudo conectar con el servidor', 'error');
+            }
+        });
+    });
             });
         }
     };
