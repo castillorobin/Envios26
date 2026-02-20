@@ -234,13 +234,15 @@
                                             </tr>
                                             @endforeach
 
-                                           
+                                          
                                         </tbody>
+
+                                       
                                         <!-- end tbody -->
                                     </table>
                                     <!-- end table -->
 
-                                   
+                                    
                                 </div>
 
                                 <div class="card-footer bg-transparent border-top">
@@ -248,8 +250,12 @@
                                         <div id="dt-info-container"></div>
                                         <div id="dt-pagination-container"></div>
                                     </div>
+                                    <div style="margin-top: 10px; float: right; font-size: 1.25rem;">
+                                    Total a pagar: <strong id="total-pagar">$ 0.00</strong>
+                                    <button class="btn btn-md btn-success" id="btn-pagar" style="margin-left: 10px;">Pagar</button>
+                                    </div>
                                 </div>
-                               
+                                
                             </div>
                             <!-- end card -->
                         </div>
