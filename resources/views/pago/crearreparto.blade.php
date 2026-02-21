@@ -38,7 +38,8 @@
                                                Comercio
                                             </h5>
                                             <p class="text-muted mb-0">
-                                                {{ $ticket->comercio }}
+                                                
+                                                {{ $ticket->datosComercio ? $ticket->datosComercio->nombre : 'Comercio no encontrado' }}
                                             </p>
                                         </div>
                                     </div>

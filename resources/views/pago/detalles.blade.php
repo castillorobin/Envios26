@@ -235,6 +235,7 @@
                                         <!-- end thead-->
                                         <tbody>
                                             @foreach($ordenes as $orden)
+                                            @if($orden->pago != 'Pagado')
                                             <tr data-id="{{ $orden->id }}">    
                                                 <td>{{ $orden->guia }}</td>
                                                 <td>{{ $orden->destinatario }}</td>
@@ -273,6 +274,7 @@
 
                                                 </td>
                                             </tr>
+                                            @endif
                                             @endforeach
 
                                           
@@ -325,6 +327,7 @@
                             <form action="{{ route('pago.guardar_registro') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="ids_ordenes" id="modal_ids_ordenes">
+                                <input type="text" name="recepcion_id" value="{{ $recepcion->id }}" class="d-none">
                                 <div class="modal-body">
                                     <div class="row g-3">
                                         <div class="col-md-6">
