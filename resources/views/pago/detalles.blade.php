@@ -492,30 +492,56 @@
                     $('#modal_total_final').val(total.toFixed(2));
                 }
 
-                // --- LÓGICA DE EDICIÓN INLINE ---
-                $(document).on('click', '.btn-editar', function() {
-                    let row = $(this).closest('tr');
-                    let cobroVal = row.find('.col-cobro').data('value');
-                    
-                    row.find('.col-cobro').html(`
-                        <select class="form-select form-select-sm edit-cobro">
-                            <option value="Pendiente" ${cobroVal == 'Pendiente' ? 'selected' : ''}>Pendiente</option>
-                            <option value="Cobrado" ${cobroVal == 'Cobrado' ? 'selected' : ''}>Cobrado</option>
-                        </select>
-                    `);
+                // --- LÓGICA DE EDICIÓN INLINE CON CÁLCULO AUTOMÁTICO ---
+$(document).on('click', '.btn-editar', function() {
+    let row = $(this).closest('tr');
+    let cobroVal = row.find('.col-cobro').data('value');
+    
+    // 1. Transformar Cobro EV en Select
+    row.find('.col-cobro').html(`
+        <select class="form-select form-select-sm edit-cobro">
+            <option value="Pendiente" ${cobroVal == 'Pendiente' ? 'selected' : ''}>Pendiente</option>
+            <option value="Cobrado" ${cobroVal == 'Cobrado' ? 'selected' : ''}>Cobrado</option>
+        </select>
+    `);
 
-                    transformToInput(row, '.col-precio', 'edit-precio');
-                    transformToInput(row, '.col-envio', 'edit-envio');
-                    transformToInput(row, '.col-total-valor', 'edit-total');
+    // 2. Transformar Precio, Envio y Total en Inputs
+    transformToInput(row, '.col-precio', 'edit-precio');
+    transformToInput(row, '.col-envio', 'edit-envio');
+    
+    // El total lo ponemos como readonly porque se calcula solo
+    let totalVal = row.find('.col-total-valor').data('valor');
+    row.find('.col-total-valor').html(`<input type="number" step="0.01" class="form-control form-control-sm edit-total bg-light" value="${totalVal}" readonly>`);
 
-                    row.find('.btn-editar').addClass('d-none');
-                    row.find('.btn-guardar, .btn-cancelar').removeClass('d-none');
-                });
+    // 3. Alternar botones
+    row.find('.btn-editar').addClass('d-none');
+    row.find('.btn-guardar, .btn-cancelar').removeClass('d-none');
+});
 
-                function transformToInput(row, selector, className) {
-                    let val = row.find(selector).data('value');
-                    row.find(selector).html(`<input type="number" step="0.01" class="form-control form-control-sm ${className}" value="${val}">`);
-                }
+// FUNCIÓN DE CÁLCULO DINÁMICO
+$(document).on('change input', '.edit-cobro, .edit-precio, .edit-envio', function() {
+    let row = $(this).closest('tr');
+    let cobro = row.find('.edit-cobro').val();
+    let precio = parseFloat(row.find('.edit-precio').val()) || 0;
+    let envio = parseFloat(row.find('.edit-envio').val()) || 0;
+    let totalRemunerar = 0;
+
+    if (cobro === 'Pendiente') {
+        // Pendiente: Precio + Envío
+        totalRemunerar = precio + envio;
+    } else {
+        // Cobrado: Solo Precio
+        totalRemunerar = precio;
+    }
+
+    // Actualizar el valor en el input del total
+    row.find('.edit-total').val(totalRemunerar.toFixed(2));
+});
+
+function transformToInput(row, selector, className) {
+    let val = row.find(selector).data('value');
+    row.find(selector).html(`<input type="number" step="0.01" class="form-control form-control-sm ${className}" value="${val}">`);
+}
 
                 $(document).on('click', '.btn-cancelar', function() {
                     location.reload();
