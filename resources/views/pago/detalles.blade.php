@@ -327,7 +327,7 @@
                             <form action="{{ route('pago.guardar_registro') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="ids_ordenes" id="modal_ids_ordenes">
-                                <input type="text" name="recepcion_id" value="{{ $recepcion->id }}" class="d-none">
+                                <input type="number" name="recepcion_id" value="{{ $recepcion->id }}" class="d-none">
                                 <div class="modal-body">
                                     <div class="row g-3">
                                         <div class="col-md-6">
@@ -528,7 +528,7 @@ $(document).on('change input', '.edit-cobro, .edit-precio, .edit-envio', functio
 
     if (cobro === 'Pendiente') {
         // Pendiente: Precio + Envío
-        totalRemunerar = precio + envio;
+        totalRemunerar = precio - envio;
     } else {
         // Cobrado: Solo Precio
         totalRemunerar = precio;
