@@ -89,10 +89,9 @@ class PagoController extends Controller
         $pago->recepcion_id    = $request->recepcion_id; // Guardar la relación con la recepción
         $pago->save();
 
-        Recepcion::whereIn('id', $request->recepcion_id)->update([
-                
-                'status' => $request->estado_pago
-            ]);
+        Recepcion::where('id', $request->recepcion_id)->update([
+    'status' => $request->estado_pago
+]);
 
 
         // 2. Actualizar las Órdenes de forma masiva
