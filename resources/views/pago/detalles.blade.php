@@ -258,9 +258,9 @@
                                                 <td class="col-total-valor" data-valor="{{ $orden->total }}">
                                                     {{ number_format($orden->total, 2) }}
                                                 </td>
-                                                <td>
+                                                <td class="col-pago" data-value="{{ $orden->pago }}">
                                                     @switch($orden->pago)
-                                                        @case('Por pagar') <span class="badge text-bg-danger">Por pagar</span> @break
+                                                        @case('Pendiente') <span class="badge text-bg-danger">Pendiente</span> @break
                                                         @case('Pagado') <span class="badge text-bg-success">Pagado</span> @break
                                                         @default <span class="badge text-bg-light">{{ $orden->pago }}</span>
                                                     @endswitch  
@@ -505,6 +505,13 @@ $(document).on('click', '.btn-editar', function() {
         </select>
     `);
 
+    row.find('.col-pago').html(`
+        <select class="form-select form-select-sm edit-pago">
+            <option value="Pendiente" ${cobroVal == 'Pendiente' ? 'selected' : ''}>Pendiente</option>
+            <option value="Pagado" ${cobroVal == 'Pagado' ? 'selected' : ''}>Pagado</option>
+        </select>
+    `);
+
     // 2. Transformar Precio, Envio y Total en Inputs
     transformToInput(row, '.col-precio', 'edit-precio');
     transformToInput(row, '.col-envio', 'edit-envio');
@@ -555,7 +562,8 @@ function transformToInput(row, selector, className) {
                         cobro: row.find('.edit-cobro').val(),
                         precio: row.find('.edit-precio').val(),
                         envio: row.find('.edit-envio').val(),
-                        total: row.find('.edit-total').val()
+                        total: row.find('.edit-total').val(),
+                        pago: row.find('.edit-pago').val()
                     };
 
                     $.post("{{ route('pago.actualizar_orden_inline') }}", datos, function(res) {

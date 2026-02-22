@@ -17,6 +17,7 @@ class Pago extends Model
     'nota_descuento',
     'total',
     'estado',
-    'comercio'
+    'comercio', 
+    'recepcion_id'
 ];
 }

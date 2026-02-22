@@ -50,6 +50,7 @@ class PagoController extends Controller
             'precio' => $request->precio,
             'envio'  => $request->envio,
             'total'  => $request->total,
+            'pago'   => $request->pago
         ]);
 
         return response()->json(['success' => true, 'message' => 'Datos de la guía actualizados.']);
