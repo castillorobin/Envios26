@@ -48,6 +48,45 @@
                                     <div class="card d-inline-block">
                                         <div class="card-body">
                                             <h5 class="mt-0 fs-16">
+                                               Estado del ticket
+                                            </h5>
+                                            <p class="text-muted mb-0">
+                                                
+                                                {{ $ticket->status }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="left-timeline-list">
+                                    <div class="card d-inline-block">
+                                        <div class="card-body">
+                                            <h5 class="mt-0 fs-16">
+                                               Fecha de verificación
+                                            </h5>
+                                            <p class="text-muted mb-0">
+                                                
+                                                {{ $ticket->updated_at ? $ticket->updated_at->format('d/m/Y H:i') : 'Sin fecha de verificación' }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="left-timeline-list">
+                                    <div class="card d-inline-block">
+                                        <div class="card-body">
+                                            <h5 class="mt-0 fs-16">
+                                               Usuario que verificó
+                                            </h5>
+                                            <p class="text-muted mb-0">
+                                                
+                                                {{ $ticket->usuario }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="left-timeline-list">
+                                    <div class="card d-inline-block">
+                                        <div class="card-body">
+                                            <h5 class="mt-0 fs-16">
                                                Total a pagar
                                             </h5>
                                             <p class="text-muted mb-0">
