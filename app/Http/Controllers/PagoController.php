@@ -204,11 +204,11 @@ class PagoController extends Controller
 
         DB::commit();
 
-        return redirect()->route('inicio')->with('success', 'Pago procesado y ticket liquidado correctamente.');
+        return redirect()->route('reparto.inicio')->with('success', 'Pago procesado y ticket liquidado correctamente.');
 
     } catch (\Exception $e) {
         DB::rollback();
-        return back()->with('error', 'Error al procesar la liquidación: ' . $e->getMessage());
+        return back()->with('error', 'Error al procesar el pago: ' . $e->getMessage());
     }
 }
 
