@@ -287,3 +287,5 @@ Route::get('/reparto/crearpago', [PagoController::class, 'crearreparto'])->name(
 Route::get('/reparto/pagoticket/{id}', [App\Http\Controllers\PagoController::class, 'pagoticket'] )->name('reparto.pagoticket') ;
 Route::post('/reparto/guardar-registro', [App\Http\Controllers\PagoController::class, 'guardarRegistroreparto'])->name('reparto.guardar_registro');
 
+Route::get('/reparto/repartidor', [App\Http\Controllers\RepartoController::class, 'index'])->name('reparto.repartidor');
+
