@@ -98,7 +98,9 @@
                                
                             </ul>
                             <p></p>
+                            @if($ticket->status === 'Revisado')
                             <button class="btn btn-primary" onclick="window.location.href='/reparto/pagoticket?caja={{ $ticket->id }}'" style="margin-top: 20px;">Pagar Ticket</button>
+                            @endif
                         </div>
                         <!-- end col -->
                     </div>
