@@ -120,14 +120,97 @@ class PagoController extends Controller
         return view('pago.reparto');
     }
     public function crearreparto(Request $request)
-    {
-        // Aquí puedes implementar la lógica para crear un nuevo reparto
-        // Por ejemplo, podrías mostrar un formulario para ingresar los detalles del reparto
-        $idticket = $request->query('caja'); // Obtener el número de ticket desde la URL
-        //$ticket = Recepcion::where('codigo', $idticket)->first(); // Buscar el ticket en la base de datos
-        $ticket = Recepcion::with('datosComercio')->where('codigo', $idticket)->first();
-        return view('pago.crearreparto', compact('ticket')  );
+{
+    $idticket = $request->query('caja'); 
+    
+    $ticket = Recepcion::with('datosComercio')->where('codigo', $idticket)->first();
+
+    if (!$ticket) {
+        return back()->with('error', 'Ticket no encontrado.');
     }
+
+    // Buscamos las órdenes vinculadas a este ticket que están en estado "Revisado"
+    $ordenesRevisadas = \App\Models\Orden::where('recepcion_id', $ticket->id)
+                                        ->where('pago', 'Revisado') // Ajustado a tu campo 'pago'
+                                        ->get();
+
+    // Calculamos el subtotal (suma del campo total de las órdenes revisadas)
+    $subtotal = $ordenesRevisadas->sum('total');
+
+    // También pasamos los IDs de estas órdenes para procesarlas luego
+    $idsOrdenes = $ordenesRevisadas->pluck('id')->toArray();
+
+    return view('pago.crearreparto', compact('ticket', 'subtotal', 'idsOrdenes'));
+}
+
+    public function pagoticket($id)
+    {
+        $ticket = Recepcion::with('datosComercio')->where('codigo', $id)->first();
+        if (!$ticket) {
+            return back()->with('error', 'El ticket de recepción no existe.');
+        }
+
+        Recepcion::where('id', $ticket->id)->update([
+                'status' => 'Pagado'
+            ]);
+
+        return view('pago.pagoticket', compact('ticket'));
+    }
+
+
+    public function guardarRegistroreparto(Request $request)
+{
+    // Validaciones básicas
+    $request->validate([
+        'recepcion_id' => 'required|exists:recepcions,id',
+        'ids_ordenes'  => 'required',
+        'subtotal'     => 'required|numeric',
+        'total'        => 'required|numeric',
+    ]);
+
+    $comercionombre = Comercio::where('id', $request->comercio)->value('nombre');
+
+    try {
+        DB::beginTransaction();
+
+        // 1. Decodificar los IDs de las órdenes que vienen del campo oculto del modal
+        $ids = json_decode($request->ids_ordenes);
+
+        // 2. Crear el registro en el modelo Pago
+        $pago = new \App\Models\Pago();
+        $pago->usuario_id     = Auth::id();
+        $pago->fecha_pago     = now();
+        $pago->subtotal       = $request->subtotal;
+        $pago->descuento      = $request->descuento ?? 0;
+        $pago->nota_descuento = $request->nota_descuento;
+        $pago->total          = $request->total;
+        $pago->estado         = 'Pagado';
+        $pago->comercio       = $comercionombre; // Guardar el nombre del comercio
+        $pago->recepcion_id    = $request->recepcion_id;
+        // Si tu modelo Pago tiene relacion con Recepcion:
+        // $pago->recepcion_id = $request->recepcion_id; 
+        $pago->save();
+
+        // 3. Actualizar el Ticket de Recepción a "Pagado"
+        $recepcion = \App\Models\Recepcion::find($request->recepcion_id);
+        $recepcion->status = 'Pagado'; // Cambiamos el status del ticket
+        $recepcion->save();
+
+        // 4. Actualizar las Órdenes relacionadas
+        // Cambiamos el campo 'cobro' (o 'pago' según tu DB) a Pagado
+        \App\Models\Orden::whereIn('id', $ids)->update([
+            'pago' => 'Pagado' 
+        ]);
+
+        DB::commit();
+
+        return redirect()->route('inicio')->with('success', 'Pago procesado y ticket liquidado correctamente.');
+
+    } catch (\Exception $e) {
+        DB::rollback();
+        return back()->with('error', 'Error al procesar la liquidación: ' . $e->getMessage());
+    }
+}
 
     /**
      * Show the form for creating a new resource.

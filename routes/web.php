@@ -284,3 +284,6 @@ Route::post('/pago/guardar-registro', [App\Http\Controllers\PagoController::clas
 //Reparto
 Route::get('/reparto', [App\Http\Controllers\PagoController::class, 'reparto'])->name('reparto.inicio');
 Route::get('/reparto/crearpago', [PagoController::class, 'crearreparto'])->name('reparto.crearreparto');
+Route::get('/reparto/pagoticket/{id}', [App\Http\Controllers\PagoController::class, 'pagoticket'] )->name('reparto.pagoticket') ;
+Route::post('/reparto/guardar-registro', [App\Http\Controllers\PagoController::class, 'guardarRegistroreparto'])->name('reparto.guardar_registro');
+
