@@ -45,4 +45,28 @@ class RepartoController extends Controller
 
     return view('reparto.reparto', compact('guias', 'totales', 'unidad'));
 }
+
+    public function noEntregados()
+    {
+        
+
+        return view('reparto.noentregados');
+    }
+
+    public function verificarNoEntregado(Request $request)
+        {
+            $guia = $request->guia;
+
+            // Cargamos la relación del comercio (asumiendo que se llama comercioRel)
+            $envio = Orden::with('comercioRel')->where('guia', $guia)->first();
+
+            if (!$envio) {
+                return response()->json(['exists' => false]);
+            }
+
+            return response()->json([
+                'exists' => true,
+                'envio'  => $envio // Laravel convertirá automáticamente el modelo y su relación a JSON
+            ]);
+        }
 }

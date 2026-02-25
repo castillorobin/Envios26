@@ -1221,6 +1221,14 @@
                                             >Mis Repartos</a
                                         >
                                     </li>
+
+                                    <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
+                                            href="/reparto/no-entregados"
+                                            >No entregados</a
+                                        >
+                                    </li>
                                    
                                    
 

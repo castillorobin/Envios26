@@ -288,4 +288,7 @@ Route::get('/reparto/pagoticket/{id}', [App\Http\Controllers\PagoController::cla
 Route::post('/reparto/guardar-registro', [App\Http\Controllers\PagoController::class, 'guardarRegistroreparto'])->name('reparto.guardar_registro');
 
 Route::get('/reparto/repartidor', [App\Http\Controllers\RepartoController::class, 'index'])->name('reparto.repartidor');
+Route::get('/reparto/no-entregados', [App\Http\Controllers\RepartoController::class, 'noEntregados'])->name('reparto.no_entregados');
+Route::post('/reparto/noentregado-verificar', [App\Http\Controllers\RepartoController::class, 'verificarNoEntregado'])->name('noentregado.verificar') ;
+Route::post('/reparto/noentregado-actualizar', [App\Http\Controllers\RepartoController::class, 'actualizarNoEntregado'])->name('noentregado.actualizar') ;
 
