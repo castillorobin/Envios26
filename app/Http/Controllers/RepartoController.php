@@ -54,19 +54,30 @@ class RepartoController extends Controller
     }
 
     public function verificarNoEntregado(Request $request)
-        {
-            $guia = $request->guia;
+{
+    $guia = $request->guia;
 
-            // Cargamos la relación del comercio (asumiendo que se llama comercioRel)
-            $envio = Orden::with('comercioRel')->where('guia', $guia)->first();
+    // Cargamos la relación y seleccionamos los campos necesarios
+    $envio = Orden::with('comercioRel')
+                  ->where('guia', $guia)
+                  ->first();
 
-            if (!$envio) {
-                return response()->json(['exists' => false]);
-            }
+    if (!$envio) {
+        return response()->json(['exists' => false]);
+    }
 
-            return response()->json([
-                'exists' => true,
-                'envio'  => $envio // Laravel convertirá automáticamente el modelo y su relación a JSON
-            ]);
-        }
+    return response()->json([
+        'exists' => true,
+        'envio'  => [
+            'guia'            => $envio->guia,
+            'comercio_rel'    => $envio->comercioRel,
+            'destinatario'    => $envio->destinatario,
+            'destino'         => $envio->destino, // Agregado
+            'estado'          => $envio->estado,
+            'agencia'         => $envio->agencia, // Agregado
+            'tipo_asignacion' => $envio->tipo_asignacion, // Agregado
+            'caja'            => $envio->caja // Agregado
+        ]
+    ]);
+}
 }

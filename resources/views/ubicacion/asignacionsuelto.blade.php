@@ -275,6 +275,15 @@
                         <label class="form-label">Góndola</label>
                         <input type="text" id="gondola" class="form-control" placeholder="Ej: 5" required>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Agencia</label>
+                        <select id="agencia" class="form-control" required>
+                            <option value="" selected disabled >Seleccionar Agencia</option>
+                            @foreach($agencias as $agencia)
+                                <option value="{{ $agencia->nombre }}">{{ $agencia->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -448,6 +457,7 @@ async function enviarAsignacion(datosExtra = {}) {
         guias: guias,
         tipo: "{{ $tipo }}",
         caja: "{{ $caja }}",
+        agencia: document.getElementById('agencia').value,
         ...datosExtra // rack, nivel, gondola si vienen
     };
 
@@ -476,7 +486,7 @@ if (res.success) {
         },
         buttonsStyling: false
     }).then(() => {
-        window.location.href = "{{ route('ordenes.asignar_mercancia') }}";
+        window.location.href = "{{ route('ubicacion.buscar') }}";
     });
 } else {
             Swal.fire('Error', res.message, 'error');
@@ -518,6 +528,7 @@ btnConfirmarSuelto.addEventListener('click', function() {
     const rack = document.getElementById('rack').value.trim();
     const nivel = document.getElementById('nivel').value.trim();
     const gondola = document.getElementById('gondola').value.trim();
+        const agencia = document.getElementById('agencia').value.trim();
 
     if (!rack || !nivel || !gondola) {
         Swal.fire('Campos requeridos', 'Por favor complete todos los datos de ubicación.', 'warning');
@@ -525,7 +536,7 @@ btnConfirmarSuelto.addEventListener('click', function() {
     }
 
     modalSuelto.hide();
-    enviarAsignacion({ rack, nivel, gondola });
+    enviarAsignacion({ rack, nivel, gondola, agencia});
 });
 
 

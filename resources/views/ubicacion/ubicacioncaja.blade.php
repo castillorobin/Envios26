@@ -109,6 +109,15 @@
                         <label class="form-label">Ubicación</label>
                         <input type="text" id="gondola" class="form-control" placeholder="Ej: 5" required>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Agencia</label>
+                        <select id="agencia" class="form-control" required>
+                            <option value="" selected disabled >Seleccionar Agencia</option>
+                            @foreach($agencias as $agencia)
+                                <option value="{{ $agencia->nombre }}">{{ $agencia->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -208,9 +217,10 @@
     const rack = document.getElementById('rack').value.trim();
     const nivel = document.getElementById('nivel').value.trim();
     const gondola = document.getElementById('gondola').value.trim();
+    const agencia = document.getElementById('agencia').value.trim();
 
     // 2. Validación simple
-    if (!rack || !nivel || !gondola) {
+    if (!rack || !nivel || !gondola || !agencia) {
         Swal.fire('Atención', 'Todos los campos de ubicación son obligatorios.', 'warning');
         return;
     }
@@ -233,7 +243,8 @@
                 cajas: cajas,
                 rack: rack,
                 nivel: nivel,
-                gondola: gondola
+                gondola: gondola,
+                agencia: agencia
             })
         });
 

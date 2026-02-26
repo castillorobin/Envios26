@@ -332,6 +332,7 @@ public function confirmarAsignacion(Request $request)
 {
     $guias = $request->input('guias');
     $tipo = $request->input('tipo');
+    $agencia = $request->input('agencia');
 
     if (empty($guias)) {
         return response()->json(['success' => false, 'message' => 'No hay guías para procesar.']);
@@ -342,6 +343,7 @@ public function confirmarAsignacion(Request $request)
             // Actualización masiva para Caja
             Orden::whereIn('guia', $guias)->update([
                 'caja' => $request->input('caja'),
+                'agencia' => $agencia,
                 'estado' => 'Asignado' // O el estado que manejes
             ]);
             $mensaje = "Mercancía asignada a la caja correctamente.";
@@ -351,6 +353,7 @@ public function confirmarAsignacion(Request $request)
                 'rack' => $request->input('rack'),
                 'nivel' => $request->input('nivel'),
                 'gondola' => $request->input('gondola'),
+                'agencia' => $agencia,
                 'caja' => null, // Aseguramos que no tenga caja
                 'estado' => 'En Bodega'
             ]);
@@ -377,14 +380,14 @@ public function confirmarAsignacion(Request $request)
         'tipo' => 'required|string',
        // 'caja' => 'required_if:tipo,Caja' 
     ]);
-
+$agencias = Punto::where('tipo', 'Agencia')->get();
     $tipo = $request->input('tipo');
    // $cajaSeleccionada = $request->input('caja'); // El número de caja ingresado/escaneado
 $caja = $request->input('caja'); // El número de caja ingresado/escaneado
     // Lógica de redirección por tipo
     if ($tipo === 'Suelto') {
         // Opción Suelto: Va a la vista de guías individuales
-        return view('ubicacion.asignacionsuelto', compact('tipo', 'caja'));
+        return view('ubicacion.asignacionsuelto', compact('tipo', 'caja', 'agencias'));
     }
 /*
     // Opción Caja: Validamos que la caja exista antes de ir a la siguiente vista
@@ -394,9 +397,10 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
         return back()->with('error', "La caja #{$cajaSeleccionada} no existe en el sistema.");
     }
         */
+    $agencias = Punto::where('tipo', 'Agencia')->get();
 
     // Retorna la vista que ya tenías para Cajas
-    return view('ubicacion.ubicacioncaja', compact('tipo'));
+    return view('ubicacion.ubicacioncaja', compact('tipo', 'agencias'));
 }
 
    

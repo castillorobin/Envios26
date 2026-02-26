@@ -34,7 +34,8 @@ class Orden extends Model
         'nivel',
         'gondola',
         'entrega',
-        'pago' // Nuevo campo para el estado del pago  
+        'pago',
+        'agencia'
     ];
 
     public function comercioRel() {

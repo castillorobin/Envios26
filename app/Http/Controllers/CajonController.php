@@ -47,6 +47,7 @@ public function confirmarUbicacionCajas(Request $request)
         'rack' => 'required|string',
         'nivel' => 'required|string',
         'gondola' => 'required|string',
+            'agencia' => 'required|string'
     ]);
 
     $numerosCajas = $request->input('cajas');
@@ -58,6 +59,7 @@ public function confirmarUbicacionCajas(Request $request)
             'rack'    => $request->rack,
             'nivel'   => $request->nivel,
             'ubicacion' => $request->gondola,
+            'agencia' => $request->agencia // Asumiendo que tienes una relación con la agencia
             // Opcional: puedes cambiar un estado si tienes esa columna
             // 'status' => 'Ubicado' 
         ]);

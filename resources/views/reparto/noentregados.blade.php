@@ -1,28 +1,131 @@
 @extends('layouts.app')
 
 @section('content')
+
 <style>
-    /* Forzar el ancho del contenedor de Choices */
-    .choices {
-        width: 100% !important;
-        margin-bottom: 0 !important; /* Quitar margen inferior que traen por defecto */
+    /* Estilo para integrar DataTables con el diseño de la plantilla */
+    .dataTables_length select {
+        padding: 5px 10px;
+        border-radius: 5px;
+        border: 1px solid #e1e3ea;
     }
-
-    /* Ajustar la altura interna para que coincida con un botón estándar (aprox 38px) */
-    .choices__inner {
-        min-height: 38px !important;
-        padding: 4px 10px !important;
-        background-color: #fff !important;
-        border: 1px solid #dee2e6 !important;
-        border-radius: 0.375rem !important;
+    .dataTables_info, .dataTables_paginate {
+        margin-top: 15px !important;
     }
-
-    /* Centrar el texto del buscador */
-    .choices__list--single {
-        padding: 0 !important;
-        line-height: 28px;
+    /* Ocultar el buscador por defecto de DataTables */
+    .dataTables_filter {
+        display: none;
+    }
+    /* Ajuste de ancho de tu buscador personalizado */
+    .search-bar input {
+        width: 250px !important;
     }
 </style>
+
+<style>
+    /* Forzar el estilo redondeado de Reback en los botones de DataTables */
+    .pagination-rounded .page-item .page-link {
+        border-radius: 50% !important;
+        margin: 0 3px !important;
+        border: none;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+    }
+
+    .pagination-rounded .page-item.active .page-link {
+        background-color: #3e60d5 !important; /* Azul primario de Reback */
+        color: white !important;
+        box-shadow: 0 2px 6px 0 rgba(62, 96, 213, 0.5);
+    }
+
+    /* Ajuste para los botones 'Anterior' y 'Siguiente' para que no sean círculos perfectos */
+    .pagination-rounded .page-item:first-child .page-link,
+    .pagination-rounded .page-item:last-child .page-link {
+        border-radius: 5px !important;
+        width: auto !important;
+        padding: 0 15px;
+    }
+</style>
+
+<style>
+    /* Aseguramos que la info y paginación no tengan márgenes extra al estar fuera */
+    .dataTables_info, .dataTables_paginate {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    #dt-pagination-container .dataTables_paginate {
+        display: flex;
+        justify-content: flex-end;
+    }
+    
+    /* Evita que el contenedor de la tabla se vea vacío si se mueven los elementos */
+    .dataTables_wrapper {
+        padding: 0 !important;
+    }
+
+    /* Evitar saltos visuales al mover elementos */
+    #dt-info-container, #dt-pagination-container {
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+    }
+
+    .dataTables_info {
+        margin-top: 0 !important;
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+</style>
+
+<style>
+    /* Ocultar el buscador original por si acaso */
+    .dataTables_filter { display: none !important; }
+
+    /* Forzar el estilo redondeado de Reback */
+    .pagination-rounded .page-item .page-link {
+        border-radius: 50% !important;
+        margin: 0 3px !important;
+        border: none;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+    }
+
+    /* Color azul oficial de Reback para el botón activo */
+    .pagination-rounded .page-item.active .page-link {
+        background-color: #3e60d5 !important; 
+        color: white !important;
+        box-shadow: 0 2px 6px 0 rgba(62, 96, 213, 0.5);
+    }
+
+    .pagination-rounded .page-item:first-child .page-link,
+    .pagination-rounded .page-item:last-child .page-link {
+        border-radius: 5px !important;
+        width: auto !important;
+        padding: 0 15px;
+    }
+
+    /* Contenedores externos */
+    #dt-info-container .dataTables_info {
+        margin-top: 0 !important;
+        padding: 0 !important;
+        font-size: 0.875rem;
+    }
+
+    #dt-pagination-container .dataTables_paginate {
+        margin-top: 0 !important;
+        padding: 0 !important;
+    }
+</style>
+
 
 <div class="container-xxl">
 
@@ -37,48 +140,98 @@
                         </div>
                     </div>
 
-
-
-
-                <div class="row">
-                        
-                        <!-- end col -->
-                        <div class="col-xl-12">
+                    <div class="row">
+                        <div class="col-12">
                             <div class="card">
-                                    <div class="card-body">
-                                             <!-- Escáner QR -->
-                                        <div class="d-flex align-items-center mb-4">
-                                            <input id="qr-input" type="text" placeholder="Escanear código QR" readonly
-                                                class="form-control me-3" style="max-width: 300px;" />
-                                        
-                                        </div>
-
-                                        <div id="qr-reader" style="width:50%; display:none;" class="border rounded p-2 mb-3"></div>
-                                            <div id="camera-controls" style="width:50%; display:none;" class="mb-3 text-center">
-                                                <button type="button" class="btn btn-sm btn-danger" onclick="detenerCamara()">
-                                                    <i class="bx bx-camera-off"></i> Finalizar escaneo
+                                <div class="card-body">
+                                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                                        <div>
+                                             <div class="d-flex gap-2">
+                                                <input type="text" id="qr-input" class="form-control" style="max-width: 400px;" placeholder="Ingresar guía" autofocus>
+                                                <button type="button" id="btn-agregar" class="btn btn-primary">Agregar</button>
+                                                <button type="button" id="btn-activar-qr" class="btn btn-outline-secondary">
+                                                    <i class="bx bx-qr-scan fs-4"></i>
                                                 </button>
                                             </div>
-                                    </div>
-                                        <div class="table-responsive table-centered mt-1">
-                                        
-                                            <table class="table table-borderless table-hover table-nowrap align-middle"  id="tabla-lote">
-                                                <thead class="bg-light bg-opacity-50 thead-sm">
-                                                    <tr >
-                                                        <th>Guía</th>
-                                                        <th>Comercio</th>
-                                                        <th>Destinatario</th>
-                                                        <th>Estado</th>
-                                                        
-                                                        <th>Accion</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody></tbody>
-                                            </table>
+                                            <div id="reader-container" class="d-none mt-3 border rounded bg-light" style="max-width: 400px;">
+                                                <div id="reader" style="width: 100%;"></div>
+                                                <div class="p-2 text-center">
+                                                    <button type="button" id="btn-cerrar-camara" class="btn btn-sm btn-danger">
+                                                        Cerrar Cámara
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
+                                        <div>
+                                            <div class="d-flex flex-wrap gap-2 justify-content-md-end align-items-center">
+                                               
+
+                                            </div>
+                                        </div>
+                                        <!-- end col-->
+                                    </div>
+                                    <!-- end row -->
+                                </div>
+                            </div>
+                            <!-- end card -->
+                        </div>
+                        <!-- end col-->
+                    </div>
+
+                   <div class="tab-content pt-0">
+                        <div class="tab-pane show active" id="team-list" role="tabpanel">
+                            <div class="card overflow-hidden">
+
+                                        <div class="table-responsive table-centered mt-1">
+
+
+
+
+                                            <table class="table text-nowrap mb-0" id="tabla-lote">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Guía</th>
+                                                <th>Comercio</th>
+                                                <th>Destinatario</th>
+                                                <th>Destino</th>
+                                                <th>Estado</th>
+                                                <th>Ubicación</th>
+                                                <th>Tipo Almac.</th>
+                                                <th>N° Caja</th>
+                                                <th class="text-center">Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <!-- end thead-->
+                                        <tbody>
+
+                                           
+                                            
+                                        </tbody>
+                                        <!-- end tbody -->
+                                    </table>
+
+
+
+                                        
+                                           
+                                        </div>
+
+
+
+                                        <div class="card-footer bg-transparent border-top">
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between">
+                                        <div id="dt-info-container"></div>
+                                        <div id="dt-pagination-container"></div>
+                                    </div>
+                                </div>
+
+
+
                                         <div class="text-end mt-4" style="margin-bottom: 20px; margin-right: 20px;">
-                                            <button type="button" id="btn-limpiar" class="btn btn-secondary">Limpiar lista</button>
-                                            <button type="button" id="btn-entregar-lote" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEntregarLote">
+                                            <a href="/reparto/no-entregados">
+                                            <button type="button" id="btn-limpiar" class="btn btn-lg btn-secondary">Limpiar lista</button>
+                                            </a>
+                                            <button type="button" id="btn-entregar-lote" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#modalEntregarLote">
                                                 <i class="fas fa-check-circle"></i> Actualizar
                                             </button>
                                         </div>
@@ -190,20 +343,18 @@
 
 
 
-
-
-
-
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     let listaGuias = [];
-    let isProcessing = false; // 🔥 SEMÁFORO: Evita procesar múltiples lecturas a la vez
+    let isProcessing = false; 
     
     const tablaBody = document.querySelector("#tabla-lote tbody");
-    const inputQR = document.getElementById("qr-input");
-    const readerDiv = document.getElementById("qr-reader");
+    const inputManual = document.getElementById("qr-input"); 
+    const btnAgregarManual = document.getElementById("btn-agregar"); 
+    const btnActivarQR = document.getElementById("btn-activar-qr"); 
+    const readerDiv = document.getElementById("reader-container"); 
     const hiddenGuias = document.getElementById("guias-lote");
     const btnLimpiar = document.getElementById("btn-limpiar");
     const formNoEntrega = document.getElementById("formnoentrega");
@@ -211,9 +362,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let qrScanner = null;
 
     function actualizarHidden() {
-        if (hiddenGuias) {
-            hiddenGuias.value = JSON.stringify(listaGuias);
-        }
+        if (hiddenGuias) { hiddenGuias.value = JSON.stringify(listaGuias); }
     }
 
     async function detenerCamara() {
@@ -221,149 +370,115 @@ document.addEventListener("DOMContentLoaded", function() {
             try {
                 await qrScanner.stop();
                 qrScanner = null;
-                readerDiv.style.display = "none";
-                inputQR.placeholder = "Escanear código QR";
-                document.getElementById("camera-controls").style.display = "none";
-            } catch (e) {
-                console.warn("Error al detener cámara:", e);
-            }
+                readerDiv.classList.add('d-none');
+                inputManual.placeholder = "Ingresar guía";
+            } catch (e) { console.warn("Error:", e); }
         }
     }
 
-    // Definir detenerCamara globalmente para el botón del HTML
     window.detenerCamara = detenerCamara;
 
-    // ======================================================
-    // 📸 INICIAR ESCANEO CONTINUO
-    // ======================================================
-    inputQR.addEventListener("click", async function () {
-        if (qrScanner) return; 
-
-        qrScanner = new Html5Qrcode("qr-reader");
-        readerDiv.style.display = "block";
-        document.getElementById("camera-controls").style.display = "block";
-        inputQR.placeholder = "Escaneando...";
-
+    btnActivarQR.addEventListener("click", async function () {
+        if (qrScanner) { detenerCamara(); return; }
+        qrScanner = new Html5Qrcode("reader");
+        readerDiv.classList.remove('d-none');
         try {
             await qrScanner.start(
                 { facingMode: "environment" },
-                { 
-                    fps: 10, 
-                    qrbox: { width: 250, height: 250 } 
-                },
+                { fps: 15, qrbox: { width: 250, height: 250 } },
                 async codigoQR => {
-                    // Si ya estamos procesando un código, ignoramos este frame
                     if (isProcessing) return;
-                    
-                    isProcessing = true; // Bloqueamos el paso
-                    inputQR.value = "Procesando...";
-                    
-                    // Ejecutamos la verificación
+                    isProcessing = true;
                     await verificarYAgregar(codigoQR);
-                    
-                    // Liberamos el bloqueo después de un pequeño delay para dar tiempo a la cámara de moverse
-                    setTimeout(() => { isProcessing = false; }, 500);
+                    setTimeout(() => { isProcessing = false; }, 800);
                 }
             );
-        } catch (error) {
-            console.error("Error al iniciar cámara:", error);
-            isProcessing = false;
-        }
+        } catch (error) { Swal.fire("Error", "No se pudo acceder a la cámara", "error"); }
     });
 
-    // ======================================================
-    // 🔍 VERIFICACIÓN Y AGREGADO DINÁMICO
-    // ======================================================
+    document.getElementById("btn-cerrar-camara").addEventListener("click", detenerCamara);
+
+    btnAgregarManual.addEventListener("click", () => {
+        const valor = inputManual.value.trim();
+        if (valor) verificarYAgregar(valor);
+        else inputManual.focus();
+    });
+
+    inputManual.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") { e.preventDefault(); btnAgregarManual.click(); }
+    });
+
     async function verificarYAgregar(guia) {
         guia = guia.trim();
-
-        // 1. Verificar duplicado localmente
         if (listaGuias.includes(guia)) {
-            inputQR.value = "";
-            return; // Salimos silenciosamente si ya existe para no saturar con alertas
+            inputManual.value = "";
+            Swal.fire({ icon: "info", title: "Duplicado", text: `La guía ${guia} ya está en la lista.`, timer: 1000, showConfirmButton: false });
+            return;
         }
 
         try {
             const res = await fetch("{{ route('noentregado.verificar') }}", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
+                headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
                 body: JSON.stringify({ guia })
             });
 
             const data = await res.json();
-
             if (!data.exists) {
-                Swal.fire({ 
-                    icon: "error", 
-                    title: "No encontrada", 
-                    text: `La guía ${guia} no existe.`,
-                    timer: 1500,
-                    showConfirmButton: false 
-                });
-                inputQR.value = "";
+                Swal.fire({ icon: "error", title: "No encontrada", text: `La guía ${guia} no existe.`, timer: 1500, showConfirmButton: false });
+                inputManual.value = "";
                 return;
             }
 
-            // 2. Agregar a la lista y a la tabla
-            listaGuias.push(data.envio.guia);
-            actualizarHidden();
-            
-            const nombreComercio = data.envio.comercio_rel ? data.envio.comercio_rel.nombre : (data.envio.comercio || '---');
-
-            const nuevaFila = `
-                <tr data-guia="${data.envio.guia}">
-                    <td><span class="fw-bold text-primary">${data.envio.guia}</span></td>
-                    <td>${nombreComercio}</td>
-                    <td>${data.envio.destinatario ?? '---'}</td>
-                    <td><span class="badge bg-light-warning text-warning">No entregado</span></td>
-                    <td>
-                        <button type="button" class="btn btn-sm btn-soft-danger btn-quitar" data-guia="${data.envio.guia}">
-                            <i class="bx bx-trash fs-16"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
-            tablaBody.insertAdjacentHTML("afterbegin", nuevaFila);
-            
-            inputQR.value = "";
-            inputQR.focus();
-
-        } catch (err) {
-            console.error("Error:", err);
-            inputQR.value = "";
-        }
+            agregarFila(data.envio);
+            inputManual.value = "";
+            inputManual.focus();
+        } catch (err) { console.error("Error:", err); }
     }
 
-    // Quitar una sola guía
+    function agregarFila(envio) {
+        listaGuias.push(envio.guia);
+        actualizarHidden();
+        
+        const nombreComercio = envio.comercio_rel ? envio.comercio_rel.nombre : (envio.comercio || '---');
+        // Nuevos campos solicitados
+        const destino = envio.destino ?? '---';
+        const ubicacion = envio.agencia ?? '---';
+        const tipoAlmacen = envio.tipo_asignacion ?? 'Suelto';
+        const nCaja = envio.caja ?? '---';
+
+        const nuevaFila = `
+            <tr data-guia="${envio.guia}">
+                <td><span class="fw-bold text-primary">${envio.guia}</span></td>
+                <td>${nombreComercio}</td>
+                <td>${envio.destinatario ?? '---'}</td>
+                <td>${destino}</td>
+                <td><span class="badge bg-light-danger text-danger">No entregado</span></td>
+                <td>${ubicacion}</td>
+                <td>${tipoAlmacen}</td>
+                <td>${nCaja}</td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-sm btn-soft-danger btn-quitar" data-guia="${envio.guia}">
+                        <i class="bx bx-trash fs-16"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        tablaBody.insertAdjacentHTML("afterbegin", nuevaFila);
+    }
+
     tablaBody.addEventListener("click", function(e) {
         const btn = e.target.closest(".btn-quitar");
         if (!btn) return;
-        const guia = btn.dataset.guia;
-        listaGuias = listaGuias.filter(g => g !== guia);
+        listaGuias = listaGuias.filter(g => g !== btn.dataset.guia);
         actualizarHidden();
         btn.closest("tr").remove();
     });
 
-    // Limpiar toda la lista
-    btnLimpiar.addEventListener("click", function () {
-        listaGuias = [];
-        actualizarHidden();
-        tablaBody.innerHTML = "";
+    btnLimpiar.addEventListener("click", () => {
+        listaGuias = []; actualizarHidden(); tablaBody.innerHTML = ""; inputManual.focus();
     });
-
-    if (formNoEntrega) {
-        formNoEntrega.addEventListener("submit", function(e) {
-            if (listaGuias.length === 0) {
-                e.preventDefault();
-                Swal.fire({ icon: "warning", title: "Lista vacía", text: "Escanee al menos una guía." });
-            }
-        });
-    }
 });
 </script>
-
 
 @endsection
