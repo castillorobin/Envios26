@@ -270,15 +270,14 @@
 
 <!-- Modal Entregar en Lote -->
 <div class="modal fade" id="modalEntregarLote" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal modal-dialog-centered">
         <div class="modal-content">
             <form id="formnoentrega" method="POST" action="{{ route('noentregado.actualizar') }}">
     @csrf
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title">Detalles de la Actualizacion</h5>
-                    <button type="button" class="btn btn-icon btn-sm btn-light" data-bs-dismiss="modal">
-                        <i class="fas fa-times"></i>
-                    </button>
+                <div class="modal-header bg-secondary text-white">
+                    <h5 class="modal-title " style="color: white;">Detalles de la Actualizacion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    
                 </div>
 
                 <div class="modal-body">
@@ -286,32 +285,23 @@
                     
                     <div class="row">
 						<input type="hidden" name="guias" id="guias-lote">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-12 mb-3">
                             <label class="form-label">Cajero</label>
                             <input type="text" class="form-control" value="{{ Auth::user()->name }}" readonly>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Fecha</label>
-                            <input type="text" class="form-control" value="{{ now()->format('j/n/Y') }}" readonly>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Fecha y Hora</label>
+                            <input type="text" class="form-control" value="{{ now()->format('d/m/Y H:i') }}" readonly>
                         </div>
-						<div class="col-md-6 mb-3">
-                            <label class="form-label">Estado</label>
-                            <input type="text" id="estado" name="estado" class="form-control" value="No entregado" readonly>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Agencia</label>
-                            <input type="text" class="form-control" value="" readonly>
+						
+                        <div class="col-md-12 mb-3">
+                            <div class="alert alert-danger text-center" role="alert">
+                                Estas a punto de cambiar el estado a <strong>No entregado</strong> a 
+                                <span id="conteo-paquetes" class="fw-bold">0</span> paquetes. ¿Estás seguro?
+                            </div>
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            
-                            <select class="form-select" name="ubicacion" required>
-                                <option value="caja">Caja</option>
-                                <option value="suelto">Suelto</option>
-                                
-                            </select>
-                        </div>
-                                                                
+                                                                                        
                         
                         
                     </div>
@@ -325,7 +315,7 @@
 
 
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Actualizar</button>
+                    <button type="submit" class="btn btn-secondary" style="background-color: #a7acb1;">Actualizar</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 </div>
             </form>
@@ -436,36 +426,78 @@ document.addEventListener("DOMContentLoaded", function() {
         } catch (err) { console.error("Error:", err); }
     }
 
-    function agregarFila(envio) {
-        listaGuias.push(envio.guia);
-        actualizarHidden();
-        
-        const nombreComercio = envio.comercio_rel ? envio.comercio_rel.nombre : (envio.comercio || '---');
-        // Nuevos campos solicitados
-        const destino = envio.destino ?? '---';
-        const ubicacion = envio.agencia ?? '---';
-        const tipoAlmacen = envio.tipo_asignacion ?? 'Suelto';
-        const nCaja = envio.caja ?? '---';
 
-        const nuevaFila = `
-            <tr data-guia="${envio.guia}">
-                <td><span class="fw-bold text-primary">${envio.guia}</span></td>
-                <td>${nombreComercio}</td>
-                <td>${envio.destinatario ?? '---'}</td>
-                <td>${destino}</td>
-                <td><span class="badge bg-light-danger text-danger">No entregado</span></td>
-                <td>${ubicacion}</td>
-                <td>${tipoAlmacen}</td>
-                <td>${nCaja}</td>
-                <td class="text-center">
-                    <button type="button" class="btn btn-sm btn-soft-danger btn-quitar" data-guia="${envio.guia}">
-                        <i class="bx bx-trash fs-16"></i>
-                    </button>
-                </td>
-            </tr>
-        `;
-        tablaBody.insertAdjacentHTML("afterbegin", nuevaFila);
+
+    document.getElementById("btn-entregar-lote").addEventListener("click", function() {
+    // 1. Obtener la cantidad de guías en la lista
+    const totalGuia = listaGuias.length;
+
+    // 2. Insertar el número en el span del modal
+    document.getElementById("conteo-paquetes").textContent = totalGuia;
+    // Convertimos el array JS a una cadena JSON para el controlador
+    document.getElementById("guias-lote").value = JSON.stringify(listaGuias);
+
+    // 3. Actualizar el input hidden por seguridad antes de abrir
+    actualizarHidden();
+
+    // 4. (Opcional) Si quieres que el botón "Actualizar" del modal se bloquee si no hay nada
+    const btnSubmit = document.querySelector("#modalEntregarLote button[type='submit']");
+    if (totalGuia === 0) {
+        btnSubmit.disabled = true;
+    } else {
+        btnSubmit.disabled = false;
     }
+});
+
+    function agregarFila(envio) {
+    listaGuias.push(envio.guia);
+    actualizarHidden();
+    
+    const nombreComercio = envio.comercio_rel ? envio.comercio_rel.nombre : (envio.comercio || '---');
+    
+   
+    let badgeEstado = '';
+    const estado = envio.estado;
+
+    switch (estado) {
+        case 'Recepcionado':
+            badgeEstado = `<span class="badge text-bg-secondary">Recepcionado</span>`;
+            break;
+        case 'Creado':
+            badgeEstado = `<span class="badge text-bg-primary">Creado</span>`;
+            break;
+        case 'No entregado':
+            badgeEstado = `<span class="badge text-bg-danger">No entregado</span>`;
+            break;
+        case 'Fallido':
+            badgeEstado = `<span class="badge text-bg-warning">Fallido</span>`;
+            break;
+        case 'Entregado':
+            badgeEstado = `<span class="badge text-bg-success">Entregado</span>`;
+            break;
+        default:
+            badgeEstado = `<span class="badge text-bg-light">${estado || '---'}</span>`;
+    }
+
+    // --- CONSTRUCCIÓN DE LA FILA ---
+    const nuevaFila = `
+        <tr data-guia="${envio.guia}">
+            <td><span class="fw-bold text-primary">${envio.guia}</span></td>
+            <td>${nombreComercio}</td>
+            <td>${envio.destinatario ?? '---'}</td>
+            <td>${envio.destino ?? '---'}</td>
+            <td>${badgeEstado}</td> <td>${envio.agencia ?? '---'}</td>
+            <td>${envio.tipo_asignacion ?? 'Suelto'}</td>
+            <td>${envio.caja ?? '---'}</td>
+            <td class="text-center">
+                <button type="button" class="btn btn-sm btn-soft-danger btn-quitar" data-guia="${envio.guia}">
+                    <i class="bx bx-trash fs-16"></i>
+                </button>
+            </td>
+        </tr>
+    `;
+    tablaBody.insertAdjacentHTML("afterbegin", nuevaFila);
+}
 
     tablaBody.addEventListener("click", function(e) {
         const btn = e.target.closest(".btn-quitar");
@@ -481,4 +513,20 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
+
+@if(session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Proceso Completado!',
+                text: "{{ session('success') }}",
+                confirmButtonColor: '#198754', // Color verde success de Bootstrap
+                confirmButtonText: 'Aceptar',
+                timer: 3000, // Se cierra solo en 3 segundos si no interactúan
+                timerProgressBar: true
+            });
+        });
+    </script>
+@endif
 @endsection

@@ -1065,7 +1065,7 @@
                                         <a
                                             class="sub-nav-link"
                                             href="/ordenes"
-                                            >Listado</a
+                                            >Busqueda manual</a
                                         >
                                     </li>
                                     <li class="sub-nav-item">

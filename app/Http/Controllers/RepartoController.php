@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Orden;
 use App\Models\Unidad; // Asumiendo que existe el modelo
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class RepartoController extends Controller
 {
@@ -79,5 +80,44 @@ class RepartoController extends Controller
             'caja'            => $envio->caja // Agregado
         ]
     ]);
+    
+}
+
+
+    public function actualizarLote(Request $request)
+{
+    // 1. Validar que vengan guías
+    $request->validate([
+        'guias' => 'required' // El JSON string del input hidden
+    ]);
+
+    try {
+        DB::beginTransaction();
+
+        // 2. Decodificar el JSON que enviamos desde el JS
+        $guiasArray = json_decode($request->guias);
+
+        if (empty($guiasArray)) {
+            return back()->with('error', 'La lista de guías está vacía.');
+        }
+
+        // 3. Actualización masiva de las órdenes
+        // Buscamos por el campo 'guia' y cambiamos el 'estado'
+        Orden::whereIn('guia', $guiasArray)->update([
+            'estado' => 'No entregado',
+            // Opcional: puedes registrar qué usuario hizo el cambio o la fecha
+            // 'usuario_actualiza' => auth()->id(), 
+            // 'fecha_no_entregado' => now()
+        ]);
+
+        DB::commit();
+
+        // Redirigir con mensaje de éxito
+        return redirect()->back()->with('success', 'Se han actualizado ' . count($guiasArray) . ' paquetes correctamente.');
+
+    } catch (\Exception $e) {
+        DB::rollback();
+        return back()->with('error', 'Ocurrió un error al actualizar el lote: ' . $e->getMessage());
+    }
 }
 }
