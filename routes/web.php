@@ -293,3 +293,6 @@ Route::post('/reparto/noentregado-verificar', [App\Http\Controllers\RepartoContr
 Route::post('/reparto/noentregado-actualizar', [App\Http\Controllers\RepartoController::class, 'actualizarLote'])->name('noentregado.actualizar') ;
 
 
+//caja
+Route::get('/caja/movimientos', [App\Http\Controllers\CajaController::class, 'movimientos'])->name('caja.movimientos');
+Route::get('/caja/cuadre', [App\Http\Controllers\CajaController::class, 'cuadre'])->name('caja.cuadre');

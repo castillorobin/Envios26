@@ -1188,6 +1188,54 @@
                                     
                                 </ul>
 
+
+
+
+
+
+                                <li class="nav-item">
+                            <a
+                                class="nav-link menu-arrow"
+                                href="#sidebarCaja"
+                                data-bs-toggle="collapse"
+                                role="button"
+                                aria-expanded="false"
+                                aria-controls="sidebarCaja"
+                            >
+                                <span class="nav-icon">
+                                    <iconify-icon
+                                        icon="iconamoon:invoice-duotone"
+                                    ></iconify-icon>
+                                </span>
+                                <span class="nav-text"> Caja</span>
+                            </a>
+                            <div class="collapse" id="sidebarCaja">
+                                <ul class="nav sub-navbar-nav">
+                                    <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
+                                            href="/caja/movimientos"
+                                            >Movimientos de caja</a
+                                        >
+                                    </li>
+                                    <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
+                                            href="/caja/cuadre"
+                                            >Cuadre de caja</a
+                                        >
+                                    </li>
+
+                                  
+                                                            
+                                </ul>
+
+
+
+
+
+
+
                                  <li class="nav-item">
                             <a
                                 class="nav-link menu-arrow"
