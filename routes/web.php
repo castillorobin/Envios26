@@ -294,5 +294,5 @@ Route::post('/reparto/noentregado-actualizar', [App\Http\Controllers\RepartoCont
 
 
 //caja
-Route::get('/caja/movimientos', [App\Http\Controllers\CajaController::class, 'movimientos'])->name('caja.movimientos');
+Route::get('/caja/movimientos', [App\Http\Controllers\CajaController::class, 'index'])->name('caja.movimientos');
 Route::get('/caja/cuadre', [App\Http\Controllers\CajaController::class, 'cuadre'])->name('caja.cuadre');
