@@ -137,7 +137,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="page-title-box">
-                                <h4 class="mb-0 fw-semibold">Movimientos de caja</h4>
+                                <h4 class="mb-0 fw-semibold">Cuadre de caja</h4>
                                 
                             </div>
                         </div>
@@ -158,10 +158,7 @@
                                            
                                         </div>
                                          <div>
-                                            <div class="d-flex flex-wrap gap-2 justify-content-md-end align-items-center">
-                                               <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_stacked_1">Agregar</button>
-
-                                            </div>
+                                           
                                         </div>
                                        
                                         <!-- end col-->
@@ -192,44 +189,39 @@
                                        <table class="table text-nowrap mb-0" id="tabla-lote">
                                         <thead class="table-light">
                                             <tr>
+                                                <th>ID</th>
                                                 <th>Fecha</th>
-                                                <th>Concepto</th>
-                                                <th class="text-center">Entrada</th>
-                                                <th class="text-center">Salida</th>
+                                                <th class="text-center">Cajero</th>
                                                 <th class="text-center">Saldo</th>
+                                                <th class="text-center">Estado</th>
                                                 
                                             </tr>
                                         </thead>
                                         <!-- end thead-->
                                         <tbody>
-                                            @foreach ($cajas as $caja)
-                                            <tr>
-                                                <td>{{ date("d/m/Y H:i:s", strtotime($caja->created_at)) }}</td>
-                                                <td>{{ $caja->concepto }}</td>
-                                                 <td class="text-center">
-                        @if ($caja->tipo == "Entrada")
-                           $ {{ $caja->valor }}
-                        @elseif ($caja->tipo == "Apertura de caja")
-                            $ {{ $caja->valor }}
-                        @else
-                            $ 0.00
-                        @endif
-                    </td>
-                    <td class="text-center">
-                          @if ($caja->tipo == "Salida")
-                           $ {{ $caja->valor }}
-                        @elseif ($caja->tipo == "Cierre de caja")
-                            $ {{ $caja->valor }}
-                        @else
-                            $ 0.00
-                        @endif
-                    </td>
-                    <td class="text-center">
-                        
-                    $ {{$caja->saldo}}</td>
-                    
-                    </tr>
-                                            @endforeach
+                                           @isset($cajas)
+                                                        @foreach ($cajas as $caja) 
+                                                            <tr class="'table-row-gray' : 'table-row-white' ">
+                                                                    <td class="text-center"> 
+                                                                        <a href="/caja/listado/{{ $caja->id }}" class="form-control-plaintext">
+                                                                    {{ $caja->id }}
+                                                                    </a>
+                                                                    </td>
+                                                                    <td class="text-center">{{ date('d/m/Y', strtotime($caja->created_at)) }}</td>
+                                                                    <td class="text-center">{{$caja->cajero}}</td>
+                                                                    <td class="text-center">$ {{$caja->descuadre}}</td>
+                                                                    <td class="text-center" >
+                                                                        @if($caja->estado == 0)
+                                                                        <span class="badge text-bg-success" ><span style="color:white; font-weight:bolder;"> Abierta</span></span>
+                                                                        @endif
+                                                                        @if($caja->estado == 1)
+                                                                        <span class="badge text-bg-danger" > <span style="color:white; font-weight:bolder;">Cerrada</span></span>
+                                                                        @endif
+                                                                    </td>
+                                                        
+                                                            </tr>
+                                                        @endforeach
+                                            @endisset
 
                                            
                                             
@@ -269,95 +261,6 @@
 
 
 
-
-
-
-
-<!--inicia::Modal-->	
-
-<div class="modal fade" tabindex="-1" id="kt_modal_stacked_1">
-<div class="modal-dialog modal-dialog-centered">
-     
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 class="modal-title">Crear Movimiento</h3>
-<form action="/caja/guardar" method="GET">
-     
-            <!--begin::Close-->
-            <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
-                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
-            </div>
-            <!--end::Close-->
-        </div>
-
-        <div class="modal-body">
-            
-           <input type="text" name="cajero" class="form-control form-control-solid" value="{{ Auth::user()->name }}" readonly />
-           <br>
-            <input type="text" class="form-control form-control-solid" value="{{ date("d/m/Y") }}" readonly />
-            
-            <br>
-            
-       
-          
-              <select class="form-select form-select-solid" aria-label="Select example" name="concepto" id="select-concepto"> 
-    <option>Concepto</option>
-    @foreach ($conceptos as $concepto)
-    <option value="{{$concepto->id}}">{{$concepto->concepto}}</option>
-    @endforeach
-</select>
-            <br>
-             <div id="input-cierre-wrapper3" class="mt-3">
-            <input type="text" class="form-control form-control-solid" placeholder="$0.00" name="valor" />
-            </div>
-            
-            <div class="row">
-                <div class="col">
-                    <div id="input-cierre-wrapper2" style="display: none;" class="mt-3">
-                         
-                             <label for="valor_caja" class="form-label">Saldo en caja</label>
-                            @isset($caja->saldo)
-                               <input type="text" name="valor_caja" id="valor_caja" class="form-control form-control-solid" placeholder="Saldo caja" value="{{$caja->saldo}}" readonly>
-                            @endisset
-
-
-                    </div>
-                </div>
-                <div class="col">
-            <!-- Input oculto al principio -->
-                    <div id="input-cierre-wrapper" style="display: none;" class="mt-3">
-                        <label for="valor_cierre" class="form-label">Saldo de cajero</label>
-                        <input type="text" name="valor_cierre" id="valor_cierre" class="form-control form-control-solid" placeholder="Saldo cajero">
-
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="row">
-                <div class="col-6">
-                
-            <div id="input-saldo-final-wrapper" style="display: none;" class="mt-3">
-               <label for="saldo_final" class="form-label">Descuadre</label>
-                    <input type="number" name="saldo_final" id="saldo_final" class="form-control form-control-solid" placeholder="$0.00" readonly>
-            </div>
-
-              </div>
-            </div>
-
-
-
-        </div>
-
-
-
-        <div class="modal-footer">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-primary">Guardar</button>
-        </div>
-    </div>
-</div>
-</div>
 
 
 

@@ -294,5 +294,22 @@ Route::post('/reparto/noentregado-actualizar', [App\Http\Controllers\RepartoCont
 
 
 //caja
-Route::get('/caja/movimientos', [App\Http\Controllers\CajaController::class, 'index'])->name('caja.movimientos');
-Route::get('/caja/cuadre', [App\Http\Controllers\CajaController::class, 'cuadre'])->name('caja.cuadre');
+Route::get('/caja/movimientos', [App\Http\Controllers\CajaController::class, 'index'])->name('cajero');
+Route::get('/caja/cuadre', [App\Http\Controllers\CajaController::class, 'cuadre'])->name('jefe');
+
+//Route::get('/caja/cajero', [App\Http\Controllers\CajaController::class, 'index'] )->name('cajero') ;
+//Route::get('/caja/jefe', [App\Http\Controllers\CajaController::class, 'cuadre'] )->name('jefe') ;
+Route::get('/caja/guardar', [App\Http\Controllers\CajaController::class, 'store'])->name('caja.store');
+Route::get('/caja/listado/{id}', [App\Http\Controllers\CajaController::class, 'listado'])->name('caja.listado');
+Route::get('/caja/listadofiltro', [App\Http\Controllers\CajaController::class, 'listadofiltro'])->name('caja.listadofiltro');
+Route::get('/caja/ajustes', [App\Http\Controllers\CajaController::class, 'ajustes'] )->name('ajustes') ;
+Route::get('/caja/guardarconcepto', [App\Http\Controllers\CajaController::class, 'guardarconcepto'] )->name('guardarconcepto') ;
+
+Route::get('/caja/editar/{id}', [App\Http\Controllers\CajaController::class, 'editar'])->name('caja.editar');
+Route::get('/caja/eliminar/{id}', [App\Http\Controllers\CajaController::class, 'eliminar'])->name('caja.eliminar');
+Route::get('/caja/editandoconcepto', [App\Http\Controllers\CajaController::class, 'editandoconcepto'])->name('caja.editandoconcepto');
+Route::get('/caja/exportarticket/{id}', [App\Http\Controllers\CajaController::class, 'exportarticket'])->name('caja.exportarticket');
+Route::get('/caja/exportarpdf/{id}', [App\Http\Controllers\CajaController::class, 'exportarpdf'])->name('caja.exportarpdf');
+Route::get('/caja/exportarexcel/{id}', [App\Http\Controllers\CajaController::class, 'exportarExcel'])->name('caja.exportarExcel');
+
+Route::get('/caja/configuracion', [App\Http\Controllers\CajaController::class, 'configuracion'])->name('caja.configuracion');

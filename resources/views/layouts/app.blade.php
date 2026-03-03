@@ -1351,6 +1351,14 @@
                                             >Unidades</a
                                         >
                                     </li>
+
+                                    <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
+                                            href="/caja/configuracion"
+                                            >Conceptos de caja</a
+                                        >
+                                    </li>
                                    
 
                                     
