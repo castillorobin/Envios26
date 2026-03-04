@@ -214,6 +214,7 @@ class CajaController extends Controller
         }
            $caja = new Caja();
            $caja->cajero = $request->get('cajero') ;
+           $caja->saldo = $request->get('valor') ;
            $caja->save();
         }
 

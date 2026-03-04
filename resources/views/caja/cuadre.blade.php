@@ -209,7 +209,7 @@
                                                                     </td>
                                                                     <td class="text-center">{{ date('d/m/Y', strtotime($caja->created_at)) }}</td>
                                                                     <td class="text-center">{{$caja->cajero}}</td>
-                                                                    <td class="text-center">$ {{$caja->descuadre}}</td>
+                                                                    <td class="text-center">$ {{$caja->saldo}}</td>
                                                                     <td class="text-center" >
                                                                         @if($caja->estado == 0)
                                                                         <span class="badge text-bg-success" ><span style="color:white; font-weight:bolder;"> Abierta</span></span>

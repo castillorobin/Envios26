@@ -7,6 +7,8 @@ use App\Models\Orden;
 use App\Models\Entrega;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Caja;
+use App\Models\Detallecaja;
 
 class EntregaController extends Controller
 {
@@ -49,6 +51,18 @@ class EntregaController extends Controller
             'metodo_pago' => 'required',
         ]);
 
+
+        // --- NUEVA VERIFICACIÓN DE CAJA ABIERTA ---
+    $cajaActiva = Caja::where('cajero', Auth::user()->name)
+                      ->where('estado', 0) // 0 = Abierta
+                      ->latest()
+                      ->first();
+
+    if (!$cajaActiva) {
+        // Si no hay caja activa, redirigir a la ruta 'cajero' con el mensaje para SweetAlert
+        return redirect()->route('cajero')->with('info', 'Debe de abrir caja antes de agregar movimientos');
+    }
+
         try {
             DB::beginTransaction();
 
@@ -65,6 +79,28 @@ class EntregaController extends Controller
             $codigoGenerado = date('Y') . $entrega->id;
             $entrega->codigo = $codigoGenerado;
             $entrega->save();
+
+
+            // --- LÓGICA DE SALDOS ---
+    
+        // Calculamos el nuevo saldo
+        // Asumiendo que el campo en la tabla Caja se llama 'saldo'
+        $nuevoSaldo = $cajaActiva->saldo + $request->total;
+
+        // A. Actualizamos el registro de la Caja principal
+        $cajaActiva->saldo = $nuevoSaldo;
+        $cajaActiva->save();
+
+        // --- NUEVO: GUARDAR DETALLE DE CAJA ---
+        $detalleCaja = new Detallecaja();
+        $detalleCaja->idcaja      = $cajaActiva->id;
+        $detalleCaja->concepto     = "Entrega en Ticket: " . $entrega->codigo;
+        $detalleCaja->valor        = $request->total;
+        $detalleCaja->tipo         = 'Entrada'; // O según tu lógica de DB
+        $detalleCaja->cajero      = Auth::user()->name;
+        $detalleCaja->saldo        = $cajaActiva->saldo; 
+        $detalleCaja->save();
+        // --------------------------------------
 
             // 4. Actualizar todas las guías de la lista
             // Buscamos las guías cuyo código 'guia' esté en el array recibido

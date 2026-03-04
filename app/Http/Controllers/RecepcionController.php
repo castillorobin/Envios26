@@ -9,6 +9,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Orden;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Caja;
+use App\Models\Detallecaja;
 
 class RecepcionController extends Controller
 {
@@ -45,68 +47,98 @@ class RecepcionController extends Controller
 
 
     public function guardar(Request $request)
-    {
-        // 1. Validar que vengan guías
-        if (!$request->has('guias') || count($request->guias) == 0) {
-            return back()->with('error', 'No hay guías en la lista para guardar.');
-        }
-
-        try {
-            DB::beginTransaction();
-
-            // 2. Crear el registro de Recepción
-            $recepcion = new Recepcion();
-            $recepcion->comercio   = $request->comercio_id; // O el nombre según tu DB
-            $recepcion->usuario    = Auth::user()->name;
-            $recepcion->subtotal   = $request->subtotal ?? 0;
-            $recepcion->descuento  = $request->descuento ?? 0;
-            $recepcion->total      = $request->total ?? 0;
-            $recepcion->nota       = $request->nota;
-            $recepcion->metodo     = $request->metodo_pago;
-            $recepcion->status     = 'Pendiente';
-            $recepcion->save();
-
-            // 3. Generar el Código (Año + ID)
-            $anioActual = date('Y');
-            $recepcion->codigo = $anioActual . $recepcion->id;
-            $recepcion->save();
-
-            // 4. Guardar cada guía en el modelo Orden
-            foreach ($request->guias as $guiaNum) {
-                $orden = new Orden();
-                $orden->guia     = $guiaNum;
-                $orden->comercio = $request->comercio_id;
-                $orden->estado   = 'Recepcionado';
-                $orden->recepcion_id = $recepcion->id; // Relación si la tienes
-                $orden->save();
-            }
-
-            DB::commit();
-
-            // 5. Preparar datos para el Ticket PDF
-            // Creamos un objeto genérico para que coincida con tu plantilla
-            $ticket = (object)[
-                'codigo'         => $recepcion->codigo,
-                'comercio'       => $request->comercio_nombre ?? 'Comercio', 
-                'cantidad_guias' => count($request->guias),
-                'subtotal'       => $recepcion->subtotal,
-                'descuento'      => $recepcion->descuento,
-                'total'          => $recepcion->total,
-                'metodo'         => $recepcion->metodo
-            ];
-
-            // 6. Generar PDF usando la plantilla ticketcobros.blade.php
-            $pdf = Pdf::loadView('recepcion.ticketcobros', compact('ticket'));
-
-            // Opcional: Si quieres que se descargue o se abra en el navegador
-            $customPaper = array(0,0,360,850);
-            return $pdf->setPaper($customPaper)->stream('Ticket_' . $recepcion->codigo . '.pdf');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Error al guardar: ' . $e->getMessage());
-        }
+{
+    // 1. Validar que vengan guías
+    if (!$request->has('guias') || count($request->guias) == 0) {
+        return back()->with('error', 'No hay guías en la lista para guardar.');
     }
+
+    // --- NUEVA VERIFICACIÓN DE CAJA ABIERTA ---
+    $cajaActiva = Caja::where('cajero', Auth::user()->name)
+                      ->where('estado', 0) // 0 = Abierta
+                      ->latest()
+                      ->first();
+
+    if (!$cajaActiva) {
+        // Si no hay caja activa, redirigir a la ruta 'cajero' con el mensaje para SweetAlert
+        return redirect()->route('cajero')->with('info', 'Debe de abrir caja antes de agregar movimientos');
+    }
+    // ------------------------------------------
+
+    try {
+        DB::beginTransaction();
+
+        // 2. Crear el registro de Recepción
+        $recepcion = new Recepcion();
+        $recepcion->comercio   = $request->comercio_id;
+        $recepcion->usuario    = Auth::user()->name;
+        $recepcion->subtotal   = $request->subtotal ?? 0;
+        $recepcion->descuento  = $request->descuento ?? 0;
+        $recepcion->total      = $request->total ?? 0;
+        $recepcion->nota       = $request->nota;
+        $recepcion->metodo     = $request->metodo_pago;
+        $recepcion->status     = 'Pendiente';
+        $recepcion->save();
+
+        // 3. Generar el Código (Año + ID)
+        $anioActual = date('Y');
+        $recepcion->codigo = $anioActual . $recepcion->id;
+        $recepcion->save();
+
+        // --- LÓGICA DE SALDOS ---
+    
+        // Calculamos el nuevo saldo
+        // Asumiendo que el campo en la tabla Caja se llama 'saldo'
+        $nuevoSaldo = $cajaActiva->saldo + $recepcion->total;
+
+        // A. Actualizamos el registro de la Caja principal
+        $cajaActiva->saldo = $nuevoSaldo;
+        $cajaActiva->save();
+
+        // --- NUEVO: GUARDAR DETALLE DE CAJA ---
+        $detalleCaja = new Detallecaja();
+        $detalleCaja->idcaja      = $cajaActiva->id;
+        $detalleCaja->concepto     = "Recepción en Ticket: " . $recepcion->codigo;
+        $detalleCaja->valor        = $recepcion->total;
+        $detalleCaja->tipo         = 'Entrada'; // O según tu lógica de DB
+        $detalleCaja->cajero      = Auth::user()->name;
+        $detalleCaja->saldo        = $cajaActiva->saldo; 
+        $detalleCaja->save();
+        // --------------------------------------
+
+        // 4. Guardar cada guía en el modelo Orden
+        foreach ($request->guias as $guiaNum) {
+            $orden = new Orden();
+            $orden->guia     = $guiaNum;
+            $orden->comercio = $request->comercio_id;
+            $orden->estado   = 'Recepcionado';
+            $orden->recepcion_id = $recepcion->id;
+            $orden->save();
+        }
+
+        DB::commit();
+
+        // 5. Preparar datos para el Ticket PDF
+        $ticket = (object)[
+            'codigo'         => $recepcion->codigo,
+            'comercio'       => $request->comercio_nombre ?? 'Comercio', 
+            'cantidad_guias' => count($request->guias),
+            'subtotal'       => $recepcion->subtotal,
+            'descuento'      => $recepcion->descuento,
+            'total'          => $recepcion->total,
+            'metodo'         => $recepcion->metodo
+        ];
+
+        // 6. Generar PDF
+        $pdf = Pdf::loadView('recepcion.ticketcobros', compact('ticket'));
+        $customPaper = array(0,0,360,850);
+        return $pdf->setPaper($customPaper)->stream('Ticket_' . $recepcion->codigo . '.pdf');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', 'Error al guardar: ' . $e->getMessage());
+    }
+}
 
     /**
      * Show the form for creating a new resource.

@@ -409,4 +409,91 @@
     };
 </script>
 
+
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Detectar mensaje de Error (Redirección de sesión de caja ya abierta)
+        @if(session('Error') || session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: '¡Operación no permitida!',
+                text: "{{ session('Error') ?? session('error') }}",
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Entendido'
+            });
+        @endif
+
+        // Detectar mensaje de Info (Redirección de caja cerrada al intentar cobrar)
+        @if(session('info'))
+            Swal.fire({
+                icon: 'info',
+                title: 'Atención',
+                text: "{{ session('info') }}",
+                confirmButtonColor: '#3e60d5',
+                confirmButtonText: 'Entendido'
+            });
+        @endif
+        
+        // Detectar mensaje de Success (Para depósitos o aperturas exitosas)
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: "{{ session('success') }}",
+                confirmButtonColor: '#198754',
+                timer: 2500
+            });
+        @endif
+    });
+</script>
+
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectConcepto = document.getElementById('select-concepto');
+        const inputWrapper = document.getElementById('input-cierre-wrapper');
+        const inputWrapper2 = document.getElementById('input-cierre-wrapper2');
+        const inputWrapper3 = document.getElementById('input-cierre-wrapper3');
+        const inputSaldoFinal = document.getElementById('saldo_final');
+        const inputSaldoFinalWrapper = document.getElementById('input-saldo-final-wrapper');
+        const inputCierre = document.getElementById('valor_cierre');
+        const inputcaja = document.getElementById('valor_caja');
+
+        selectConcepto.addEventListener('change', function () {
+            // Obtener el texto de la opción seleccionada
+            const selectedText = selectConcepto.options[selectConcepto.selectedIndex].text;
+            
+
+            // Verificar si contiene "Cierre de caja"
+            if (selectedText.includes('Cierre de caja')) {
+                inputWrapper.style.display = 'block'; // Mostrar input
+                inputWrapper2.style.display = 'block';
+                inputWrapper3.style.display = 'none';
+                inputSaldoFinalWrapper.style.display = 'block';
+
+            } else {
+                inputWrapper.style.display = 'none'; // Ocultar input
+                inputWrapper2.style.display = 'none';
+                inputWrapper3.style.display = 'block';
+                inputSaldoFinalWrapper.style.display = 'none';
+                inputSaldoFinal.value = '';
+            }
+        });
+
+
+         // Calcular saldo final en tiempo real
+        inputCierre.addEventListener('input', function () {
+            const saldoCaja = parseFloat(inputcaja.value) || 0;
+            const valorCierre = parseFloat(inputCierre.value) || 0;
+            const saldoFinal = saldoCaja - valorCierre;
+
+            inputSaldoFinal.value = saldoFinal.toFixed(2);
+        });
+    });
+</script>
+
 @endsection

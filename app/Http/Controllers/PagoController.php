@@ -8,6 +8,8 @@ use App\Models\Recepcion;
 use App\Models\Orden;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Caja;
+use App\Models\Detallecaja;
 
 class PagoController extends Controller
 {
@@ -89,6 +91,42 @@ class PagoController extends Controller
         $pago->comercio       = $request->comercio; // Guardar el nombre del comercio
         $pago->recepcion_id    = $request->recepcion_id; // Guardar la relación con la recepción
         $pago->save();
+
+        if ($request->estado_pago === 'Pagado') {
+                        // --- NUEVA VERIFICACIÓN DE CAJA ABIERTA ---
+                $cajaActiva = Caja::where('cajero', Auth::user()->name)
+                                ->where('estado', 0) // 0 = Abierta
+                                ->latest()
+                                ->first();
+
+                if (!$cajaActiva) {
+                    // Si no hay caja activa, redirigir a la ruta 'cajero' con el mensaje para SweetAlert
+                    return redirect()->route('cajero')->with('info', 'Debe de abrir caja antes de agregar movimientos');
+                }
+
+
+            // --- LÓGICA DE SALDOS ---
+                
+                    // Calculamos el nuevo saldo
+                    // Asumiendo que el campo en la tabla Caja se llama 'saldo'
+                    $nuevoSaldo = $cajaActiva->saldo - $request->total;
+
+                    // A. Actualizamos el registro de la Caja principal
+                    $cajaActiva->saldo = $nuevoSaldo;
+                    $cajaActiva->save();
+
+                    // --- NUEVO: GUARDAR DETALLE DE CAJA ---
+                    $detalleCaja = new Detallecaja();
+                    $detalleCaja->idcaja      = $cajaActiva->id;
+                    $detalleCaja->concepto     = "Pago en Ticket: " . $pago->id;
+                    $detalleCaja->valor        = $request->total;
+                    $detalleCaja->tipo         = 'Salida'; // O según tu lógica de DB
+                    $detalleCaja->cajero      = Auth::user()->name;
+                    $detalleCaja->saldo        = $cajaActiva->saldo; 
+                    $detalleCaja->save();
+                    // --------------------------------------
+
+        } 
 
         Recepcion::where('id', $request->recepcion_id)->update([
     'status' => $request->estado_pago
