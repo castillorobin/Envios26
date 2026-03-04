@@ -178,11 +178,25 @@
                         
                         <!-- end col -->
                                     <div class="col-xl-12">
-                                         <div class="card">
+                                         <div >
                                     <div class="card-body">
                                         <div class="row">
                                         
                                         </div>
+                                    </div>
+
+                                     <div class="tab-content pt-0">
+                        <div class="tab-pane show active" id="team-list" role="tabpanel">
+                            
+                            <div class="card overflow-hidden">
+
+
+                                    <div class="bg-light-subtle border-bottom p-2">
+                                        <label style="font-weight: bold; margin-bottom: 0; ">
+                                        
+                                                <i class="bx bx-receipt me-1 text-primary"></i> Movimientos de: <span class="text-primary">{{ $cajas[0]->cajero }}</span>
+                                        
+                                        </label>
                                     </div>
 
                                     <div class="table-responsive table-centered mt-3">
@@ -195,7 +209,7 @@
                                                 <th class="text-center">Entrada</th>
                                                 <th class="text-center">Salida</th>
                                                 <th class="text-center">Saldo</th>
-                                                <th class="text-center">Cajero</th>
+                                                
                                                 
                                             </tr>
                                         </thead>
@@ -229,7 +243,7 @@
                                                             @endif
                                                         </td>
                                                         <td class="text-center">$ {{$caja->saldo}}</td>
-                                                        <td class="text-center">{{$caja->cajero}}</td>
+                                                       
                                                         </tr>
                                             @endforeach
                                           
@@ -280,7 +294,7 @@
                                                         Cerrar caja       </a>
                                             @endif
 
-                                            <a href="/caja/jefe" class="btn btn-sm fw-bold btn-primary" >
+                                            <a href="/caja/cuadre" class="btn btn-sm fw-bold btn-primary" >
                                                         Regresar       </a>
                                             <!--end::Regresar-->
 
@@ -305,12 +319,98 @@
 </div>
 
 
+</div></div></div>
 
 
 
 
 
 
+
+
+<div class="modal fade" tabindex="-1" id="kt_modal_stacked_1">
+<div class="modal-dialog modal-dialog-centered">
+     
+    <div class="modal-content">
+        <div class="modal-header">
+           <h3 class="modal-title">Cerrar caja</h3>
+<form action="/caja/guardar" method="GET">
+     
+            <!--begin::Close-->
+            <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+            </div>
+            <!--end::Close-->
+        </div>
+
+        <div class="modal-body">
+            
+           <input type="text" name="cajero" class="form-control form-control-solid" value="{{ Auth::user()->name }}" readonly />
+           <br>
+            <input type="text" class="form-control form-control-solid" value="{{ date("d/m/Y") }}" readonly />
+            
+            
+            <br>
+          
+              <select class="form-select form-select-solid" aria-label="Select example" name="concepto" id="select-concepto"> 
+    
+    
+     @foreach ($conceptos as $concepto)
+     @if($concepto->concepto == "Cierre de caja")
+    <option value="{{$concepto->id}}">{{$concepto->concepto}}</option>
+    @endif
+    @endforeach
+   
+</select>
+            <br>
+                       
+            <div class="row">
+                <div class="col">
+                    <div id="input-cierre-wrapper2" class="mt-3">
+                         
+                             <label for="valor_caja" class="form-label">Saldo en caja</label>
+                            @isset($caja->saldo)
+                               <input type="text" name="valor_caja" id="valor_caja" class="form-control form-control-solid" placeholder="Saldo caja" value="{{$caja->saldo}}" readonly>
+                            @endisset
+
+
+                    </div>
+                </div>
+                <div class="col">
+            <!-- Input oculto al principio -->
+                    <div id="input-cierre-wrapper"  class="mt-3">
+                        <label for="valor_cierre" class="form-label">Saldo de cajero</label>
+                        <input type="text" name="valor_cierre" id="valor_cierre" class="form-control form-control-solid" placeholder="Saldo cajero">
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                
+            <div id="input-saldo-final-wrapper" class="mt-3">
+               <label for="saldo_final" class="form-label">Descuadre</label>
+                    <input type="number" name="saldo_final" id="saldo_final" class="form-control form-control-solid" placeholder="$0.00" readonly>
+            </div>
+
+              </div>
+            </div>
+
+
+
+        </div>
+
+
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+    </div>
+</div>
+</div>
 
 
 

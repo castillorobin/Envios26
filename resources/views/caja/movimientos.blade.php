@@ -181,11 +181,27 @@
                         
                         <!-- end col -->
                                     <div class="col-xl-12">
-                                         <div class="card">
+                                         <div>
                                     <div class="card-body">
                                         <div class="row">
                                         
                                         </div>
+                                    </div>
+
+
+
+                                     <div class="tab-content pt-0">
+                        <div class="tab-pane show active" id="team-list" role="tabpanel">
+                            
+                            <div class="card overflow-hidden">
+
+
+                                    <div class="bg-light-subtle border-bottom p-2">
+                                        <label style="font-weight: bold; margin-bottom: 0; ">
+                                        
+                                                <i class="bx bx-receipt me-1 text-primary"></i> Movimientos de: <span class="text-primary">{{ $cajas[0]->cajero }}</span>
+                                        
+                                        </label>
                                     </div>
 
                                     <div class="table-responsive table-centered mt-3">
@@ -265,7 +281,7 @@
 </div>
 
 
-
+</div></div></div>
 
 
 
