@@ -140,6 +140,19 @@ class RecepcionController extends Controller
     }
 }
 
+
+public function verificarGuiaExistente(Request $request)
+{
+    $guia = $request->guia;
+    
+    // Verificamos si existe en la tabla ordens
+    $existe = \App\Models\Orden::where('guia', $guia)->exists();
+
+    return response()->json([
+        'existe' => $existe
+    ]);
+}
+
     /**
      * Show the form for creating a new resource.
      *

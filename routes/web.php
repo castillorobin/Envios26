@@ -221,7 +221,7 @@ Route::post('/recepcion/inicio', [App\Http\Controllers\RecepcionController::clas
 Route::get('recepcion/crearrecepcion', [App\Http\Controllers\RecepcionController::class, 'crearrecepcion'] )->name('recepcion.crearrecepcion') ;
 Route::get('recepcion/elegircomercio', [App\Http\Controllers\RecepcionController::class, 'elegircomercio'] )->name('recepcion.elegircomercio') ;
 Route::post('/recepcion/guardar', [App\Http\Controllers\RecepcionController::class, 'guardar'])->name('recepcion.guardar');
-
+Route::post('/recepcion/verificar-guia', [App\Http\Controllers\RecepcionController::class, 'verificarGuiaExistente'])->name('recepcion.verificar_guia');
 
 //Cajones
 Route::get('/cajones', [App\Http\Controllers\CajonController::class, 'index'] )->name('cajones.inicio') ;

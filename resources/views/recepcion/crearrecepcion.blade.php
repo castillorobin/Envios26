@@ -216,21 +216,51 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 3. Función Principal: Agregar Guía
-    function agregarGuia() {
-        const guiaValue = inputGuia.value.trim();
+    async function agregarGuia() {
+    const guiaValue = inputGuia.value.trim();
 
-        if (guiaValue === "") {
-            Swal.fire({ icon: 'warning', title: 'Campo vacío', text: 'Ingrese o escanee una guía' });
-            return;
-        }
+    // Validaciones básicas de cliente
+    if (guiaValue === "") {
+        Swal.fire({ icon: 'warning', title: 'Campo vacío', text: 'Ingrese o escanee una guía' });
+        return;
+    }
 
-        if (document.getElementById(`input-hidden-${guiaValue}`)) {
-            Swal.fire({ icon: 'error', title: 'Duplicada', text: `La guía ${guiaValue} ya está en la lista.` });
+    // Validación 1: ¿Ya está en la lista actual (memoria local)?
+    if (document.getElementById(`input-hidden-${guiaValue}`)) {
+        Swal.fire({ icon: 'error', title: 'Duplicada', text: `La guía ${guiaValue} ya está en la lista temporal.` });
+        inputGuia.value = "";
+        return;
+    }
+
+    // Validación 2: ¿Ya existe en la Base de Datos?
+    try {
+        // Bloqueamos el input y botón brevemente
+        btnAgregar.disabled = true;
+        inputGuia.disabled = true;
+
+        const response = await fetch("{{ route('recepcion.verificar_guia') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ guia: guiaValue })
+        });
+
+        const data = await response.json();
+
+        if (data.existe) {
+            Swal.fire({ 
+                icon: 'error', 
+                title: 'Ya registrada', 
+                text: `La guía ${guiaValue} ya existe en el sistema (ya fue recepcionada anteriormente).` 
+            });
             inputGuia.value = "";
+            inputGuia.focus();
             return;
         }
 
+        // Si pasa ambas validaciones, agregar a la tabla
         contadorOrden++;
 
         tableGuias.row.add([
@@ -251,7 +281,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
         inputGuia.value = "";
         inputGuia.focus();
+
+    } catch (error) {
+        console.error("Error al verificar la guía:", error);
+        Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo verificar la guía con el servidor.' });
+    } finally {
+        // Desbloqueamos los controles
+        btnAgregar.disabled = false;
+        inputGuia.disabled = false;
+        inputGuia.focus();
     }
+}
 
     // 4. Lógica del Escáner QR (Cierre automático)
     btnActivarQr.addEventListener('click', function() {

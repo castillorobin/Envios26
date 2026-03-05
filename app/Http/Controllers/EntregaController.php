@@ -106,7 +106,7 @@ class EntregaController extends Controller
             // Buscamos las guías cuyo código 'guia' esté en el array recibido
             Orden::whereIn('guia', $request->guias)->update([
                 'entrega' => $codigoGenerado,
-                //'estado' => 'Entregado' // Opcional: actualizar el estado a entregado
+                'estado' => 'Entregado' // Opcional: actualizar el estado a entregado
             ]);
 
             DB::commit();

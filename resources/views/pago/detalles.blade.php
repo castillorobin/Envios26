@@ -260,7 +260,7 @@
                                                 </td>
                                                 <td class="col-pago" data-value="{{ $orden->pago }}">
                                                     @switch($orden->pago)
-                                                        @case('Pendiente') <span class="badge text-bg-danger">Pendiente</span> @break
+                                                        @case('Por pagar') <span class="badge text-bg-danger">Por pagar</span> @break
                                                         @case('Pagado') <span class="badge text-bg-success">Pagado</span> @break
                                                         @default <span class="badge text-bg-light">{{ $orden->pago }}</span>
                                                     @endswitch  
@@ -500,14 +500,14 @@ $(document).on('click', '.btn-editar', function() {
     // 1. Transformar Cobro EV en Select
     row.find('.col-cobro').html(`
         <select class="form-select form-select-sm edit-cobro">
-            <option value="Pendiente" ${cobroVal == 'Pendiente' ? 'selected' : ''}>Pendiente</option>
+            <option value="Por pagar" ${cobroVal == 'Por pagar' ? 'selected' : ''}>Por pagar</option>
             <option value="Cobrado" ${cobroVal == 'Cobrado' ? 'selected' : ''}>Cobrado</option>
         </select>
     `);
 
     row.find('.col-pago').html(`
         <select class="form-select form-select-sm edit-pago">
-            <option value="Pendiente" ${cobroVal == 'Pendiente' ? 'selected' : ''}>Pendiente</option>
+            <option value="Por pagar" ${cobroVal == 'Por pagar' ? 'selected' : ''}>Por pagar</option>
             <option value="Pagado" ${cobroVal == 'Pagado' ? 'selected' : ''}>Pagado</option>
         </select>
     `);
@@ -533,8 +533,8 @@ $(document).on('change input', '.edit-cobro, .edit-precio, .edit-envio', functio
     let envio = parseFloat(row.find('.edit-envio').val()) || 0;
     let totalRemunerar = 0;
 
-    if (cobro === 'Pendiente') {
-        // Pendiente: Precio + Envío
+    if (cobro === 'Por pagar') {
+        // Por pagar: Precio + Envío
         totalRemunerar = precio - envio;
     } else {
         // Cobrado: Solo Precio
