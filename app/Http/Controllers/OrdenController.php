@@ -19,8 +19,9 @@ class OrdenController extends Controller
      */
     public function index()
     {
-        $ordenes = Orden::all();
-        return view('orden.index', compact('ordenes'));
+        $comercios = Comercio::all();
+        // $ordenes = Orden::all();
+        return view('orden.index', compact('comercios'));
     }
 
     /**
@@ -514,5 +515,19 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
         $orden = Orden::with('comercioRel')->findOrFail($id);
         $comercio = Comercio::find($orden->comercio);
         return view('orden.detalleorden', compact('orden', 'comercio'));
+    }
+
+    public function busquedaComercio(Request $request)
+    {
+        $request->validate([
+            'comercio' => 'required|exists:comercios,id'
+        ]);
+
+        $comercio_id = $request->comercio;
+
+        // Obtener las órdenes asociadas al comercio seleccionado
+        $ordenes = Orden::where('comercio', $comercio_id)->get();
+
+        return view('orden.busqueda', compact('ordenes'));
     }
 }
