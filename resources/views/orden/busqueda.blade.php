@@ -207,6 +207,7 @@
                                                 <th>Fecha de entrega</th>
                                                 <th>Destinatario</th>
                                                 <th>Destino</th>
+                                                <th>Ubicación</th>
                                                 <th>Teléfono</th>
                                                 <th>Whatsapp</th>
                                                 <th>Status</th>
@@ -236,6 +237,9 @@
                                                 </td>
                                                 <td>
                                                     {{ $orden->direccion }}
+                                                </td>
+                                                <td>
+                                                    {{ $orden->destino }}
                                                 </td>
                                                 <td> {{ $orden->telefono }} </td>
                                                 <td>{{ $orden->whatsapp }}</td>
