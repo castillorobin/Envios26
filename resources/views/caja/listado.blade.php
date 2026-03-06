@@ -199,6 +199,71 @@
                                         </label>
                                     </div>
 
+
+
+                                     <hr>
+
+
+                                     <div class="row g-0">
+                                                            <div class="col-sm-4">
+                                                                <div class="bg-body border-end">
+                                                                    <div class="text-center p-3">
+                                                                        <div class="avatar-sm mx-auto mb-2">
+                                                                            <span class="avatar-title bg-primary-subtle text-primary rounded-circle"><iconify-icon icon="iconamoon:category-duotone" class="fs-18"><template shadowrootmode="open"><style data-style="data-style">:host{display:inline-block;vertical-align:0}span,svg{display:block}</style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><circle cx="17" cy="7" r="3" fill="currentColor" opacity=".16"></circle><circle cx="7" cy="17" r="3" fill="currentColor" opacity=".16"></circle><path fill="currentColor" d="M14 14h6v5a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zM4 4h6v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z" opacity=".16"></path><circle cx="17" cy="7" r="3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle><circle cx="7" cy="17" r="3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 14h6v5a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zM4 4h6v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"></path></g></svg></template></iconify-icon></span>
+                                                                        </div>
+                                                                        <h4 class="fw-semibold fs-20 mb-1">
+                                                                            $ {{$cajapr[0]->saldo}}
+                                                                        </h4>
+                                                                        <h5 class="fs-14 mb-0">
+                                                                            Saldo en caja al cierre
+                                                                        </h5>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!-- end col -->
+                                                            <div class="col-sm-4">
+                                                                <div class="bg-body border-end">
+                                                                    <div class="text-center p-3">
+                                                                        <div class="avatar-sm mx-auto mb-2">
+                                                                            <span class="avatar-title bg-success-subtle text-success rounded-circle"><iconify-icon icon="iconamoon:check-circle-1-duotone" class="fs-18"><template shadowrootmode="open"><style data-style="data-style">:host{display:inline-block;vertical-align:0}span,svg{display:block}</style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><circle cx="12" cy="12" r="9" fill="currentColor" opacity=".16"></circle><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 10l-4 4l-2-2"></path></g></svg></template></iconify-icon></span>
+                                                                        </div>
+                                                                        <h4 class="fw-semibold fs-20 mb-1">
+                                                                            $ {{$cajapr[0]->saldocajero}}
+                                                                        </h4>
+                                                                        <h5 class="fs-14 mb-0">
+                                                                            Saldo en cajero
+                                                                        </h5>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!-- end col -->
+                                                            <div class="col-sm-4">
+                                                                <div class="bg-body">
+                                                                    <div class="text-center p-3">
+                                                                        <div class="avatar-sm mx-auto mb-2">
+                                                                            <span class="avatar-title bg-danger-subtle text-danger rounded-circle"><iconify-icon icon="iconamoon:credit-card-duotone" class="fs-18"><template shadowrootmode="open"><style data-style="data-style">:host{display:inline-block;vertical-align:0}span,svg{display:block}</style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><path fill="currentColor" d="M5 19h14a2 2 0 0 0 2-2V9H3v8a2 2 0 0 0 2 2" opacity=".16"></path><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9h18M3 5h18v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zm4 8h3"></path></g></svg></template></iconify-icon></span>
+                                                                        </div>
+                                                                        <h4 class="fw-semibold fs-20 mb-1">
+                                                                            @if($cajapr[0]->descuadre > 0 )
+                                                                            <span style="color:red;"> $ -{{$cajapr[0]->descuadre}} </span>
+                                                                            @else
+                                                                            <span > $ {{$cajapr[0]->descuadre}} </span>
+                                                                            @endif
+                                                                        </h4>
+                                                                        <h5 class="fs-14 mb-0">
+                                                                            Descuadre
+                                                                        </h5>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!-- end col -->
+                                                        </div>
+
+                                                        
+
+
+                                     <hr>
+
                                     <div class="table-responsive table-centered mt-3">
                                        <table class="table text-nowrap mb-0" id="tabla-lote">
                                         <thead class="table-light">
@@ -263,66 +328,7 @@
                                             </div>
                                     </div>
                                     <!-- end table responsive -->
-                                     <hr>
-
-
-                                     <div class="row g-0">
-                                                            <div class="col-sm-4">
-                                                                <div class="bg-body border-end">
-                                                                    <div class="text-center p-3">
-                                                                        <div class="avatar-sm mx-auto mb-2">
-                                                                            <span class="avatar-title bg-primary-subtle text-primary rounded-circle"><iconify-icon icon="iconamoon:category-duotone" class="fs-18"><template shadowrootmode="open"><style data-style="data-style">:host{display:inline-block;vertical-align:0}span,svg{display:block}</style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><circle cx="17" cy="7" r="3" fill="currentColor" opacity=".16"></circle><circle cx="7" cy="17" r="3" fill="currentColor" opacity=".16"></circle><path fill="currentColor" d="M14 14h6v5a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zM4 4h6v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z" opacity=".16"></path><circle cx="17" cy="7" r="3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle><circle cx="7" cy="17" r="3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 14h6v5a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zM4 4h6v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"></path></g></svg></template></iconify-icon></span>
-                                                                        </div>
-                                                                        <h4 class="fw-semibold fs-20 mb-1">
-                                                                            $ {{$cajapr[0]->saldo}}
-                                                                        </h4>
-                                                                        <h5 class="fs-14 mb-0">
-                                                                            Saldo en caja al cierre
-                                                                        </h5>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <!-- end col -->
-                                                            <div class="col-sm-4">
-                                                                <div class="bg-body border-end">
-                                                                    <div class="text-center p-3">
-                                                                        <div class="avatar-sm mx-auto mb-2">
-                                                                            <span class="avatar-title bg-success-subtle text-success rounded-circle"><iconify-icon icon="iconamoon:check-circle-1-duotone" class="fs-18"><template shadowrootmode="open"><style data-style="data-style">:host{display:inline-block;vertical-align:0}span,svg{display:block}</style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><circle cx="12" cy="12" r="9" fill="currentColor" opacity=".16"></circle><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 10l-4 4l-2-2"></path></g></svg></template></iconify-icon></span>
-                                                                        </div>
-                                                                        <h4 class="fw-semibold fs-20 mb-1">
-                                                                            $ {{$cajapr[0]->saldocajero}}
-                                                                        </h4>
-                                                                        <h5 class="fs-14 mb-0">
-                                                                            Saldo en cajero
-                                                                        </h5>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <!-- end col -->
-                                                            <div class="col-sm-4">
-                                                                <div class="bg-body">
-                                                                    <div class="text-center p-3">
-                                                                        <div class="avatar-sm mx-auto mb-2">
-                                                                            <span class="avatar-title bg-danger-subtle text-danger rounded-circle"><iconify-icon icon="iconamoon:credit-card-duotone" class="fs-18"><template shadowrootmode="open"><style data-style="data-style">:host{display:inline-block;vertical-align:0}span,svg{display:block}</style><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none"><path fill="currentColor" d="M5 19h14a2 2 0 0 0 2-2V9H3v8a2 2 0 0 0 2 2" opacity=".16"></path><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9h18M3 5h18v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zm4 8h3"></path></g></svg></template></iconify-icon></span>
-                                                                        </div>
-                                                                        <h4 class="fw-semibold fs-20 mb-1">
-                                                                            @if($cajapr[0]->descuadre > 0 )
-                                                                            <span style="color:red;"> $ -{{$cajapr[0]->descuadre}} </span>
-                                                                            @else
-                                                                            <span > $ {{$cajapr[0]->descuadre}} </span>
-                                                                            @endif
-                                                                        </h4>
-                                                                        <h5 class="fs-14 mb-0">
-                                                                            Descuadre
-                                                                        </h5>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <!-- end col -->
-                                                        </div>
-
-
-                                     <hr>
+                                    
 
                                     
 
