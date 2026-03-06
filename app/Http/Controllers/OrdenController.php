@@ -508,4 +508,11 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
 
         return view('cuadre.detalle_paquete', compact('unidad', 'guias', 'estado'));
     }
+
+    public function detalle($id)
+    {
+        $orden = Orden::with('comercioRel')->findOrFail($id);
+        $comercio = Comercio::find($orden->comercio);
+        return view('orden.detalleorden', compact('orden', 'comercio'));
+    }
 }

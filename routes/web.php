@@ -213,6 +213,9 @@ Route::post('/ordenes/procesar-asignacion', [App\Http\Controllers\OrdenControlle
 Route::get('/ordenes/buscar-guia-ajax', [App\Http\Controllers\OrdenController::class, 'buscarGuiaAsignacion'])->name('ordenes.buscar_guia_ajax');
 Route::post('/ordenes/confirmar-asignacion', [App\Http\Controllers\OrdenController::class, 'confirmarAsignacion'])->name('ordenes.confirmar_asignacion');
 
+Route::get('/ordenes/detalle/{id}', [App\Http\Controllers\OrdenController::class, 'detalle'])->name('ordenes.detalle');
+
+
 // 3. El formulario (ahora recibe los datos por sesión o query)
 //Route::get('ordenes/crear', [App\Http\Controllers\OrdenController::class, 'create'])->name('ordenes.crear');
 

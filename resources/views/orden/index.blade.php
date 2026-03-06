@@ -208,7 +208,9 @@
                                              @foreach($ordenes as $orden)
                                             <tr>
                                                 <td>
-                                                    {{ $orden->guia }}
+                                                    <a href="{{ route('ordenes.detalle', $orden->id) }}">
+                                                        {{ $orden->guia }}
+                                                    </a>
                                                 </td>
                                                 <td>
                                                     
