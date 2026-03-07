@@ -331,14 +331,15 @@
         }
     });
 
-    // 2. Configuración de DateRangePicker
-    var start = moment().subtract(29, 'days');
-    var end = moment();
+    // --- CONFIGURACIÓN DE RANGO POR DEFECTO (ÚLTIMOS 7 DÍAS) ---
+    var startDefault = moment().subtract(6, 'days'); // 7 días contando hoy
+    var endDefault = moment();
 
+    // 2. Configuración de DateRangePicker
     const picker = $('#filtro-fecha').daterangepicker({
-        startDate: start,
-        endDate: end,
-        autoUpdateInput: false, // Evita que se ponga fecha al cargar
+        startDate: startDefault,
+        endDate: endDefault,
+        autoUpdateInput: false, // Lo mantenemos false para manejar el texto manualmente
         locale: {
             format: 'DD/MM/YYYY',
             applyLabel: "Aplicar",
@@ -355,48 +356,50 @@
         }
     });
 
-    // Evento al aplicar fechas
+    // 🔥 ACCIÓN POR DEFECTO: Aplicar el filtro de 7 días al cargar la página
+    $('#filtro-fecha').val(startDefault.format('DD/MM/YYYY') + ' - ' + endDefault.format('DD/MM/YYYY'));
+    filtrarPorFecha(startDefault, endDefault);
+
+    // Evento al aplicar fechas manualmente
     $('#filtro-fecha').on('apply.daterangepicker', function(ev, picker) {
         $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
         filtrarPorFecha(picker.startDate, picker.endDate);
     });
 
-    // Evento al dar "cancelar" en el picker (actúa como limpiar)
     $('#filtro-fecha').on('cancel.daterangepicker', function(ev, picker) {
         resetearFiltros();
     });
 
-    // 3. Lógica de Filtrado personalizada
+    // 3. Lógica de Filtrado (Se mantiene igual pero ahora es llamada al inicio)
     function filtrarPorFecha(startDate, endDate) {
+        // Limpiamos filtros previos para no acumularlos
+        $.fn.dataTable.ext.search = []; 
+        
         $.fn.dataTable.ext.search.push(
             function(settings, data, dataIndex) {
                 var dateStr = data[1]; // Columna Fecha de entrega
                 if (dateStr === "N/A" || !dateStr) return false;
 
                 var rowDate = moment(dateStr, 'DD/MM/YYYY');
+                // Ajustamos para incluir todo el día de inicio y fin
                 return rowDate.isBetween(startDate.startOf('day'), endDate.endOf('day'), null, '[]');
             }
         );
         table.draw();
-        $.fn.dataTable.ext.search.pop();
     }
 
     // 4. Lógica del Botón Limpiar Todo
     function resetearFiltros() {
-        $('#search').val(''); // Limpia buscador texto
-        $('#filtro-fecha').val(''); // Limpia input fecha
-        table.search('').draw(); // Resetea búsqueda de tabla
-        
-        // Elimiamos cualquier filtro de búsqueda personalizado de la pila
+        $('#search').val('');
+        $('#filtro-fecha').val('');
         $.fn.dataTable.ext.search = []; 
-        table.draw();
+        table.search('').draw();
     }
 
     $('#btn-reset-filtros').on('click', function() {
         resetearFiltros();
     });
 
-    // Buscador de texto normal
     $('#search').on('keyup', function() {
         table.search(this.value).draw();
     });
