@@ -14,4 +14,6 @@ class Recepcion extends Model
         // 'comercio' es el nombre de la columna que guarda el ID en tu tabla recepcions
         return $this->belongsTo(Comercio::class, 'comercio', 'id');
     }
+
+    
 }

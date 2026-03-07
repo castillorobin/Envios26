@@ -526,7 +526,7 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
         $comercio_id = $request->comercio;
 
         // Obtener las órdenes asociadas al comercio seleccionado
-        $ordenes = Orden::where('comercio', $comercio_id)->get();
+        $ordenes = Orden::with('recepcion')->where('comercio', $comercio_id)->get();
 
         return view('orden.busqueda', compact('ordenes'));
     }

@@ -41,4 +41,9 @@ class Orden extends Model
     public function comercioRel() {
     return $this->belongsTo(Comercio::class, 'comercio'); // 'comercio' es el FK en tu tabla ordens
 }
+public function recepcion()
+    {
+        // Argumentos: Modelo relacionado, clave foránea en Orden, clave local en Recepcion
+        return $this->belongsTo(Recepcion::class, 'recepcion_id', 'id');
+    }
 }

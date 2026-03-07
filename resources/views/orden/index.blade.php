@@ -18,6 +18,20 @@
     .select2-container--default .select2-selection--single .select2-selection__arrow {
         height: 36px !important;
     }
+/* Esto asegura que Select2 responda al flex-grow-1 del padre */
+.select2-container {
+    width: 100% !important;
+}
+
+/* Evita que el botón se vea muy pequeño o pegado en resoluciones altas */
+@media (min-width: 768px) {
+    .w-md-auto {
+        width: auto !important;
+        white-space: nowrap; /* Evita que el texto del botón se rompa en dos líneas */
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
 </style>
 
 <div class="container-xxl">
@@ -28,24 +42,28 @@
                     <h5 class="card-title mb-0">Búsqueda por comercio</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('ordenes.busqueda_comercio') }}" method="POST" id="form-busqueda">
-                        @csrf
-                        <div class="mb-3">
-                            <label class="form-label">Seleccionar Comercio</label>
-                            <div class="input-group">
-                                <select name="comercio" class="form-select select2" required>
-                                    <option value="" disabled selected>Seleccione un comercio</option>
-                                    @foreach($comercios as $comercio)
-                                        <option value="{{ $comercio->id }}">{{ $comercio->nombre }}</option>
-                                    @endforeach
-                                </select>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bx bx-search-alt"></i> Buscar
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+    <form action="{{ route('ordenes.busqueda_comercio') }}" method="POST" id="form-busqueda">
+        @csrf
+        <div class="mb-3">
+            <label class="form-label">Seleccionar Comercio</label>
+            <div class="d-flex flex-column flex-md-row gap-2 align-items-md-start">
+                
+                <div class="flex-grow-1 w-100">
+                    <select name="comercio" class="form-select select2" required>
+                        <option value="" disabled selected>Seleccione un comercio</option>
+                        @foreach($comercios as $comercio)
+                            <option value="{{ $comercio->id }}">{{ $comercio->nombre }}</option>
+                        @endforeach
+                    </select>
                 </div>
+
+                <button type="submit" class="btn btn-primary w-100 w-md-auto py-2">
+                    <i class="bx bx-search-alt"></i> Buscar
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
             </div>
         </div>
     </div>
@@ -59,7 +77,7 @@
         $('.select2').select2({
             placeholder: "Escriba el nombre del comercio...",
             allowClear: true,
-            width: 'resolve' // Ayuda a que herede el ancho del contenedor
+            width: '100%' // Ayuda a que herede el ancho del contenedor
         });
     });
 </script>

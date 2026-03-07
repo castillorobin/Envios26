@@ -165,36 +165,61 @@
         border-color: #3e60d5 !important;
         outline: 0;
     }
+
+/* --- COMPORTAMIENTO EN ESCRITORIO (PC/TABLET HORIZONTAL) --- */
+@media (min-width: 768px) {
+    /* El contenedor de la derecha no debe crecer más de lo necesario */
+    .w-md-auto {
+        width: auto !important;
+    }
+    
+    /* Forzamos el ancho del input-group de fecha solo en pantallas grandes */
+    #filtro-fecha {
+        max-width: 250px;
+    }
+    
+    .input-group {
+        width: auto !important;
+    }
+}
+
+/* --- COMPORTAMIENTO EN MÓVIL --- */
+@media (max-width: 767.98px) {
+    .search-bar, .input-group, #btn-reset-filtros {
+        width: 100% !important;
+        margin-bottom: 5px;
+    }
+}
 </style>
  
 <div class="container-xxl">
         <div class="row">
                         <div class="col">
                             <div class="card">
-                                <div class="card-body">
-                                    <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
-                                        <div>
-                                            <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
-                                                <div class="d-flex align-items-center gap-2">
-                                                    <div class="search-bar">
-                                                        <span><i class="bx bx-search-alt"></i></span>
-                                                        <input type="search" class="form-control" id="search" placeholder="Buscar...">
-                                                    </div>
-                                                    
-                                                    <div class="input-group" style="width: 300px;">
-                                                        <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-                                                        <input type="text" class="form-control" id="filtro-fecha" placeholder="Seleccionar rango">
-                                                    </div>
-
-                                                    <button type="button" id="btn-reset-filtros" class="btn btn-primary">
-                                                         
-                                                        <i class="bx bx-reset"></i> Limpiar
-                                                    </button>
-                                                </div>
+                               <div class="card-body">
+                                    <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center gap-3 w-100">
+                                        
+                                        <div class="search-bar w-100 w-md-auto" style="min-width: 250px;">
+                                            <div class="position-relative">
+                                                <span class="position-absolute top-50 start-0 translate-middle-y ps-2">
+                                                    <i class="bx bx-search-alt"></i>
+                                                </span>
+                                                <input type="search" class="form-control ps-4" id="search" placeholder="Buscar...">
                                             </div>
                                         </div>
-
                                         
+                                        <div class="d-flex flex-column flex-md-row gap-2 w-100 w-md-auto align-items-md-center">
+                                            
+                                            <div class="input-group w-100" style="max-width: 100%; width: 100% !important; flex: 1 1 auto; min-width: 280px;">
+                                                <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+                                                <input type="text" class="form-control" id="filtro-fecha" placeholder="Seleccionar rango">
+                                            </div>
+
+                                            <button type="button" id="btn-reset-filtros" class="btn btn-primary w-100 w-md-auto text-nowrap px-3">
+                                                <i class="bx bx-reset"></i> Limpiar
+                                            </button>
+                                            
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- end card body -->
@@ -208,6 +233,7 @@
                                                 <th>Destinatario</th>
                                                 <th>Destino</th>
                                                 <th>Ubicación</th>
+                                                <th>Ticket</th>
                                                 <th>Teléfono</th>
                                                 <th>Whatsapp</th>
                                                 <th>Status</th>
@@ -240,6 +266,15 @@
                                                 </td>
                                                 <td>
                                                     {{ $orden->destino }}
+                                                </td>
+                                                <td>
+                                                    @if($orden->recepcion)
+                                                        <span class="badge bg-light text-dark border">
+                                                            <i class="bx bx-receipt"></i> {{ $orden->recepcion->codigo }}
+                                                        </span>
+                                                    @else
+                                                        <span class="text-muted">Sin Ticket</span>
+                                                    @endif
                                                 </td>
                                                 <td> {{ $orden->telefono }} </td>
                                                 <td>{{ $orden->whatsapp }}</td>
