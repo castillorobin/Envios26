@@ -1071,6 +1071,13 @@
                                     <li class="sub-nav-item">
                                         <a
                                             class="sub-nav-link"
+                                            href="/ordenes/busqueda_ticket"
+                                            >Busqueda por ticket</a
+                                        >
+                                    </li>
+                                    <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
                                             href="/ordenes/crear"
                                             >Crear orden</a
                                         >

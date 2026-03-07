@@ -215,6 +215,9 @@ Route::post('/ordenes/confirmar-asignacion', [App\Http\Controllers\OrdenControll
 
 Route::get('/ordenes/detalle/{id}', [App\Http\Controllers\OrdenController::class, 'detalle'])->name('ordenes.detalle');
 Route::post('/ordenes/busqueda_comercio', [App\Http\Controllers\OrdenController::class, 'busquedaComercio'])->name('ordenes.busqueda_comercio');
+Route::get('/ordenes/busqueda_ticket', [App\Http\Controllers\OrdenController::class, 'busquedaTicket'])->name('ordenes.busqueda_ticket');
+Route::post('/ordenes/ticketdetalles', [App\Http\Controllers\OrdenController::class, 'ticketDetalles'])->name('ordenes.ticket_detalles');
+
 
 
 // 3. El formulario (ahora recibe los datos por sesión o query)

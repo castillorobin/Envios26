@@ -9,6 +9,7 @@ use App\Models\Punto;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Cajon;
 use App\Models\Unidad;
+use App\Models\Recepcion;
 
 class OrdenController extends Controller
 {
@@ -529,5 +530,36 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
         $ordenes = Orden::with('recepcion')->where('comercio', $comercio_id)->get();
 
         return view('orden.busqueda', compact('ordenes'));
+    }
+    public function busquedaTicket()
+    {
+        
+        return view('orden.buscarticket');
+    }
+    
+    public function ticketDetalles(Request $request)
+    {
+        $request->validate([
+            'ticket' => 'required|string', // Este es el campo 'codigo' del ticket
+        ]);
+
+        $codigoTicket = $request->ticket;
+
+        // 1. Buscamos el registro en el modelo Recepcion por su columna 'codigo'
+        $recepcion = Recepcion::where('codigo', $codigoTicket)->first();
+
+        // Validar si el ticket existe
+        if (!$recepcion) {
+            return back()->with('error', 'No se encontró ningún ticket con el código: ' . $codigoTicket);
+        }
+
+        // 2. Traemos todas las órdenes vinculadas a ese ID de recepción
+        // Usamos with('comercioRel') para optimizar la carga si necesitas mostrar el nombre del comercio
+        $ordenes = Orden::where('recepcion_id', $recepcion->id)->get();
+
+        // 3. Si necesitas el comercio del ticket (asumiendo que Recepcion tiene comercio_id)
+        $comercio = Comercio::find($recepcion->comercio); 
+
+        return view('orden.detalleticket', compact('recepcion', 'ordenes', 'comercio'));
     }
 }
