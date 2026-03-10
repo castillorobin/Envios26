@@ -53,6 +53,7 @@ return array(
     'App\\Models\\Estatus' => $baseDir . '/app/Models/Estatus.php',
     'App\\Models\\Facturacion' => $baseDir . '/app/Models/Facturacion.php',
     'App\\Models\\Filtroganan' => $baseDir . '/app/Models/Filtroganan.php',
+    'App\\Models\\Hestado' => $baseDir . '/app/Models/Hestado.php',
     'App\\Models\\Orden' => $baseDir . '/app/Models/Orden.php',
     'App\\Models\\Pago' => $baseDir . '/app/Models/Pago.php',
     'App\\Models\\Pedido' => $baseDir . '/app/Models/Pedido.php',

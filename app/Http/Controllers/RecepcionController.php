@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Caja;
 use App\Models\Detallecaja;
+use App\Models\Hestado;
+
+
+
 
 class RecepcionController extends Controller
 {
@@ -114,6 +118,15 @@ class RecepcionController extends Controller
             $orden->estado   = 'Recepcionado';
             $orden->recepcion_id = $recepcion->id;
             $orden->save();
+
+                // --- NUEVO: GUARDAR HISTORIAL DE ESTADOS ---
+                $hesta = new Hestado();
+                $hesta->idenvio = $orden->id;
+                $hesta->estado = "Recepcionado";
+                $hesta->nota = "Paquete recepcionado en el sistema.";
+                $hesta->usuario =  Auth::user()->name ;
+                $hesta->save();
+                // --------------------------------------
         }
 
         DB::commit();

@@ -216,7 +216,7 @@
 
                          <div class="col-lg-6">
                             <div class="card card-height-100">
-                                <div class="card-body">
+                                <div class="card-body"> 
                                   
                                     <h5 class="card-title mb-3">
                                         Fotos de cambio
@@ -228,11 +228,56 @@
                                     </p>
                                     
                                 </div>
+
+
+                                
                                 <!-- end card body -->
                             </div>
+
+                            
                             <!-- end card -->
                         </div>
+
+
+
                         
+
+
+
+
+
+                        
+                        <!-- end col -->
+                    </div>
+
+                    <div class="row pt-3">
+                        <div class="col-12">
+                            <h5 class="card-title mb-3">Historial del paquete</h5>
+                            @foreach($hestados as $hestado)
+                                <div class="d-flex flex-row fs-18 align-items-center mb-3">
+                                    <h5 class="mb-0"> {{ date('d/m/Y H:i', strtotime($hestado->created_at)) }}</h5>
+                                </div>
+                        
+                            <ul class="list-unstyled left-timeline">
+                                <li class="left-timeline-list">
+                                    <div class="card d-inline-block">
+                                        <div class="card-body">
+                                            <h5 class="mt-0 fs-16">
+                                                {{ $hestado->estado }}
+                                            </h5>
+                                            <p class="text-muted mb-0">
+                                                {{ $hestado->nota }}
+                                            </p>
+                                            <p class="text-muted mb-0">
+                                              <strong>Usuario:</strong> {{ $hestado->usuario }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </li>
+                                
+                            </ul>
+                            @endforeach
+                        </div>
                         <!-- end col -->
                     </div>
                     <!-- end row -->

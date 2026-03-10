@@ -10,6 +10,10 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Cajon;
 use App\Models\Unidad;
 use App\Models\Recepcion;
+use App\Models\Hestado;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 
 class OrdenController extends Controller
 {
@@ -103,6 +107,13 @@ class OrdenController extends Controller
         'punto'         => $puntoId,
         'pago'          => $request->input('estado_pago') // Guardamos el estado del pago
     ]);
+
+    $hesta = new Hestado();
+        $hesta->idenvio = $orden->id;
+        $hesta->estado = "Creado";
+        $hesta->nota = "Paquete creado en el sistema.";
+        $hesta->usuario =  Auth::user()->name ;
+        $hesta->save();
 
     // --- LÓGICA DE RESPUESTA ---
     
@@ -515,7 +526,8 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
     {
         $orden = Orden::with('comercioRel')->findOrFail($id);
         $comercio = Comercio::find($orden->comercio);
-        return view('orden.detalleorden', compact('orden', 'comercio'));
+        $hestados = Hestado::where('idenvio', $id)->get();
+        return view('orden.detalleorden', compact('orden', 'comercio', 'hestados'));
     }
 
     public function busquedaComercio(Request $request)

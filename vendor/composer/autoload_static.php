@@ -642,6 +642,7 @@ class ComposerStaticInit85fca1059374edd6fd33604df155dcfc
         'App\\Models\\Estatus' => __DIR__ . '/../..' . '/app/Models/Estatus.php',
         'App\\Models\\Facturacion' => __DIR__ . '/../..' . '/app/Models/Facturacion.php',
         'App\\Models\\Filtroganan' => __DIR__ . '/../..' . '/app/Models/Filtroganan.php',
+        'App\\Models\\Hestado' => __DIR__ . '/../..' . '/app/Models/Hestado.php',
         'App\\Models\\Orden' => __DIR__ . '/../..' . '/app/Models/Orden.php',
         'App\\Models\\Pago' => __DIR__ . '/../..' . '/app/Models/Pago.php',
         'App\\Models\\Pedido' => __DIR__ . '/../..' . '/app/Models/Pedido.php',
