@@ -30,6 +30,7 @@
                     <!-- end row -->
 
                     <div class="row">
+
                         <div class="col-xl-7">
                             <div class="card">
                                 <div class="card-body">
@@ -57,14 +58,7 @@
                                                     <td>Whatsapp</td>
                                                     <td>{{ $orden->whatsapp }}</td>
                                                 </tr>
-                                                <tr>
-                                                    <td>Estado</td>
-                                                    <td>{{ $orden->estado }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Fecha de entrega</td>
-                                                    <td>{{ $orden->fecha_entrega }}</td>
-                                                </tr>
+                                               
                                             </tbody>
                                             <!-- end tbody -->
                                         </table>
@@ -123,7 +117,7 @@
                     <!-- end row -->
 
                     <div class="row">
-                        <div class="col-lg-4">
+                        <div class="col-lg-6">
                             <div class="card card-height-100">
                                 <div class="card-body">
                                     
@@ -162,7 +156,7 @@
                             <!-- end card -->
                         </div>
                         <!-- end col -->
-                        <div class="col-lg-4">
+                        <div class="col-lg-6">
                             <div class="card card-height-100">
                                 <div class="card-body">
                                   
@@ -179,25 +173,44 @@
                             <!-- end card -->
                         </div>
                         <!-- end col -->
-                        <div class="col-lg-4">
+
+                        <div class="col-lg-6">
                             <div class="card card-height-100">
                                 <div class="card-body">
-                                    
+                                  
                                     <h5 class="card-title mb-3">
-                                        Fotos de cambio
+                                        Fotos del paquete
                                     </h5>
-                                    <div class="text-center">
-                                       
-                                        <p class="mb-1">
-                                            <img src="https://techzaa.in/reback/admin/assets/images/products/product-1(3).png" alt="product-1(3)" class="img-fluid mx-auto d-block rounded" style="max-width: 200px;">
-                                        </p>
-                                       
-                                    </div>
+                                    <p class="mb-1 d-flex justify-content-around">
+                                       <img src="https://techzaa.in/reback/admin/assets/images/products/product-1(3).png" alt="product-1(3)" class="img-fluid mx-auto d-block rounded" style="max-width: 75px;">
+                                       <img src="https://techzaa.in/reback/admin/assets/images/products/product-1(3).png" alt="product-1(3)" class="img-fluid mx-auto d-block rounded" style="max-width: 75px;">
+                                       <img src="https://techzaa.in/reback/admin/assets/images/products/product-1(3).png" alt="product-1(3)" class="img-fluid mx-auto d-block rounded" style="max-width: 75px;">
+                                    </p>
                                 </div>
                                 <!-- end card body -->
                             </div>
                             <!-- end card -->
                         </div>
+
+                         <div class="col-lg-6">
+                            <div class="card card-height-100">
+                                <div class="card-body">
+                                  
+                                    <h5 class="card-title mb-3">
+                                        Fotos de cambio
+                                    </h5>
+                                    <p class="mb-1 d-flex justify-content-around">
+                                       <img src="https://techzaa.in/reback/admin/assets/images/products/product-1(3).png" alt="product-1(3)" class="img-fluid mx-auto d-block rounded" style="max-width: 75px;">
+                                       <img src="https://techzaa.in/reback/admin/assets/images/products/product-1(3).png" alt="product-1(3)" class="img-fluid mx-auto d-block rounded" style="max-width: 75px;">
+                                       <img src="https://techzaa.in/reback/admin/assets/images/products/product-1(3).png" alt="product-1(3)" class="img-fluid mx-auto d-block rounded" style="max-width: 75px;">
+                                    </p>
+                                    
+                                </div>
+                                <!-- end card body -->
+                            </div>
+                            <!-- end card -->
+                        </div>
+                        
                         <!-- end col -->
                     </div>
                     <!-- end row -->
