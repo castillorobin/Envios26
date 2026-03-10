@@ -393,7 +393,7 @@
             let guias = [];
             table.rows().every(function() { guias.push(this.data()[0]); });
 
-            try {
+            try { 
                 const response = await fetch("{{ route('carga.confirmar_carga_guias') }}", {
                     method: 'POST',
                     headers: {

@@ -7,6 +7,8 @@ use App\Models\Orden;
 use App\Models\Unidad; // Asumiendo que existe el modelo
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Hestado; // Para registrar el historial de estados
+
 
 class RepartoController extends Controller
 {
@@ -109,6 +111,18 @@ class RepartoController extends Controller
             // 'usuario_actualiza' => auth()->id(), 
             // 'fecha_no_entregado' => now()
         ]);
+
+        foreach ($guiasArray as $guia) {
+            $orden = Orden::where('guia', $guia)->first();
+            if ($orden) {
+                $hestado = new Hestado();
+                $hestado->idenvio = $orden->id;
+                $hestado->estado = "No entregado";
+                $hestado->nota = "El paquete se ha marcado como No entregado. " ;
+                $hestado->usuario = Auth::user()->name;
+                $hestado->save();
+            }
+        }
 
         DB::commit();
 

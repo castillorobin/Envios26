@@ -265,6 +265,13 @@ public function guardarFotos(Request $request)
 
         // GUARDADO CON REFRESH
         $guardado = $orden->save();
+
+        $hesta = new Hestado();
+        $hesta->idenvio = $orden->id;
+        $hesta->estado = "Foto Agregada";
+        $hesta->nota = "Se han agregado fotos al paquete.";
+        $hesta->usuario =  Auth::user()->name ;
+        $hesta->save();
         
         if ($guardado) {
             \Log::info('Base de datos actualizada con éxito');
@@ -352,26 +359,52 @@ public function confirmarAsignacion(Request $request)
     }
 
     try {
-        if ($tipo === 'Caja') {
-            // Actualización masiva para Caja
-            Orden::whereIn('guia', $guias)->update([
-                'caja' => $request->input('caja'),
-                'agencia' => $agencia,
-                'estado' => 'Asignado' // O el estado que manejes
-            ]);
-            $mensaje = "Mercancía asignada a la caja correctamente.";
-        } else {
-            // Actualización masiva para Suelto
-            Orden::whereIn('guia', $guias)->update([
-                'rack' => $request->input('rack'),
-                'nivel' => $request->input('nivel'),
-                'gondola' => $request->input('gondola'),
-                'agencia' => $agencia,
-                'caja' => null, // Aseguramos que no tenga caja
-                'estado' => 'En Bodega'
-            ]);
-            $mensaje = "Mercancía ubicada en estantería correctamente.";
+    if ($tipo === 'Caja') {
+        // Actualización masiva para Caja
+        Orden::whereIn('guia', $guias)->update([
+            'caja' => $request->input('caja'),
+            'agencia' => $agencia,
+            'estado' => 'Asignado'
+        ]);
+
+        // Crear registros de historial para cada guía
+        foreach ($guias as $guia) {
+            $orden = Orden::where('guia', $guia)->first();
+            if ($orden) {
+                $hesta = new Hestado();
+                $hesta->idenvio = $orden->id;
+                $hesta->estado = "Asignación";
+                $hesta->nota = "Se ha asignado el paquete a la caja #{$request->input('caja')}";
+                $hesta->usuario = Auth::user()->name;
+                $hesta->save();
+            }
         }
+        $mensaje = "Mercancía asignada a la caja correctamente.";
+    } else {
+        // Actualización masiva para Suelto
+        Orden::whereIn('guia', $guias)->update([
+            'rack' => $request->input('rack'),
+            'nivel' => $request->input('nivel'),
+            'gondola' => $request->input('gondola'),
+            'agencia' => $agencia,
+            'caja' => null, // Aseguramos que no tenga caja
+            'estado' => 'En Bodega'
+        ]);
+
+        // Crear registros de historial para cada guía
+        foreach ($guias as $guia) {
+            $orden = Orden::where('guia', $guia)->first();
+            if ($orden) {
+                $hesta = new Hestado();
+                $hesta->idenvio = $orden->id;
+                $hesta->estado = "Ubicación";
+                $hesta->nota = "El paquete se le asignó ubicación dentro del almacén";
+                $hesta->usuario = Auth::user()->name;
+                $hesta->save();
+            }
+        }
+        $mensaje = "Mercancía ubicada en estantería correctamente.";
+    }
 
         return response()->json(['success' => true, 'message' => $mensaje]);
 
@@ -621,6 +654,14 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
             // 4. Cambiar estado a Fallido y guardar
             $orden->estado = 'Fallido';
             $orden->save();
+
+                // 5. Registrar en el historial
+                $hestado = new Hestado();
+                $hestado->idenvio = $orden->id;
+                $hestado->estado = "Fallido";
+                $hestado->nota = "El paquete se ha marcado como Fallido. " ;
+                $hestado->usuario = Auth::user()->name;
+                $hestado->save();
 
             return redirect()->route('ordenes.buscarfallidas')->with('success', 'La guía se ha marcado como Fallida correctamente.');
 

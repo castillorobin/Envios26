@@ -131,7 +131,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="page-title-box">
-                                <h4 class="mb-0 fw-semibold">Asignación de mercancía</h4>
+                                <h4 class="mb-0 fw-semibold">Asignación de caja</h4>
                                 
                             </div>
                         </div>

@@ -48,7 +48,7 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
     }
 
 
-
+ 
 
 /*
     // Opción Caja: Validamos que la caja exista antes de ir a la siguiente vista
@@ -94,6 +94,18 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
                 'estado' => 'En transito' // Ejemplo de estado, ajusta según tu lógica de negocio
             ]);
 
+            foreach ($numerosCajas as $numeroCaja) {
+                $caja = Orden::where('caja', $numeroCaja)->first();
+                if ($caja) {
+                    $hestado = new \App\Models\Hestado();
+                    $hestado->idenvio = $caja->id; // Asumiendo que idenvio se refiere al ID de la caja
+                    $hestado->estado = "Asignación de carga";
+                    $hestado->nota = "Se ha asignado la guía a la unidad {$unidad->nombre}.";
+                    $hestado->usuario = auth()->user()->name;
+                    $hestado->save();
+                }
+            }
+
             DB::commit();
 
             return response()->json([
@@ -138,6 +150,18 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
             'unidad' => $unidadId,
             'estado' => 'En transito' // Cambiamos el estado opcionalmente
         ]);
+
+        foreach ($codigosGuias as $guia) {
+            $orden = \App\Models\Orden::where('guia', $guia)->first();
+            if ($orden) {
+                $hestado = new \App\Models\Hestado();
+                $hestado->idenvio = $orden->id;
+                $hestado->estado = "Asignación de carga";
+                $hestado->nota = "Se ha asignado la guía a la unidad {$unidad->nombre}.";
+                $hestado->usuario = auth()->user()->name;
+                $hestado->save();
+            }
+        }
 
         \DB::commit();
 

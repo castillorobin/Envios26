@@ -7,7 +7,7 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header text-center">
-                    <h5 class="card-title mb-0">Asignar Mercancia</h5>
+                    <h5 class="card-title mb-0">Asignar Caja</h5>
                 </div>
                 <div class="card-body">
                     <form action="{{ route('ordenes.asignacion') }}" method="POST" id="form-busqueda">

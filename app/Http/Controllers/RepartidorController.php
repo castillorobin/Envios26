@@ -6,12 +6,15 @@ use Illuminate\Http\Request;
 use App\Models\Repartidor;
 use Illuminate\Support\Str;
 use PDF;
+use App\Models\Orden;
+use App\Models\Hestado;
+use Illuminate\Support\Facades\Auth;
 
 class RepartidorController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
+     * 
      * @return \Illuminate\Http\Response
      */
     public function index()
