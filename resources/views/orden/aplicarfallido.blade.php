@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 
-@if(session('error'))
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Alerta de Éxito
@@ -106,5 +106,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
         });
     </script>
-@endif
+
 @endsection

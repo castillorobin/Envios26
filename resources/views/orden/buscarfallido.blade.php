@@ -101,19 +101,38 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-@if(session('error'))
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Alerta de Éxito
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: '¡Logrado!',
+                text: "{{ session('success') }}",
+                confirmButtonText: 'Aceptar',
+                customClass: {
+                    confirmButton: 'btn btn-primary'
+                }
+            });
+        @endif
+
+           
+            // Alerta de Error
+        @if(session('error'))
             Swal.fire({
                 icon: 'error',
-                title: '¡Atención!',
+                title: 'Error',
                 text: "{{ session('error') }}",
-                confirmButtonText: 'Aceptar',
+                confirmButtonText: 'Cerrar',
                 customClass: {
                     confirmButton: 'btn btn-danger'
                 }
             });
+        @endif
+
+
+
+
         });
     </script>
-@endif
 @endsection
