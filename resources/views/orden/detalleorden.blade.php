@@ -159,14 +159,36 @@
                         <div class="col-lg-6">
                             <div class="card card-height-100">
                                 <div class="card-body">
-                                  
-                                    <h5 class="card-title mb-3">
-                                        Fotos del paquete
-                                    </h5>
-                                    <p class="mb-1">
-                                       <img src="https://techzaa.in/reback/admin/assets/images/products/product-1(3).png" alt="product-1(3)" class="img-fluid mx-auto d-block rounded" style="max-width: 200px;">
-                                    </p>
                                     
+                                    <h5 class="card-title mb-3">
+                                      
+                                    </h5>
+                                    
+                                    <table class="table mb-0">
+                                           
+                                            <!-- end thead -->
+                                            <tbody>
+                                                <tr>
+                                                    <td>Fecha de entrega</td>
+                                                    <td>{{ $orden->fecha_entrega }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Tipo de paquete</td>
+                                                    <td>{{ $orden->tipo }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Estado del pago</td>
+                                                    <td>{{ $orden->pago }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Nota</td>
+                                                    <td>{{ $orden->nota }}</td>
+                                                </tr>
+                                                
+                                               
+                                            </tbody>
+                                            <!-- end tbody -->
+                                        </table>
                                 </div>
                                 <!-- end card body -->
                             </div>
