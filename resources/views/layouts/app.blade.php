@@ -1137,6 +1137,15 @@
                                             >Cuadre de paqueteria </a
                                         >
                                     </li>
+                                    
+
+                                     <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
+                                            href="/ordenes/buscarfallidas"
+                                            >Entregas fallidas </a
+                                        >
+                                    </li>
 
                                     
                                 </ul>

@@ -562,4 +562,59 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
 
         return view('orden.detalleticket', compact('recepcion', 'ordenes', 'comercio'));
     }
+
+    public function buscarfallidas()
+    {
+        
+        return view('orden.buscarfallido');
+    }
+
+
+    public function fallidas(Request $request)
+    {
+        $request->validate([
+            'guia' => 'required|string', // Este es el campo 'codigo' del ticket
+        ]);
+        $codigoGuia = $request->guia;
+            $orden = Orden::where('guia', $codigoGuia)->first();
+        
+        return view('orden.aplicarfallido', compact('orden'));
+    }
+
+
+    public function registrarFallida(Request $request, $id)
+    {
+        // 1. Validar los datos básicos
+        $request->validate([
+            'motivo' => 'required',
+            'fecha_reprogramacion' => 'required_if:motivo,Reprogramado',
+            'nota_motivo' => 'required_if:motivo,Otro',
+        ]);
+
+        try {
+            // 2. Buscar la orden
+            $orden = Orden::findOrFail($id);
+
+            // 3. Aplicar lógica según el motivo
+            if ($request->motivo === 'Reprogramado') {
+                $orden->fecha_repro = $request->fecha_reprogramacion;
+                $orden->notafallido = "Reprogramado para el " . date('d/m/Y', strtotime($request->fecha_reprogramacion));
+            } elseif ($request->motivo === 'Otro') {
+                $orden->notafallido = $request->nota_motivo;
+            } else {
+                // Para otros motivos que no requieren campos extra
+                $orden->notafallido = $request->motivo;
+            }
+
+            // 4. Cambiar estado a Fallido y guardar
+            $orden->estado = 'Fallido';
+            $orden->save();
+
+            return redirect()->route('ordenes.buscarfallidas')->with('success', 'La guía se ha marcado como Fallida correctamente.');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al actualizar el registro: ' . $e->getMessage());
+        }
+    }
+    
 }
