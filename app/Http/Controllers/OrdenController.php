@@ -660,6 +660,7 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
                 $hestado->idenvio = $orden->id;
                 $hestado->estado = "Fallido";
                 $hestado->nota = "El paquete se ha marcado como Fallido. " ;
+                $hestado->motivofallo = $request->motivo;
                 $hestado->usuario = Auth::user()->name;
                 $hestado->save();
 

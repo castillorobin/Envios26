@@ -265,12 +265,21 @@
                                             <h5 class="mt-0 fs-16">
                                                 {{ $hestado->estado }}
                                             </h5>
+                                            
                                             <p class="text-muted mb-0">
                                                 {{ $hestado->nota }}
                                             </p>
+                                            @if($hestado->estado == 'Fallido')
+                                            <p class="text-muted mb-0">
+                                              <strong>Motivo del fallo:</strong> {{ $hestado->motivofallo }}
+                                            </p>
+                                            @endif
+
                                             <p class="text-muted mb-0">
                                               <strong>Usuario:</strong> {{ $hestado->usuario }}
                                             </p>
+
+                                            
                                         </div>
                                     </div>
                                 </li>
