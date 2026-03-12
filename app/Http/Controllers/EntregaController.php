@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Caja;
 use App\Models\Detallecaja;
+use App\Models\Hestado; // Para registrar el historial de estados
+
 
 class EntregaController extends Controller
 {
@@ -108,6 +110,22 @@ class EntregaController extends Controller
                 'entrega' => $codigoGenerado,
                 'estado' => 'Entregado' // Opcional: actualizar el estado a entregado
             ]);
+
+            $guiasArray = $request->guias;
+
+            foreach ($guiasArray as $guia) {
+            $orden = Orden::where('guia', $guia)->first();
+            if ($orden) {
+                $hestado = new Hestado();
+                $hestado->idenvio = $orden->id;
+                $hestado->estado = "Entregado";
+                $hestado->nota = "El paquete se ha marcado como Entregado. " ;
+                $hestado->usuario = Auth::user()->name;
+                $hestado->save();
+            }
+        }
+
+
 
             DB::commit();
 
