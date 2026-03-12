@@ -117,7 +117,7 @@
                     <!-- end row -->
 
                     <div class="row">
-                        <div class="col-lg-6">
+                        <div class="col-lg-4">
                             <div class="card card-height-100">
                                 <div class="card-body">
                                     
@@ -156,7 +156,7 @@
                             <!-- end card -->
                         </div>
                         <!-- end col -->
-                        <div class="col-lg-6">
+                        <div class="col-lg-4">
                             <div class="card card-height-100">
                                 <div class="card-body">
                                     
@@ -196,6 +196,46 @@
                         </div>
                         <!-- end col -->
 
+                        <div class="col-lg-4">
+                            <div class="card card-height-100">
+                                <div class="card-body">
+                                    
+                                    <h5 class="card-title mb-3">
+                                      
+                                    </h5>
+                                    
+                                    <table class="table mb-0">
+                                           
+                                            <!-- end thead -->
+                                            <tbody>
+                                                <tr>
+                                                    <td>Agencia</td>
+                                                    <td>{{ $orden->agencia }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Rack</td>
+                                                    <td>{{ $orden->rack }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Nivel</td>
+                                                    <td>{{ $orden->nivel }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Caja</td>
+                                                    <td>{{ $orden->caja }}</td>
+                                                </tr>
+                                                
+                                               
+                                            </tbody>
+                                            <!-- end tbody -->
+                                        </table>
+                                </div>
+                                <!-- end card body -->
+                            </div>
+                            <!-- end card -->
+                        </div>
+                        <!-- end col -->
+
                         <div class="col-lg-6">
                             <div class="card card-height-100">
                                 <div class="card-body">
@@ -204,11 +244,31 @@
                                         Fotos del paquete
                                     </h5>
                                     <p class="mb-1 d-flex justify-content-around">
-                                       <img src="https://techzaa.in/reback/admin/assets/images/products/product-1(3).png" alt="product-1(3)" class="img-fluid mx-auto d-block rounded" style="max-width: 75px;">
-                                       <img src="https://techzaa.in/reback/admin/assets/images/products/product-1(3).png" alt="product-1(3)" class="img-fluid mx-auto d-block rounded" style="max-width: 75px;">
-                                       <img src="https://techzaa.in/reback/admin/assets/images/products/product-1(3).png" alt="product-1(3)" class="img-fluid mx-auto d-block rounded" style="max-width: 75px;">
+                                      <div class="row text-center">
+                                            {{-- Foto 1 --}}
+                                            @if($orden->foto1)
+                                                <div class="col-md-4 mb-3">
+                                                    <img src="{{ asset('imgs/' . $orden->foto1) }}" alt="Foto 1" class="img-fluid rounded border shadow-sm" style="max-width: 100px;">
+                                                </div>
+                                            @endif
+
+                                            {{-- Foto 2 --}}
+                                            @if($orden->foto2)
+                                                <div class="col-md-4 mb-3">
+                                                    <img src="{{ asset('imgs/' . $orden->foto2) }}" alt="Foto 2" class="img-fluid rounded border shadow-sm" style="max-width: 100px;">
+                                                </div>
+                                            @endif
+
+                                            {{-- Foto 3 --}}
+                                            @if($orden->foto3)
+                                                <div class="col-md-4 mb-3">
+                                                    <img src="{{ asset('imgs/' . $orden->foto3) }}" alt="Foto 3" class="img-fluid rounded border shadow-sm" style="max-width: 100px;">
+                                                </div>
+                                            @endif
+                                        </div>
                                     </p>
                                 </div>
+
                                 <!-- end card body -->
                             </div>
                             <!-- end card -->
@@ -222,9 +282,28 @@
                                         Fotos de cambio
                                     </h5>
                                     <p class="mb-1 d-flex justify-content-around">
-                                       <img src="https://techzaa.in/reback/admin/assets/images/products/product-1(3).png" alt="product-1(3)" class="img-fluid mx-auto d-block rounded" style="max-width: 75px;">
-                                       <img src="https://techzaa.in/reback/admin/assets/images/products/product-1(3).png" alt="product-1(3)" class="img-fluid mx-auto d-block rounded" style="max-width: 75px;">
-                                       <img src="https://techzaa.in/reback/admin/assets/images/products/product-1(3).png" alt="product-1(3)" class="img-fluid mx-auto d-block rounded" style="max-width: 75px;">
+                                        <div class="row text-center">
+                                            {{-- Foto 1 --}}
+                                            @if($orden->fotocambio1)
+                                                <div class="col-md-4 mb-3">
+                                                    <img src="{{ asset('imgs/' . $orden->foto1) }}" alt="Foto 1" class="img-fluid rounded border shadow-sm" style="max-width: 100px;">
+                                                </div>
+                                            @endif
+
+                                            {{-- Foto 2 --}}
+                                            @if($orden->fotocambio2)
+                                                <div class="col-md-4 mb-3">
+                                                    <img src="{{ asset('imgs/' . $orden->fotocambio2) }}" alt="Foto 2" class="img-fluid rounded border shadow-sm" style="max-width: 100px;">
+                                                </div>
+                                            @endif
+
+                                            {{-- Foto 3 --}}
+                                            @if($orden->fotocambio3)
+                                                <div class="col-md-4 mb-3">
+                                                    <img src="{{ asset('imgs/' . $orden->fotocambio3) }}" alt="Foto 3" class="img-fluid rounded border shadow-sm" style="max-width: 100px;">
+                                                </div>
+                                            @endif
+                                        </div>
                                     </p>
                                     
                                 </div>
