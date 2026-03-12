@@ -150,9 +150,7 @@
                             <div class="card card-height-100">
                                 <div class="card-body">
                                     
-                                    <h5 class="card-title mb-3">
-                                      
-                                    </h5>
+                                    
                                     
                                     <table class="table mb-0">
                                            
@@ -189,10 +187,7 @@
                         <div class="col-lg-4">
                             <div class="card card-height-100">
                                 <div class="card-body">
-                                    
-                                    <h5 class="card-title mb-3">
-                                      
-                                    </h5>
+                               
                                     
                                     <table class="table mb-0">
                                            
@@ -209,6 +204,10 @@
                                                 <tr>
                                                     <td>Nivel</td>
                                                     <td>{{ $orden->nivel }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Ubicación</td>
+                                                    <td>{{ $orden->ubicacion }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Caja</td>
