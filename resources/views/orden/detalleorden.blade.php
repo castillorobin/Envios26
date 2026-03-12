@@ -16,17 +16,7 @@
                     <!-- ========== Page Title End ========== -->
 
 
-                    <div class="row justify-content-center">
-                        <div class="col-lg-8 col-xl-7">
-                            <ul class="progressbar ps-0 my-4 pb-5">
-                                <li class="active">Order Placed</li>
-                                <li>Packed</li>
-                                <li>Shipped</li>
-                                <li>Delivered</li>
-                            </ul>
-                        </div>
-                        <!-- end col -->
-                    </div>
+                    
                     <!-- end row -->
 
                     <div class="row">
