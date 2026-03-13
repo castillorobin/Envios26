@@ -33,6 +33,7 @@ use App\Http\Controllers\PagoController;
 | contains the "web" middleware group. Now create something great!
 |
 */ 
+Route::middleware(['auth'])->group(function () {
  
 Route::get('/', function () {
     return view('auth.login');
@@ -324,3 +325,5 @@ Route::get('/caja/exportarpdf/{id}', [App\Http\Controllers\CajaController::class
 Route::get('/caja/exportarexcel/{id}', [App\Http\Controllers\CajaController::class, 'exportarExcel'])->name('caja.exportarExcel');
 
 Route::get('/caja/configuracion', [App\Http\Controllers\CajaController::class, 'configuracion'])->name('caja.configuracion');
+
+});
