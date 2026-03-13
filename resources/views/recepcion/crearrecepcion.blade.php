@@ -98,7 +98,7 @@
                 <input type="hidden" name="comercio_id" value="{{ $comercio->id }}">
                 <div id="hidden-inputs"></div>
 
-                <div class="card">
+                <div class="card"> 
                     <div class="card-body">
                         <div class="mb-3">
                                         <label for="usuari" class="form-label">Usuario</label>
@@ -107,12 +107,12 @@
 <input type="hidden" name="comercio_nombre" value="{{ $comercio->nombre }}">
                                     <div class="mb-3">
                                         <label for="subtotal" class="form-label">Subtotal</label>
-                                        <input type="number" class="form-control" id="subtotal" name="subtotal" placeholder="$ 0.00">
+                                        <input type="number" class="form-control" id="subtotal" step="0.01" name="subtotal" placeholder="$ 0.00">
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="descuento" class="form-label">Descuento</label>
-                                        <input type="number" class="form-control" id="descuento" name="descuento" placeholder="$ 0.00">
+                                        <input type="number" class="form-control" id="descuento" step="0.01" name="descuento" placeholder="$ 0.00">
                                     </div>
                                     
                                     <div class="mb-3">

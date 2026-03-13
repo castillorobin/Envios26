@@ -14,6 +14,12 @@
         position: relative;
         z-index: 1000; /* Asegura que el botón esté sobre cualquier capa */
     }
+    .dropzone.disabled {
+        opacity: 0.5;
+        pointer-events: none; /* Evita clics */
+        background-color: #f8f9fa;
+        cursor: not-allowed;
+    }
 </style>
 
 <div class="container-xxl">
@@ -61,7 +67,7 @@
                             <h5 class="fs-14 mb-1">Fotos de la orden</h5>
                             <p class="text-muted fs-13">Agregar fotos a la orden (Máximo 3).</p>
                             
-                            <form action="{{ route('ordenes.guardar_fotos') }}" method="post" class="dropzone" id="productImagesForm">
+                            <form action="{{ route('ordenes.guardar_fotos') }}" method="post" class="dropzone disabled" id="productImagesForm">
                                 @csrf
                                 <input type="hidden" name="guia" id="guia_hidden">
                                 <div class="dz-message needsclick">
@@ -91,85 +97,149 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // --- LÓGICA DE BÚSQUEDA ---
+    // --- REFERENCIAS DE ELEMENTOS ---
     const guiaInput = document.getElementById('guia_input');
     const btnBuscar = document.getElementById('btn-buscar-guia');
     const infoContainer = document.getElementById('info-guia-encontrada');
     const textoGuia = document.getElementById('texto-guia-confirmada');
+    const dropzoneElement = document.getElementById('productImagesForm');
+    const guiaHidden = document.getElementById('guia_hidden');
+    const btnGuardar = document.getElementById('btn-finalizar-guardado');
 
+    // --- LÓGICA DE BÚSQUEDA AJAX ---
     async function realizarBusqueda(codigo) {
-        if (!codigo.trim()) return;
+        const query = codigo.trim();
+        if (!query) {
+            Swal.fire('Atención', 'Por favor ingresa un código de guía.', 'warning');
+            return;
+        }
+
         try {
-            const response = await fetch("{{ route('ordenes.buscar_ajax') }}?guia=" + encodeURIComponent(codigo));
+            // Bloqueamos el botón de búsqueda mientras consulta
+            btnBuscar.disabled = true;
+            
+            const response = await fetch("{{ route('ordenes.buscar_ajax') }}?guia=" + encodeURIComponent(query));
             const data = await response.json();
+
             if (data.success) {
+                // 1. Mostrar confirmación visual
                 infoContainer.classList.remove('d-none');
                 textoGuia.innerText = data.guia;
                 guiaInput.classList.add('is-valid');
+                guiaInput.classList.remove('is-invalid');
+                
+                // 2. DESBLOQUEAR DROPZONE
+                dropzoneElement.classList.remove('disabled');
+                guiaHidden.value = data.guia; // Asignamos el valor al input oculto
+
+                // 3. Notificación rápida
+                Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2500,
+                    timerProgressBar: true
+                }).fire({
+                    icon: 'success',
+                    title: 'Guía validada correctamente'
+                });
+
             } else {
-                Swal.fire('Error', data.message || 'Guía no encontrada', 'error');
+                // Si la guía no existe, volvemos a bloquear
+                bloquearDropzone();
+                Swal.fire('No encontrado', data.message || 'La guía no existe en el sistema.', 'error');
             }
         } catch (error) {
-            Swal.fire('Error', 'Error de conexión', 'error');
+            Swal.fire('Error', 'Hubo un problema de conexión con el servidor.', 'error');
+        } finally {
+            btnBuscar.disabled = false;
         }
     }
 
-    btnBuscar.addEventListener('click', () => realizarBusqueda(guiaInput.value));
+    function bloquearDropzone() {
+        dropzoneElement.classList.add('disabled');
+        infoContainer.classList.add('d-none');
+        guiaInput.classList.remove('is-valid');
+        guiaInput.classList.add('is-invalid');
+        guiaHidden.value = '';
+        if (myDropzone) myDropzone.removeAllFiles(true); // Limpiar fotos si ya había
+    }
 
-    // --- LÓGICA DROPZONE ---
+    // Eventos de búsqueda
+    btnBuscar.addEventListener('click', () => realizarBusqueda(guiaInput.value));
+    
+    guiaInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            realizarBusqueda(this.value);
+        }
+    });
+
+    // --- CONFIGURACIÓN DE DROPZONE ---
     Dropzone.autoDiscover = false;
     
-    // Destruir instancia previa si existe para evitar errores
+    // Evitar duplicados de instancia
     if (Dropzone.instances.length > 0) Dropzone.instances.forEach(dz => dz.destroy());
 
     var myDropzone = new Dropzone("#productImagesForm", {
         url: "{{ route('ordenes.guardar_fotos') }}",
         paramName: "file",
         maxFiles: 3,
-        maxFilesize: 2,
+        maxFilesize: 2, // MB
         acceptedFiles: "image/*",
         addRemoveLinks: true,
-        autoProcessQueue: false,
-        headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" }
+        autoProcessQueue: false, // Importante: no subir hasta dar clic en Guardar
+        headers: {
+            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+        },
+        dictRemoveFile: "Quitar",
+        dictMaxFilesExceeded: "Solo puedes subir hasta 3 fotos."
     });
 
-    myDropzone.on("init", function() {
-        console.log("Dropzone inicializado correctamente");
-    });
+    // --- ACCIÓN DE GUARDADO ---
+    btnGuardar.addEventListener("click", function(e) {
+        const guiaVal = guiaHidden.value;
 
-    // Evento del botón Guardar (Dentro del DOMContentLoaded)
-    document.getElementById('btn-finalizar-guardado').addEventListener("click", function(e) {
-        console.log("Clic detectado en Guardar"); // VERIFICAR EN F12
-
-        const guiaValue = guiaInput.value.trim();
-        if (!guiaValue) {
-            Swal.fire('Atención', 'Primero debes buscar una guía.', 'warning');
+        if (!guiaVal) {
+            Swal.fire('Atención', 'Primero debes validar una guía válida.', 'warning');
             return;
         }
 
         if (myDropzone.getQueuedFiles().length === 0) {
-            Swal.fire('Atención', 'Agrega fotos antes de guardar.', 'info');
+            Swal.fire('Sin fotos', 'Por favor, agrega al menos una fotografía.', 'info');
             return;
         }
 
-        // Pasar datos y procesar
-        document.getElementById('guia_hidden').value = guiaValue;
-        myDropzone.options.params = { guia: guiaValue };
+        // Mostrar cargando
+        Swal.fire({
+            title: 'Subiendo fotos...',
+            text: 'Por favor espera',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+
         myDropzone.processQueue();
     });
 
+    // Enviar la guía junto con cada archivo
     myDropzone.on("sending", function(file, xhr, formData) {
-        formData.append("guia", guiaInput.value.trim());
+        formData.append("guia", guiaHidden.value);
     });
 
+    // Éxito al terminar toda la cola
     myDropzone.on("queuecomplete", function() {
-        Swal.fire('¡Éxito!', 'Fotos guardadas correctamente', 'success').then(() => {
+        Swal.fire({
+            icon: 'success',
+            title: '¡Completado!',
+            text: 'Las fotografías han sido vinculadas a la guía.',
+            confirmButtonColor: '#3e60d5'
+        }).then(() => {
             window.location.reload();
         });
     });
 
     myDropzone.on("error", function(file, response) {
-        console.error("Error subida:", response);
+        Swal.fire('Error', 'No se pudo subir una de las imágenes.', 'error');
         myDropzone.removeFile(file);
     });
 });
