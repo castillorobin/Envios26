@@ -123,9 +123,9 @@
             <!-- ========== Topbar End ========== -->
 
             <!-- ========== App Menu Start ========== -->
-            <div class="main-nav" style="background-color: #001d7e; color: white !important; ">
+            <div class="main-nav" style="background-color: #001d7e; color: white !important; padding-top: 10px;">
                 <!-- Sidebar Logo -->
-                <div class="logo-box">
+                <div class="logo-box text-center" style="background-color: #001d7e; color: white !important; padding-bottom: 25px;">
                     <a href="/home" class="logo-dark">
                         <img
                             src="{{ asset('img/logomelo.png') }}"
