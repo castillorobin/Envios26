@@ -33,15 +33,18 @@ use App\Http\Controllers\PagoController;
 | contains the "web" middleware group. Now create something great!
 |
 */ 
-Route::middleware(['auth'])->group(function () {
+
  
 Route::get('/', function () {
     return view('auth.login');
 });
 
+
+
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Auth::routes();
+
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/facturasfiltro', [App\Http\Controllers\FacturacionController::class, 'filtro'])->name('facturasfiltro');
@@ -61,6 +64,9 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('estatus', EstatusController::class);
      
 }); 
+
+
+
 Route::group(['middleware' => ['auth']], function() {
 Route::get('pedido/noretirado', [App\Http\Controllers\PedidoController::class, 'noretirado'] )->name('noretirado') ;
 Route::get('pedido/noretiradofiltro', [App\Http\Controllers\PedidoController::class, 'noretiradofiltro'] )->name('noretiradofiltro') ;
@@ -134,7 +140,7 @@ Route::get('pedido/camara', [App\Http\Controllers\PedidoController::class, 'cama
 
 Route::get('estatus/agregar', [App\Http\Controllers\EstatusController::class, 'agregar'] )->name('agregar') ;
 
-}); 
+
 
 
 
