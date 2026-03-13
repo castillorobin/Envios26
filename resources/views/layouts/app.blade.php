@@ -3,7 +3,7 @@
     <head>
         <!-- Title Meta -->
         <meta charset="utf-8" />
-        <title>Analytics | Reback - Responsive Admin Dashboard Template</title>
+        <title>Meloexpress</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta
             name="description"
@@ -130,7 +130,7 @@
                         <img
                             src="{{ asset('img/logomelo.png') }}"
                            
-                             width="150px"
+                             width="130px"
                             alt="logo sm"
                         />
                         
@@ -168,7 +168,7 @@
 
                         
 
-                        <li class="menu-title">Melo Express</li>
+                     
 
                         <li class="nav-item">
                             <a
