@@ -13,7 +13,7 @@ use App\Models\Recepcion;
 use App\Models\Hestado;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+ 
 
 class OrdenController extends Controller
 {

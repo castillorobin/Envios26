@@ -208,18 +208,7 @@
                                             </div>
                                         </div>
                                         
-                                        <div class="d-flex flex-column flex-md-row gap-2 w-100 w-md-auto align-items-md-center">
-                                            
-                                            <div class="input-group w-100" style="max-width: 100%; width: 100% !important; flex: 1 1 auto; min-width: 280px;">
-                                                <span class="input-group-text"><i class="bx bx-calendar"></i></span>
-                                                <input type="text" class="form-control" id="filtro-fecha" placeholder="Seleccionar rango">
-                                            </div>
-
-                                            <button type="button" id="btn-reset-filtros" class="btn btn-primary w-100 w-md-auto text-nowrap px-3">
-                                                <i class="bx bx-reset"></i> Limpiar
-                                            </button>
-                                            
-                                        </div>
+                                        
                                     </div>
                                 </div>
                                 <!-- end card body -->

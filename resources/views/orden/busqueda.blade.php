@@ -228,6 +228,7 @@
                                         <thead class="bg-light bg-opacity-50">
                                            
                                             <tr>
+                                                <th style="display: none;">Fecha Creación</th>
                                                 <th>Guía</th>
                                                 <th>Fecha de entrega</th>
                                                 <th>Destinatario</th>
@@ -245,6 +246,7 @@
                                         <tbody>
                                              @foreach($ordenes as $orden)
                                             <tr>
+                                                <td style="display: none;">{{ $orden->created_at->format('d/m/Y') }}</td>
                                                 <td>
                                                     <a href="{{ route('ordenes.detalle', $orden->id) }}">
                                                         {{ $orden->guia }}
@@ -318,10 +320,14 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
             
 <script>
-    $(document).ready(function() {
+   $(document).ready(function() {
     // 1. Inicialización de DataTable
     var table = $('#tabla-usuarios').DataTable({
         "dom": 'rtip',
+        "order": [[0, "desc"]], // Ordenar por fecha de creación por defecto
+        "columnDefs": [
+            { "targets": [0], "visible": false } // Ocultar la columna de created_at formalmente
+        ],
         "language": { "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json" },
         "drawCallback": function() {
             $('.dataTables_paginate > ul.pagination').addClass('pagination-rounded');
@@ -372,23 +378,23 @@
 
     // 3. Lógica de Filtrado (Se mantiene igual pero ahora es llamada al inicio)
     function filtrarPorFecha(startDate, endDate) {
-        // Limpiamos filtros previos para no acumularlos
         $.fn.dataTable.ext.search = []; 
         
         $.fn.dataTable.ext.search.push(
             function(settings, data, dataIndex) {
-                var dateStr = data[1]; // Columna Fecha de entrega
-                if (dateStr === "N/A" || !dateStr) return false;
+                // CAMBIO: Ahora leemos el índice 0 (created_at)
+                var dateStr = data[0]; 
+                
+                if (!dateStr) return false;
 
                 var rowDate = moment(dateStr, 'DD/MM/YYYY');
-                // Ajustamos para incluir todo el día de inicio y fin
                 return rowDate.isBetween(startDate.startOf('day'), endDate.endOf('day'), null, '[]');
             }
         );
         table.draw();
     }
 
-    // 4. Lógica del Botón Limpiar Todo
+    // 4. Resetear Filtros (Asegúrate de limpiar la búsqueda)
     function resetearFiltros() {
         $('#search').val('');
         $('#filtro-fecha').val('');
