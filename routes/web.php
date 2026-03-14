@@ -17,6 +17,8 @@ use App\Http\Controllers\PuntoController;
 use App\Http\Controllers\RecepcionController;
 use App\Http\Controllers\OrdenController;
 use App\Http\Controllers\PagoController;
+use App\Http\Controllers\EntregaController;
+use App\Http\Controllers\ReportesController;
 
 
  
@@ -331,5 +333,9 @@ Route::get('/caja/exportarpdf/{id}', [App\Http\Controllers\CajaController::class
 Route::get('/caja/exportarexcel/{id}', [App\Http\Controllers\CajaController::class, 'exportarExcel'])->name('caja.exportarExcel');
 
 Route::get('/caja/configuracion', [App\Http\Controllers\CajaController::class, 'configuracion'])->name('caja.configuracion');
+
+
+//reportes}
+Route::get('/reportes/cajas', [App\Http\Controllers\ReportesController::class, 'reportecajas'])->name('reportes.cajas');
 
 });

@@ -451,6 +451,38 @@
                             </a>
                         </li>
 
+
+                        <li class="nav-item">
+                            <a
+                                class="nav-link menu-arrow"
+                                href="#sidebarReportes"
+                                data-bs-toggle="collapse"
+                                role="button"
+                                aria-expanded="false"
+                                aria-controls="sidebarReportes"
+                            >
+                                <span class="nav-icon">
+                                    <iconify-icon
+                                        icon="iconamoon:invoice-duotone"
+                                    ></iconify-icon>
+                                </span>
+                                <span class="nav-text"> Reportes </span>
+                            </a>
+                            <div class="collapse" id="sidebarReportes">
+                                <ul class="nav sub-navbar-nav">
+                                    <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
+                                            href="/reportes/cajas"
+                                            >Reporte de caja</a
+                                        >
+                                    </li>
+                                   
+
+                                  
+                                                            
+                                </ul>
+
                         
 
 
