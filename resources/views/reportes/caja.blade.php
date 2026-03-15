@@ -31,16 +31,10 @@
 
                                     <div class="row mt-3">
                                         <div class="col-md-6">
-                                            <h6 class="fw-normal text-muted">
-                                                Customer
-                                            </h6>
-                                            <h6 class="fs-16">Glenn H Smith</h6>
-                                            <address>
-                                                135 White Cemetery Rd,<br>
-                                                Perryville, KY, 40468<br>
-                                                <abbr title="Phone">P:</abbr>
-                                                (304) 584-4345
-                                            </address>
+                                            
+                                            <h6 class="fs-16">Usuario: {{ Auth::user()->name }}</h6>
+                                            <h6 class="fs-16">Fecha: {{ date('d-m-Y') }}</h6>
+                                            <br>
                                         </div>
                                         <!-- end col -->
                                     </div>
@@ -52,16 +46,11 @@
                                                 <table class="table mb-0">
                                                     <thead class="bg-light bg-opacity-50">
                                                         <tr>
-                                                            <th class="border-0 py-2">
-                                                                Product Name
+                                                            <th class="border-0 py-2" style="width: 75%;">
+                                                                Descripción
                                                             </th>
-                                                            <th class="border-0 py-2">
-                                                                Quantity
-                                                            </th>
-                                                            <th class="border-0 py-2">
-                                                                Price
-                                                            </th>
-                                                            <th class="text-end border-0 py-2">
+                                                            
+                                                            <th class="text-end border-0 py-2" style="width: 25%;">
                                                                 Total
                                                             </th>
                                                         </tr>
@@ -70,51 +59,54 @@
                                                     <tbody>
                                                         <tr>
                                                             <td>
-                                                                G15 Gaming
-                                                                Laptop
+                                                                Ingreso por recepción
                                                             </td>
-                                                            <td>3</td>
-                                                            <td>$240.59</td>
+                                                            
                                                             <td class="text-end">
                                                                 $721.77
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                                Sony Alpha ILCE
-                                                                6000Y 24.3 MP
-                                                                Mirrorless
-                                                                Digital SLR
-                                                                Camera
+                                                               Pagos de remuneración
                                                             </td>
-                                                            <td>5</td>
-                                                            <td>$135.99</td>
+                                                            
                                                             <td class="text-end">
                                                                 $679.95
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                                Sony Over-Ear
-                                                                Wireless
-                                                                Headphone with
-                                                                Mic
+                                                                Entrega de paqueteria
                                                             </td>
-                                                            <td>1</td>
-                                                            <td>$99.49</td>
+                                                            
                                                             <td class="text-end">
                                                                 $99.49
                                                             </td>
                                                         </tr>
                                                         <tr class="border-bottom">
                                                             <td>
-                                                                Adam ROMA USB-C
-                                                                / USB-A 3.1
-                                                                (2-in-1 Flash
-                                                                Drive) – 128GB
+                                                                Ingresos
                                                             </td>
-                                                            <td>2</td>
-                                                            <td>$350.19</td>
+                                                            
+                                                            <td class="text-end">
+                                                                700.38
+                                                            </td>
+                                                        </tr>
+                                                        <tr class="border-bottom">
+                                                            <td>
+                                                                Gastos
+                                                            </td>
+                                                            
+                                                            <td class="text-end">
+                                                                700.38
+                                                            </td>
+                                                        </tr>
+                                                        <tr class="border-bottom">
+                                                            <td>
+                                                                Transferencias recepcionadas
+                                                            </td>
+                                                            
                                                             <td class="text-end">
                                                                 700.38
                                                             </td>
@@ -122,6 +114,8 @@
                                                     </tbody>
                                                     <!-- end tbody -->
                                                 </table>
+
+
                                                 <!-- end table -->
                                             </div>
                                             <!-- end table responsive -->
@@ -133,23 +127,17 @@
                                     <div class="row mt-3">
                                         <div class="col-sm-7">
                                             <div class="clearfix pt-xl-3 pt-0">
-                                                <h6 class="text-muted">
-                                                    Notes:
-                                                </h6>
+                                                <div class="float-start" style="width: 220px; height: 100px; border: 1px solid #9e9d9d; padding: 10px;">
+                                                    Saldo del receptor
+                                                </div>
+                                                <div class="float-start" style="width: 220px; height: 100px; border: 1px solid #9e9d9d; padding: 10px;">
+                                                    Descuadre
+                                                </div>
+                                                <div class="float-start" style="width: 220px; height: 100px; border: 1px solid #9e9d9d; padding: 10px;">
+                                                    Recibido por
+                                                </div>
 
-                                                <small class="text-muted">
-                                                    All accounts are to be paid
-                                                    within 7 days from receipt
-                                                    of invoice. To be paid by
-                                                    cheque or credit card or
-                                                    direct payment online. If
-                                                    account is not paid within 7
-                                                    days the credits details
-                                                    supplied as confirmation of
-                                                    work undertaken will be
-                                                    charged the agreed quoted
-                                                    fee noted above.
-                                                </small>
+                                               
                                             </div>
                                         </div>
                                         <div class="col-sm-5">
@@ -159,7 +147,7 @@
                                                     <span class="float-end">$2266.59</span>
                                                 </p>
                                                 <p>
-                                                    <span class="fw-medium">Discount (10%) :</span>
+                                                    <span class="fw-medium">Descuento:</span>
                                                     <span class="float-end">
                                                         &nbsp;&nbsp;&nbsp;
                                                         $226.659</span>
