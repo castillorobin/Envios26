@@ -100,7 +100,7 @@
 <script>
     $(document).ready(function() {
         $('.select2').select2({
-            placeholder: "Escriba el nombre del repartidor...",
+            placeholder: "Seleccione el nombre del repartidor...",
             allowClear: true,
             width: '100%' // Ayuda a que herede el ancho del contenedor
         });
