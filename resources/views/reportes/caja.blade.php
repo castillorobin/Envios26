@@ -102,15 +102,7 @@
                                                                 700.38
                                                             </td>
                                                         </tr>
-                                                        <tr class="border-bottom">
-                                                            <td>
-                                                                Transferencias recepcionadas
-                                                            </td>
-                                                            
-                                                            <td class="text-end">
-                                                                700.38
-                                                            </td>
-                                                        </tr>
+                                                        
                                                     </tbody>
                                                     <!-- end tbody -->
                                                 </table>
