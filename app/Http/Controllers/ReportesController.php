@@ -9,6 +9,7 @@ use App\Models\Unidad;
 use App\Models\Caja;
 use App\Models\DetalleCaja;
 use Illuminate\Support\Str;
+use App\Models\Orden;
 
 
 
@@ -71,5 +72,37 @@ class ReportesController extends Controller
     {
          $unidades = Unidad::all(); // Ejemplo de obtención de datos, puedes ajustar según tus necesidades
         return view('reportes.buscarreporteunidad', compact('unidades'));
+    }
+
+    public function crearreporteunidades(Request $request)
+    {
+        $unidad = $request->input('unidad');
+        $fecha = $request->input('fecha');
+
+        $ordenes = Orden::where('unidad', $unidad)
+                    ->whereDate('fecharuta', $fecha)
+                    ->get();
+
+        // --- SECCIÓN DE ENTREGADOS (o cualquier estado distinto a 'No entregado') ---
+        $coleccionEntregados = $ordenes->filter(fn($orden) => $orden->estado !== 'No entregado');
+        
+        $totalEntregadas = $coleccionEntregados->sum('total'); // Suma de dinero
+        $cantidadEntregadas = $coleccionEntregados->count();   // Cantidad de órdenes
+
+        // --- SECCIÓN DE NO ENTREGADOS ---
+        $coleccionNoEntregados = $ordenes->filter(fn($orden) => $orden->estado === 'No entregado');
+        
+        $totalNoEntregadas = $coleccionNoEntregados->sum('total'); // Suma de dinero
+        $cantidadNoEntregadas = $coleccionNoEntregados->count();   // Cantidad de órdenes
+
+        return view('reportes.unidad', compact(
+            'unidad', 
+            'fecha', 
+            'ordenes', 
+            'totalEntregadas', 
+            'cantidadEntregadas',
+            'totalNoEntregadas',
+            'cantidadNoEntregadas'
+        ));
     }
 }

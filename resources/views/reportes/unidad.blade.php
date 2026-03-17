@@ -9,7 +9,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="page-title-box">
-                                <h4 class="mb-0 fw-semibold">Reporte de Caja</h4>
+                                <h4 class="mb-0 fw-semibold">Reporte de Unidad</h4>
                                
                             </div>
                         </div>
@@ -46,11 +46,14 @@
                                                 <table class="table mb-0">
                                                     <thead class="bg-light bg-opacity-50">
                                                         <tr>
-                                                            <th class="border-0 py-2" style="width: 75%;">
+                                                            <th class="border-0 py-2" style="width: 60%;">
                                                                 Descripción
                                                             </th>
+                                                            <th class="text-end border-0 py-2" style="width: 20%;">
+                                                                Cantidad
+                                                            </th>
                                                             
-                                                            <th class="text-end border-0 py-2" style="width: 25%;">
+                                                            <th class="text-end border-0 py-2" style="width: 20%;">
                                                                 Total
                                                             </th>
                                                         </tr>
@@ -59,49 +62,29 @@
                                                     <tbody>
                                                         <tr>
                                                             <td>
-                                                                Ingreso por recepción
+                                                               Paquetes en ruta
+                                                            </td>
+                                                            <td class="text-end">
+                                                                {{ $cantidadEntregadas }}
                                                             </td>
                                                             
                                                             <td class="text-end">
-                                                                $ {{ $totalRecepciones }}
+                                                                $ {{ $totalEntregadas }}
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                               Pagos de remuneración
+                                                               No entregados
                                                             </td>
                                                             
                                                             <td class="text-end">
-                                                                $ {{ $totalPagos }}
+                                                                {{ $cantidadNoEntregadas }}
                                                             </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Entrega de paqueteria
-                                                            </td>
-                                                            
                                                             <td class="text-end">
-                                                                $ {{ $totalEntregas }}
+                                                                $ {{ $totalNoEntregadas }}
                                                             </td>
                                                         </tr>
-                                                        <tr class="border-bottom">
-                                                            <td>
-                                                                Ingresos
-                                                            </td>
-                                                            
-                                                            <td class="text-end">
-                                                                $ {{ $otrosIngresos }}
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="border-bottom">
-                                                            <td>
-                                                                Gastos
-                                                            </td>
-                                                            
-                                                            <td class="text-end">
-                                                                $ {{ $otrosGastos }}
-                                                            </td>
-                                                        </tr>
+                                                        
                                                         
                                                     </tbody>
                                                     <!-- end tbody -->
@@ -118,34 +101,16 @@
 
                                     <div class="row mt-3">
                                         <div class="col-sm-7">
-                                            <div class="clearfix pt-xl-3 pt-0">
-                                                <div class="float-start" style="width: 220px; height: 100px; border: 1px solid #9e9d9d; padding: 10px;">
-                                                    Saldo del receptor:
-                                                    <br>
-                                                    <span><h3>$ {{ $caja[0]->saldocajero ?? 0 }} </h3></span>
-                                                </div>
-                                                <div class="float-start" style="width: 220px; height: 100px; border: 1px solid #9e9d9d; padding: 10px;">
-                                                    Descuadre:
-                                                     <br>
-                                                    <span> <h3>$ {{ $caja[0]->descuadre ?? 0 }}</h3></span>
-                                                </div>
-                                                <div class="float-start" style="width: 220px; height: 100px; border: 1px solid #9e9d9d; padding: 10px;">
-                                                    Recibido por:
-                                                    <br>
-                                                    <span><h3>{{ $caja[0]->cajero}}</h3></span>
-                                                </div>
-
-                                               
-                                            </div>
+                                           
                                         </div>
                                         <div class="col-sm-5">
                                             <div class="float-end">
                                                 <p>
                                                     <span class="fw-medium">Sub-total :</span>
-                                                    <span class="float-end">$ {{ $balanceCaja}}</span>
+                                                    <span class="float-end">$ {{ $totalEntregadas + $totalNoEntregadas }}</span>
                                                 </p>
                                                
-                                                <h3>$ {{ $balanceCaja}}</h3>
+                                                <h3>$ {{ $totalEntregadas + $totalNoEntregadas }}</h3>
                                             </div>
                                             <div class="clearfix"></div>
                                         </div>
