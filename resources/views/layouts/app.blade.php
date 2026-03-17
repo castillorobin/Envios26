@@ -477,6 +477,14 @@
                                             >Reporte de caja</a
                                         >
                                     </li>
+
+                                    <li class="sub-nav-item">
+                                        <a
+                                            class="sub-nav-link"
+                                            href="/reportes/unidades"
+                                            >Reporte de unidad</a
+                                        >
+                                    </li>
                                    
 
                                   

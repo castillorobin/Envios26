@@ -8,6 +8,8 @@ use App\Models\Cajon;
 use DB;
 use App\Models\User;
 use Carbon\Carbon;
+use App\Models\Orden;
+use App\Models\Hestado;
 
 class UnidadController extends Controller
 {
@@ -103,6 +105,10 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
                     $hestado->nota = "Se ha asignado la guía a la unidad {$unidad->nombre}.";
                     $hestado->usuario = auth()->user()->name;
                     $hestado->save();
+                    $caja->estado = "En transito"; // Cambiamos el estado de la caja
+                    $caja->unidad = $unidadId; // Asignamos la unidad a la caja
+                    $caja->fecharuta = $fecha; // Actualizamos la fecha de ruta en la caja
+                    $caja->save();
                 }
             }
 
@@ -148,7 +154,8 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
         // Asignamos el ID de la unidad a cada orden
         \App\Models\Orden::whereIn('guia', $codigosGuias)->update([
             'unidad' => $unidadId,
-            'estado' => 'En transito' // Cambiamos el estado opcionalmente
+            'estado' => 'En transito', // Cambiamos el estado opcionalmente
+            'fecharuta' => $fecha // Si quieres actualizar la fecha de ruta en la orden también
         ]);
 
         foreach ($codigosGuias as $guia) {

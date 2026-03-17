@@ -66,4 +66,10 @@ class ReportesController extends Controller
         'totalGeneralEntradas', 'totalGeneralSalidas', 'balanceCaja', 'caja'
     ));
 }
+
+    public function reporteunidades()
+    {
+         $unidades = Unidad::all(); // Ejemplo de obtención de datos, puedes ajustar según tus necesidades
+        return view('reportes.buscarreporteunidad', compact('unidades'));
+    }
 }
