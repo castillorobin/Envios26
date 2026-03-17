@@ -337,5 +337,6 @@ Route::get('/caja/configuracion', [App\Http\Controllers\CajaController::class, '
 
 //reportes}
 Route::get('/reportes/cajas', [App\Http\Controllers\ReportesController::class, 'reportecajas'])->name('reportes.cajas');
+Route::post('/reportes/crearreportecaja', [App\Http\Controllers\ReportesController::class, 'crearreportecaja'])->name('reportes.crearreportecaja') ;
 
 });

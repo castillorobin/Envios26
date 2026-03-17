@@ -42,31 +42,22 @@
                     <h5 class="card-title mb-0">Seleccionar</h5>
                 </div>
                 <div class="card-body">
-    <form action="{{ route('ordenes.busqueda_comercio') }}" method="POST" id="form-busqueda">
+    <form action="{{ route('reportes.crearreportecaja') }}" method="POST" id="form-busqueda">
         @csrf
        
 
         <div class="mb-3">
         <div class=" w-100">
-                    <select name="repartidor" class="form-select select2" required>
+                    <select name="usuario" class="form-select select2" required>
                         <option value="" disabled selected>Seleccione un repartidor</option>
                         @foreach($usuarios as $usuario)
-                            <option value="{{ $usuario->id }}">{{ $usuario->name }}</option>
+                            <option value="{{ $usuario->name }}">{{ $usuario->name }}</option>
                         @endforeach
                     </select>
                 </div>
         </div>
 
-        <div class="mb-3">
-             <div class="w-100">
-                    <select name="unidad" class="form-select " required>
-                        <option value="" disabled selected>Seleccione una unidad</option>
-                        @foreach($unidades as $unidad)
-                            <option value="{{ $unidad->id }}">{{ $unidad->nombre }}</option>
-                        @endforeach
-                    </select>
-                </div>
-        </div>
+       
 
 
         <div class="mb-3">

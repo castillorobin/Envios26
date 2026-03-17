@@ -63,7 +63,7 @@
                                                             </td>
                                                             
                                                             <td class="text-end">
-                                                                $721.77
+                                                                $ {{ $totalRecepciones }}
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -72,7 +72,7 @@
                                                             </td>
                                                             
                                                             <td class="text-end">
-                                                                $679.95
+                                                                $ {{ $totalPagos }}
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -81,7 +81,7 @@
                                                             </td>
                                                             
                                                             <td class="text-end">
-                                                                $99.49
+                                                                $ {{ $totalEntregas }}
                                                             </td>
                                                         </tr>
                                                         <tr class="border-bottom">
@@ -90,7 +90,7 @@
                                                             </td>
                                                             
                                                             <td class="text-end">
-                                                                700.38
+                                                                $ {{ $otrosIngresos }}
                                                             </td>
                                                         </tr>
                                                         <tr class="border-bottom">
@@ -99,7 +99,7 @@
                                                             </td>
                                                             
                                                             <td class="text-end">
-                                                                700.38
+                                                                $ {{ $otrosGastos }}
                                                             </td>
                                                         </tr>
                                                         
@@ -120,13 +120,19 @@
                                         <div class="col-sm-7">
                                             <div class="clearfix pt-xl-3 pt-0">
                                                 <div class="float-start" style="width: 220px; height: 100px; border: 1px solid #9e9d9d; padding: 10px;">
-                                                    Saldo del receptor
+                                                    Saldo del receptor:
+                                                    <br>
+                                                    <span><h3>$ {{ $caja[0]->saldocajero ?? 0 }} </h3></span>
                                                 </div>
                                                 <div class="float-start" style="width: 220px; height: 100px; border: 1px solid #9e9d9d; padding: 10px;">
-                                                    Descuadre
+                                                    Descuadre:
+                                                     <br>
+                                                    <span> <h3>$ {{ $caja[0]->descuadre ?? 0 }}</h3></span>
                                                 </div>
                                                 <div class="float-start" style="width: 220px; height: 100px; border: 1px solid #9e9d9d; padding: 10px;">
-                                                    Recibido por
+                                                    Recibido por:
+                                                    <br>
+                                                    <span><h3>{{ $caja[0]->cajero}}</h3></span>
                                                 </div>
 
                                                
@@ -136,15 +142,10 @@
                                             <div class="float-end">
                                                 <p>
                                                     <span class="fw-medium">Sub-total :</span>
-                                                    <span class="float-end">$2266.59</span>
+                                                    <span class="float-end">$ {{ $balanceCaja}}</span>
                                                 </p>
-                                                <p>
-                                                    <span class="fw-medium">Descuento:</span>
-                                                    <span class="float-end">
-                                                        &nbsp;&nbsp;&nbsp;
-                                                        $226.659</span>
-                                                </p>
-                                                <h3>$2039.931 USD</h3>
+                                               
+                                                <h3>$ {{ $balanceCaja}}</h3>
                                             </div>
                                             <div class="clearfix"></div>
                                         </div>
@@ -154,8 +155,8 @@
 
                                     <div class="mt-5 mb-1">
                                         <div class="text-end d-print-none">
-                                            <a href="javascript:window.print()" class="btn btn-primary">Print</a>
-                                            <a href="javascript:void(0);" class="btn btn-outline-primary">Submit</a>
+                                            <a href="javascript:window.print()" class="btn btn-primary">Imprimir</a>
+                                            <a href="javascript:void(0);" class="btn btn-outline-primary">Cerrar</a>
                                         </div>
                                     </div>
                                 </div>
