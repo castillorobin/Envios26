@@ -3,22 +3,22 @@
 @section('content')
 
 <style>
-    /* Evita que el área de Dropzone tape los botones */
     .dropzone {
         min-height: 150px;
         border: 2px dashed #ced4da;
         background: white;
         border-radius: 6px;
     }
-    .buttons-container {
-        position: relative;
-        z-index: 1000; /* Asegura que el botón esté sobre cualquier capa */
-    }
     .dropzone.disabled {
         opacity: 0.5;
-        pointer-events: none; /* Evita clics */
+        pointer-events: none;
         background-color: #f8f9fa;
         cursor: not-allowed;
+    }
+    /* Estilo para el contenedor del lector QR */
+    #reader-container {
+        max-width: 400px;
+        margin-top: 15px;
     }
 </style>
 
@@ -44,6 +44,16 @@
                                         </button>
                                     </div>
                                 </div>
+
+                                <div id="reader-container" class="d-none border rounded bg-light">
+                                    <div id="reader" style="width: 100%;"></div>
+                                    <div class="p-2 text-center">
+                                        <button type="button" id="btn-cerrar-camara" class="btn btn-sm btn-danger">
+                                            Cerrar Cámara
+                                        </button>
+                                    </div>
+                                </div>
+
                                 <div id="info-guia-encontrada" class="alert alert-success d-none mt-3">
                                     <i class="bx bx-check-circle me-1"></i> 
                                     Guía encontrada: <strong id="texto-guia-confirmada"></strong> 
@@ -55,7 +65,7 @@
                     <ul class="nav nav-tabs card-header-tabs border-0" role="tablist">
                         <li class="nav-item">
                             <a href="#productImages" data-bs-toggle="tab" class="nav-link pb-3 active">
-                                <i class="bx bx-images me-1"></i> Toma de fotografia
+                                <i class="bx bx-images me-1"></i> Toma de fotografía
                             </a>
                         </li>
                     </ul>
@@ -76,8 +86,8 @@
                                 </div>
                             </form>
 
-                            <div class="d-flex flex-wrap gap-2 justify-content-end mt-3 buttons-container">
-                                <a href="/ordenes/toma-foto" class="btn btn-secondary">
+                            <div class="d-flex flex-wrap gap-2 justify-content-end mt-3">
+                                <a href="{{ url()->previous() }}" class="btn btn-secondary">
                                     <i class="bx bx-x me-1"></i> Cancelar
                                 </a>
                                 <button type="button" id="btn-finalizar-guardado" class="btn btn-primary">
@@ -97,60 +107,50 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // --- REFERENCIAS DE ELEMENTOS ---
+    // --- REFERENCIAS ---
     const guiaInput = document.getElementById('guia_input');
     const btnBuscar = document.getElementById('btn-buscar-guia');
+    const btnActivarQR = document.getElementById('btn-activar-qr');
+    const btnCerrarCamara = document.getElementById('btn-cerrar-camara');
+    const readerContainer = document.getElementById('reader-container');
     const infoContainer = document.getElementById('info-guia-encontrada');
     const textoGuia = document.getElementById('texto-guia-confirmada');
     const dropzoneElement = document.getElementById('productImagesForm');
     const guiaHidden = document.getElementById('guia_hidden');
     const btnGuardar = document.getElementById('btn-finalizar-guardado');
+    let html5QrCode;
 
-    // --- LÓGICA DE BÚSQUEDA AJAX ---
+    // --- LÓGICA DE BÚSQUEDA ---
     async function realizarBusqueda(codigo) {
         const query = codigo.trim();
-        if (!query) {
-            Swal.fire('Atención', 'Por favor ingresa un código de guía.', 'warning');
-            return;
-        }
+        if (!query) return;
 
         try {
-            // Bloqueamos el botón de búsqueda mientras consulta
             btnBuscar.disabled = true;
-            
             const response = await fetch("{{ route('ordenes.buscar_ajax') }}?guia=" + encodeURIComponent(query));
             const data = await response.json();
 
             if (data.success) {
-                // 1. Mostrar confirmación visual
                 infoContainer.classList.remove('d-none');
                 textoGuia.innerText = data.guia;
                 guiaInput.classList.add('is-valid');
                 guiaInput.classList.remove('is-invalid');
-                
-                // 2. DESBLOQUEAR DROPZONE
                 dropzoneElement.classList.remove('disabled');
-                guiaHidden.value = data.guia; // Asignamos el valor al input oculto
+                guiaHidden.value = data.guia;
 
-                // 3. Notificación rápida
                 Swal.mixin({
                     toast: true,
                     position: 'top-end',
                     showConfirmButton: false,
-                    timer: 2500,
-                    timerProgressBar: true
-                }).fire({
-                    icon: 'success',
-                    title: 'Guía validada correctamente'
-                });
+                    timer: 2000
+                }).fire({ icon: 'success', title: 'Guía validada' });
 
             } else {
-                // Si la guía no existe, volvemos a bloquear
                 bloquearDropzone();
-                Swal.fire('No encontrado', data.message || 'La guía no existe en el sistema.', 'error');
+                Swal.fire('Error', data.message || 'Guía no encontrada', 'error');
             }
         } catch (error) {
-            Swal.fire('Error', 'Hubo un problema de conexión con el servidor.', 'error');
+            Swal.fire('Error', 'Error de conexión', 'error');
         } finally {
             btnBuscar.disabled = false;
         }
@@ -160,87 +160,75 @@ document.addEventListener('DOMContentLoaded', function() {
         dropzoneElement.classList.add('disabled');
         infoContainer.classList.add('d-none');
         guiaInput.classList.remove('is-valid');
-        guiaInput.classList.add('is-invalid');
         guiaHidden.value = '';
-        if (myDropzone) myDropzone.removeAllFiles(true); // Limpiar fotos si ya había
+        if (typeof myDropzone !== 'undefined') myDropzone.removeAllFiles(true);
     }
 
-    // Eventos de búsqueda
+    // --- LÓGICA QR (ESTILO ENTREGA) ---
+    btnActivarQR.addEventListener('click', function() {
+        readerContainer.classList.remove('d-none');
+        html5QrCode = new Html5Qrcode("reader");
+        html5QrCode.start(
+            { facingMode: "environment" },
+            { fps: 15, qrbox: 250 },
+            (text) => {
+                guiaInput.value = text;
+                detenerCamara();
+                realizarBusqueda(text);
+            }
+        ).catch(err => Swal.fire('Error', 'No se pudo activar la cámara', 'error'));
+    });
+
+    function detenerCamara() {
+        if (html5QrCode) {
+            html5QrCode.stop().then(() => {
+                readerContainer.classList.add('d-none');
+            }).catch(err => console.error(err));
+        }
+    }
+
+    btnCerrarCamara.addEventListener('click', detenerCamara);
+
+    // --- EVENTOS DE INPUT ---
     btnBuscar.addEventListener('click', () => realizarBusqueda(guiaInput.value));
-    
-    guiaInput.addEventListener('keypress', function(e) {
+    guiaInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            realizarBusqueda(this.value);
+            realizarBusqueda(guiaInput.value);
         }
     });
 
-    // --- CONFIGURACIÓN DE DROPZONE ---
+    // --- DROPZONE ---
     Dropzone.autoDiscover = false;
-    
-    // Evitar duplicados de instancia
     if (Dropzone.instances.length > 0) Dropzone.instances.forEach(dz => dz.destroy());
 
     var myDropzone = new Dropzone("#productImagesForm", {
         url: "{{ route('ordenes.guardar_fotos') }}",
         paramName: "file",
         maxFiles: 3,
-        maxFilesize: 2, // MB
+        maxFilesize: 2,
         acceptedFiles: "image/*",
         addRemoveLinks: true,
-        autoProcessQueue: false, // Importante: no subir hasta dar clic en Guardar
-        headers: {
-            'X-CSRF-TOKEN': "{{ csrf_token() }}"
-        },
-        dictRemoveFile: "Quitar",
-        dictMaxFilesExceeded: "Solo puedes subir hasta 3 fotos."
+        autoProcessQueue: false,
+        headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" }
     });
 
-    // --- ACCIÓN DE GUARDADO ---
-    btnGuardar.addEventListener("click", function(e) {
-        const guiaVal = guiaHidden.value;
-
-        if (!guiaVal) {
-            Swal.fire('Atención', 'Primero debes validar una guía válida.', 'warning');
+    btnGuardar.addEventListener("click", function() {
+        if (!guiaHidden.value) {
+            Swal.fire('Atención', 'Valida una guía primero', 'warning');
             return;
         }
-
         if (myDropzone.getQueuedFiles().length === 0) {
-            Swal.fire('Sin fotos', 'Por favor, agrega al menos una fotografía.', 'info');
+            Swal.fire('Atención', 'Agrega fotos primero', 'info');
             return;
         }
-
-        // Mostrar cargando
-        Swal.fire({
-            title: 'Subiendo fotos...',
-            text: 'Por favor espera',
-            allowOutsideClick: false,
-            didOpen: () => { Swal.showLoading(); }
-        });
-
+        Swal.fire({ title: 'Guardando...', didOpen: () => Swal.showLoading() });
         myDropzone.processQueue();
     });
 
-    // Enviar la guía junto con cada archivo
-    myDropzone.on("sending", function(file, xhr, formData) {
-        formData.append("guia", guiaHidden.value);
-    });
-
-    // Éxito al terminar toda la cola
-    myDropzone.on("queuecomplete", function() {
-        Swal.fire({
-            icon: 'success',
-            title: '¡Completado!',
-            text: 'Las fotografías han sido vinculadas a la guía.',
-            confirmButtonColor: '#3e60d5'
-        }).then(() => {
-            window.location.reload();
-        });
-    });
-
-    myDropzone.on("error", function(file, response) {
-        Swal.fire('Error', 'No se pudo subir una de las imágenes.', 'error');
-        myDropzone.removeFile(file);
+    myDropzone.on("sending", (file, xhr, formData) => formData.append("guia", guiaHidden.value));
+    myDropzone.on("queuecomplete", () => {
+        Swal.fire('Éxito', 'Fotos guardadas', 'success').then(() => window.location.reload());
     });
 });
 </script>
