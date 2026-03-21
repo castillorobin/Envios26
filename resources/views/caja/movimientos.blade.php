@@ -199,7 +199,14 @@
                                     <div class="bg-light-subtle border-bottom p-2">
                                         <label style="font-weight: bold; margin-bottom: 0; ">
                                         
-                                                <i class="bx bx-receipt me-1 text-primary"></i> Movimientos de: <span class="text-primary">{{ $cajas[0]->cajero }}</span>
+                                                <i class="bx bx-receipt me-1 text-primary"></i> Movimientos de: 
+                                                <span class="text-primary">
+        @if(isset($cajas) && count($cajas) > 0)
+            {{ $cajas[0]->cajero }}
+        @else
+            Sin asignar / Caja cerrada
+        @endif
+    </span>
                                         
                                         </label>
                                     </div>
