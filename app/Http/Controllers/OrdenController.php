@@ -699,7 +699,9 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
         // 3. Si necesitas el comercio del ticket (asumiendo que Recepcion tiene comercio_id)
         $comercio = Comercio::find($recepcion->comercio); 
 
-        return view('reenvdev.detalleticket', compact('recepcion', 'ordenes', 'comercio'));
+        $puntos = Punto::all();
+
+        return view('reenvdev.detalleticket', compact('recepcion', 'ordenes', 'comercio', 'puntos'));
     }
     
 }

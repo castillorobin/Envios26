@@ -272,10 +272,10 @@
                                                     <i class="bx bxs-circle text-primary me-1"></i> {{ $orden->estado }}
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('ordenes.detalle', $orden->id) }}" class="btn btn-warning">
+                                                    <button type="button" class="btn btn-warning btn-sm btn-abrir-reenvio" data-id="{{ $orden->id }}">
                                                         Reenvio
-                                                    </a>
-                                                    <a href="{{ route('ordenes.detalle', $orden->id) }}" class="btn btn-danger">
+                                                    </button>
+                                                    <a href="{{ route('ordenes.detalle', $orden->id) }}" class="btn btn-danger btn-sm">
                                                         Devolución
                                                     </a>
                                                 </td>
@@ -296,7 +296,7 @@
                                 <!-- table responsive -->
                                 <div class="align-items-center justify-content-between row g-0 text-center text-sm-start p-3 border-top">
                                     <div class="justify-content-end w-100 d-flex">
-                                   <button onclick="window.history.back()" class="btn btn-danger justify-content-end " >Regresar</button>
+                                   <button onclick="window.history.back()" class="btn btn-secondary justify-content-end " >Regresar</button>
                                    </div>
                                 </div>
                                 
@@ -307,6 +307,57 @@
                         <!-- end col -->
                     </div>          
 </div>
+
+
+
+
+
+
+
+<div class="modal fade" id="modalReenvio" tabindex="-1" aria-labelledby="modalReenvioLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalReenvioLabel">Programar Reenvío</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('ordenes.registrar_reenvio') }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <input type="hidden" name="orden_id" id="modal_orden_id">
+
+                    <div class="mb-3">
+                        <label class="form-label">Seleccionar Punto</label>
+                        <select name="punto_id" class="form-select select2-modal" required>
+                            <option value="" disabled selected>Seleccione un punto...</option>
+                            @foreach($puntos as $punto)
+                                <option value="{{ $punto->id }}">{{ $punto->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Fecha de Reenvío</label>
+                        <input type="date" name="fecha_reenvio" class="form-control" required min="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning">Crear Reenvío</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
 
 
 
@@ -397,6 +448,33 @@
     $('#search').on('keyup', function() {
         table.search(this.value).draw();
     });
+
+
+
+
+    // Manejar la apertura del modal de reenvío
+$(document).on('click', '.btn-abrir-reenvio', function() {
+    var ordenId = $(this).data('id');
+    
+    // Asignar el ID al input oculto del modal
+    $('#modal_orden_id').val(ordenId);
+    
+    // Inicializar Select2 dentro del modal si no se ha hecho
+    // Se usa setTimeout para que el modal termine de animarse antes de inicializar Select2
+    var myModal = new bootstrap.Modal(document.getElementById('modalReenvio'));
+    myModal.show();
+    
+    setTimeout(function() {
+        $('.select2-modal').select2({
+            dropdownParent: $('#modalReenvio'),
+            width: '100%'
+        });
+    }, 200);
+});
+
+
+
+
 });
 </script>
 
