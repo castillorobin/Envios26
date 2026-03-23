@@ -677,31 +677,108 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
         return view('reenvdev.buscarticket');
     }
     public function ticketDetallesdevo(Request $request)
-    {
-        $request->validate([
-            'ticket' => 'required|string', // Este es el campo 'codigo' del ticket
-        ]);
+{
+    // Cambiamos la validación para que 'ticket' pueda venir por GET o POST
+    $codigoTicket = $request->input('ticket');
 
-        $codigoTicket = $request->ticket;
+    if (!$codigoTicket) {
+        return redirect()->route('reenvdev.buscarticket')->with('error', 'Debe ingresar un código de ticket.');
+    }
 
-        // 1. Buscamos el registro en el modelo Recepcion por su columna 'codigo'
-        $recepcion = Recepcion::where('codigo', $codigoTicket)->first();
+    // 1. Buscamos el registro en el modelo Recepcion
+    $recepcion = Recepcion::where('codigo', $codigoTicket)->first();
 
-        // Validar si el ticket existe
-        if (!$recepcion) {
-            return back()->with('error', 'No se encontró ningún ticket con el código: ' . $codigoTicket);
+    if (!$recepcion) {
+        return redirect()->route('reenvdev.buscarticket')->with('error', 'No se encontró el ticket: ' . $codigoTicket);
+    }
+
+    // 2. Traemos las órdenes y puntos
+    $ordenes = Orden::where('recepcion_id', $recepcion->id)->get();
+    $comercio = Comercio::find($recepcion->comercio); 
+    $puntos = Punto::all();
+
+    return view('reenvdev.detalleticket', compact('recepcion', 'ordenes', 'comercio', 'puntos'));
+}
+
+    public function registrarReenvio(Request $request)
+{
+    $request->validate([
+        'orden_id' => 'required|string',
+        'punto_id' => 'required|string',
+        'fecha_reenvio' => 'required|date',
+    ]);
+
+    try {
+        $orden = Orden::findOrFail($request->orden_id);
+
+        // Guardar cambios
+        $orden->freenvio = $request->fecha_reenvio; 
+        $orden->preenvio = $request->punto_id; 
+        $orden->estado = 'Reenvio';
+        $orden->save();
+
+        // Historial
+        $hestado = new Hestado();
+        $hestado->idenvio = $orden->id;
+        $hestado->estado = "Reenviado";
+        $hestado->nota = "El paquete se ha marcado como Reenviado.";
+        $hestado->freprogra = $request->fecha_reenvio;
+        $hestado->usuario = Auth::user()->name;
+        $hestado->save();
+
+        $recepcion = Recepcion::findOrFail($orden->recepcion_id);
+
+       $codigoTicket = $recepcion->codigo;
+
+        if ($codigoTicket) {
+            // Volvemos a la tabla enviando el ticket como parámetro
+            return redirect()->route('ordenes.ticket_detallesdevo', ['ticket' => $codigoTicket])
+                             ->with('success', 'La guía se ha marcado como Reenviada correctamente.');
         }
 
-        // 2. Traemos todas las órdenes vinculadas a ese ID de recepción
-        // Usamos with('comercioRel') para optimizar la carga si necesitas mostrar el nombre del comercio
-        $ordenes = Orden::where('recepcion_id', $recepcion->id)->get();
+        return redirect()->route('ordenes.reenvios_devoluciones');
 
-        // 3. Si necesitas el comercio del ticket (asumiendo que Recepcion tiene comercio_id)
-        $comercio = Comercio::find($recepcion->comercio); 
-
-        $puntos = Punto::all();
-
-        return view('reenvdev.detalleticket', compact('recepcion', 'ordenes', 'comercio', 'puntos'));
+    } catch (\Exception $e) {
+        return redirect()->route('ordenes.reenvios_devoluciones')->with('error', 'Error: ' . $e->getMessage());
     }
+}
+
+public function registrarDevolucion(Request $request)
+{
+    $request->validate([
+        'orden_id' => 'required|string',
+        'punto_id' => 'required|string',
+        'fecha_devolucion' => 'required|date',
+    ]);
+
+    try {
+        $orden = Orden::findOrFail($request->orden_id);
+
+        // Actualizamos la orden
+        $orden->fdevolucion = $request->fecha_devolucion; 
+        $orden->pdevolucion = $request->punto_id; 
+        $orden->estado = 'Devolucion';
+        $orden->save();
+
+        // Registrar en Hestado
+        $hestado = new Hestado();
+        $hestado->idenvio = $orden->id;
+        $hestado->estado = "Devolucion";
+        $hestado->nota = "El paquete se ha marcado para Devolución.";
+        $hestado->freprogra = $request->fecha_devolucion;
+        $hestado->usuario = Auth::user()->name;
+        $hestado->save();
+
+         $recepcion = Recepcion::findOrFail($orden->recepcion_id);
+
+       $codigoTicket = $recepcion->codigo;
+
+        return redirect()->route('ordenes.ticket_detallesdevo', ['ticket' => $codigoTicket])
+                         ->with('success', 'La guía se ha marcado para Devolución correctamente.');
+
+    } catch (\Exception $e) {
+        return back()->with('error', 'Error: ' . $e->getMessage());
+    }
+}
     
 }

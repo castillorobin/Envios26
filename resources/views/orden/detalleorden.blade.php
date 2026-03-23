@@ -342,6 +342,17 @@
                                               <strong>Motivo del fallo:</strong> {{ $hestado->motivofallo }}
                                             </p>
                                             @endif
+                                            @if($hestado->estado == 'Reenviado')
+                                            <p class="text-muted mb-0">
+                                              <strong>Fecha de reenvio:</strong> {{ $orden->freenvio }} <br> <strong>Punto de reenvio:</strong> {{ $orden->preenvio }}
+                                            </p>
+                                            @endif
+
+                                            @if($hestado->estado == 'Devolucion')
+                                            <p class="text-muted mb-0">
+                                              <strong>Fecha de devolución:</strong> {{ $orden->fdevolucion }} <br> <strong>Punto de devolución:</strong> {{ $orden->pdevolucion }}
+                                            </p>
+                                            @endif
 
                                             <p class="text-muted mb-0">
                                               <strong>Usuario:</strong> {{ $hestado->usuario }}

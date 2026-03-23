@@ -190,6 +190,27 @@
         margin-bottom: 5px;
     }
 }
+
+/* Estilo para que el input de fecha parezca un botón */
+.cursor-pointer {
+    cursor: pointer !important;
+}
+
+/* Opcional: Eliminar el icono nativo de calendario si prefieres que todo el campo sea uniforme */
+#input-fecha-reenvio::-webkit-calendar-picker-indicator {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: transparent;
+    background: transparent;
+    cursor: pointer;
+}
+
+#input-fecha-reenvio {
+    position: relative;
+}
 </style>
  
 <div class="container-xxl">
@@ -275,9 +296,9 @@
                                                     <button type="button" class="btn btn-warning btn-sm btn-abrir-reenvio" data-id="{{ $orden->id }}">
                                                         Reenvio
                                                     </button>
-                                                    <a href="{{ route('ordenes.detalle', $orden->id) }}" class="btn btn-danger btn-sm">
+                                                    <button type="button" class="btn btn-danger btn-sm btn-abrir-devolucion" data-id="{{ $orden->id }}">
                                                         Devolución
-                                                    </a>
+                                                    </button>
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -312,8 +333,6 @@
 
 
 
-
-
 <div class="modal fade" id="modalReenvio" tabindex="-1" aria-labelledby="modalReenvioLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -331,14 +350,24 @@
                         <select name="punto_id" class="form-select select2-modal" required>
                             <option value="" disabled selected>Seleccione un punto...</option>
                             @foreach($puntos as $punto)
-                                <option value="{{ $punto->id }}">{{ $punto->nombre }}</option>
+                                <option value="{{ $punto->nombre }}">{{ $punto->nombre }}</option>
                             @endforeach
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Fecha de Reenvío</label>
-                        <input type="date" name="fecha_reenvio" class="form-control" required min="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}">
+                        <input type="date" 
+                            name="fecha_reenvio" 
+                            id="input-fecha-reenvio" 
+                            class="form-control cursor-pointer" 
+                            required 
+                            {{-- Establecemos el mínimo como mañana --}}
+                            min="{{ \Carbon\Carbon::now()->addDay()->format('Y-m-d') }}" 
+                            {{-- El valor por defecto también será mañana --}}
+                            value="{{ \Carbon\Carbon::now()->addDay()->format('Y-m-d') }}"
+                            onclick="this.showPicker()">
+                        <div class="form-text text-muted">La fecha mínima de reenvío es mañana.</div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -359,12 +388,88 @@
 
 
 
+<div class="modal fade" id="modalDevolucion" tabindex="-1" aria-labelledby="modalDevolucionLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title text-white" id="modalDevolucionLabel">Programar Devolución</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('ordenes.registrar_devolucion') }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <input type="hidden" name="orden_id" id="modal_devo_id">
+
+                    <div class="mb-3">
+                        <label class="form-label">Punto de Devolución</label>
+                        <select name="punto_id" class="form-select select2-modal-devo" required>
+                            <option value="" disabled selected>Seleccione un punto...</option>
+                            @foreach($puntos as $punto)
+                                <option value="{{ $punto->nombre }}">{{ $punto->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Fecha de Devolución</label>
+                        <input type="date" 
+                               name="fecha_devolucion" 
+                               id="input-fecha-devolucion" 
+                               class="form-control cursor-pointer" 
+                               required 
+                               min="{{ \Carbon\Carbon::now()->addDay()->format('Y-m-d') }}" 
+                               value="{{ \Carbon\Carbon::now()->addDay()->format('Y-m-d') }}"
+                               onclick="this.showPicker()">
+                        <div class="form-text text-muted">Mínimo permitido: mañana.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Confirmar Devolución</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
 
 
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-            
+          
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: '¡Operación Exitosa!',
+                text: "{{ session('success') }}",
+                confirmButtonColor: '#3e60d5',
+                timer: 3500
+            });
+        @endif
+
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: "{{ session('error') }}",
+                confirmButtonColor: '#f1556c'
+            });
+        @endif
+    });
+</script>
+
+
 <script>
     $(document).ready(function() {
     // 1. Inicialización de DataTable
@@ -452,7 +557,6 @@
 
 
 
-    // Manejar la apertura del modal de reenvío
 $(document).on('click', '.btn-abrir-reenvio', function() {
     var ordenId = $(this).data('id');
     
@@ -475,6 +579,72 @@ $(document).on('click', '.btn-abrir-reenvio', function() {
 
 
 
+});
+
+// Asegurar que al hacer clic en el contenedor o el input se abra el selector
+$(document).on('click', '#input-fecha-reenvio', function() {
+    try {
+        this.showPicker(); // Método estándar moderno de JS
+    } catch (e) {
+        // Fallback para navegadores antiguos que no soportan showPicker
+        $(this).trigger('focus').trigger('click');
+    }
+});
+
+
+$(document).on('change', '#input-fecha-reenvio', function() {
+    const selectedDate = new Date($(this).val());
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0,0,0,0);
+
+    // Si por alguna razón logran seleccionar hoy o una fecha pasada
+    if (selectedDate < tomorrow) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Fecha no válida',
+            text: 'El reenvío debe programarse al menos con un día de anticipación.',
+            confirmButtonColor: '#3e60d5'
+        });
+        // Resetear al valor mínimo permitido (mañana)
+        $(this).val("{{ \Carbon\Carbon::now()->addDay()->format('Y-m-d') }}");
+    }
+});
+
+
+
+// Abrir Modal Devolución
+$(document).on('click', '.btn-abrir-devolucion', function() {
+    var ordenId = $(this).data('id');
+    $('#modal_devo_id').val(ordenId);
+    
+    var myModal = new bootstrap.Modal(document.getElementById('modalDevolucion'));
+    myModal.show();
+    
+    setTimeout(function() {
+        $('.select2-modal-devo').select2({
+            dropdownParent: $('#modalDevolucion'),
+            width: '100%'
+        });
+    }, 200);
+});
+
+// Forzar apertura de calendario al clic
+$(document).on('click', '#input-fecha-devolucion', function() {
+    try { this.showPicker(); } catch (e) {}
+});
+
+// Validación de fecha mínima (Mañana)
+$(document).on('change', '#input-fecha-devolucion', function() {
+    const selectedDate = new Date($(this).val());
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0,0,0,0);
+
+    if (selectedDate < tomorrow) {
+        Swal.fire({ icon: 'error', title: 'Fecha no válida', text: 'La devolución debe ser desde mañana.' });
+        $(this).val("{{ \Carbon\Carbon::now()->addDay()->format('Y-m-d') }}");
+    }
 });
 </script>
 

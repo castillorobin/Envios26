@@ -231,11 +231,12 @@ Route::get('/ordenes/buscarfallidas', [App\Http\Controllers\OrdenController::cla
 Route::post('/ordenes/fallidas', [App\Http\Controllers\OrdenController::class, 'fallidas'])->name('ordenes.fallidas');
 Route::post('/ordenes/registrar-fallida/{id}', [App\Http\Controllers\OrdenController::class, 'registrarFallida'])->name('ordenes.registrar_fallida');
 Route::get('/ordenes/reenvios-devoluciones', [App\Http\Controllers\OrdenController::class, 'reenviosDevoluciones'])->name('ordenes.reenvios_devoluciones');
-Route::post('/ordenes/ticketdetallesdevo', [App\Http\Controllers\OrdenController::class, 'ticketDetallesdevo'])->name('ordenes.ticket_detallesdevo');
-Route::post('/ordenes/registrar-reenvio/', [App\Http\Controllers\OrdenController::class, 'registrarReenvio'])->name('ordenes.registrar_reenvio');
+Route::match(['get', 'post'], '/ordenes/ticketdetallesdevo', [App\Http\Controllers\OrdenController::class, 'ticketDetallesdevo'])->name('ordenes.ticket_detallesdevo');
+Route::post('/ordenes/registrar-reenvio', [App\Http\Controllers\OrdenController::class, 'registrarReenvio'])->name('ordenes.registrar_reenvio');
+Route::post('/ordenes/registrar-devolucion', [App\Http\Controllers\OrdenController::class, 'registrarDevolucion'])->name('ordenes.registrar_devolucion');
 
 
-// 3. El formulario (ahora recibe los datos por sesión o query)
+// 3. El formulario (ahora recibe los datos por sesión o query)   ordenes.ticket_detallesdevo
 //Route::get('ordenes/crear', [App\Http\Controllers\OrdenController::class, 'create'])->name('ordenes.crear');
 
 //Recepción de paquetes
