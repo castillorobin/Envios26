@@ -720,7 +720,7 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
         // Historial
         $hestado = new Hestado();
         $hestado->idenvio = $orden->id;
-        $hestado->estado = "Reenviado";
+        $hestado->estado = "Reenvio";
         $hestado->nota = "El paquete se ha marcado como Reenviado.";
         $hestado->freprogra = $request->fecha_reenvio;
         $hestado->usuario = Auth::user()->name;

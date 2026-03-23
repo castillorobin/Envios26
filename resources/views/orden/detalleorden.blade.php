@@ -342,7 +342,7 @@
                                               <strong>Motivo del fallo:</strong> {{ $hestado->motivofallo }}
                                             </p>
                                             @endif
-                                            @if($hestado->estado == 'Reenviado')
+                                            @if($hestado->estado == 'Reenvio')
                                             <p class="text-muted mb-0">
                                               <strong>Fecha de reenvio:</strong> {{ $orden->freenvio }} <br> <strong>Punto de reenvio:</strong> {{ $orden->preenvio }}
                                             </p>
