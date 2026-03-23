@@ -670,5 +670,36 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
             return back()->with('error', 'Error al actualizar el registro: ' . $e->getMessage());
         }
     }
+
+    public function reenviosDevoluciones()
+    {
+        
+        return view('reenvdev.buscarticket');
+    }
+    public function ticketDetallesdevo(Request $request)
+    {
+        $request->validate([
+            'ticket' => 'required|string', // Este es el campo 'codigo' del ticket
+        ]);
+
+        $codigoTicket = $request->ticket;
+
+        // 1. Buscamos el registro en el modelo Recepcion por su columna 'codigo'
+        $recepcion = Recepcion::where('codigo', $codigoTicket)->first();
+
+        // Validar si el ticket existe
+        if (!$recepcion) {
+            return back()->with('error', 'No se encontró ningún ticket con el código: ' . $codigoTicket);
+        }
+
+        // 2. Traemos todas las órdenes vinculadas a ese ID de recepción
+        // Usamos with('comercioRel') para optimizar la carga si necesitas mostrar el nombre del comercio
+        $ordenes = Orden::where('recepcion_id', $recepcion->id)->get();
+
+        // 3. Si necesitas el comercio del ticket (asumiendo que Recepcion tiene comercio_id)
+        $comercio = Comercio::find($recepcion->comercio); 
+
+        return view('reenvdev.detalleticket', compact('recepcion', 'ordenes', 'comercio'));
+    }
     
 }

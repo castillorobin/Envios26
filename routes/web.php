@@ -230,7 +230,8 @@ Route::post('/ordenes/ticketdetalles', [App\Http\Controllers\OrdenController::cl
 Route::get('/ordenes/buscarfallidas', [App\Http\Controllers\OrdenController::class, 'buscarfallidas'])->name('ordenes.buscarfallidas');
 Route::post('/ordenes/fallidas', [App\Http\Controllers\OrdenController::class, 'fallidas'])->name('ordenes.fallidas');
 Route::post('/ordenes/registrar-fallida/{id}', [App\Http\Controllers\OrdenController::class, 'registrarFallida'])->name('ordenes.registrar_fallida');
-
+Route::get('/ordenes/reenvios-devoluciones', [App\Http\Controllers\OrdenController::class, 'reenviosDevoluciones'])->name('ordenes.reenvios_devoluciones');
+Route::post('/ordenes/ticketdetallesdevo', [App\Http\Controllers\OrdenController::class, 'ticketDetallesdevo'])->name('ordenes.ticket_detallesdevo');
 
 
 // 3. El formulario (ahora recibe los datos por sesión o query)
