@@ -234,6 +234,7 @@ Route::get('/ordenes/reenvios-devoluciones', [App\Http\Controllers\OrdenControll
 Route::match(['get', 'post'], '/ordenes/ticketdetallesdevo', [App\Http\Controllers\OrdenController::class, 'ticketDetallesdevo'])->name('ordenes.ticket_detallesdevo');
 Route::post('/ordenes/registrar-reenvio', [App\Http\Controllers\OrdenController::class, 'registrarReenvio'])->name('ordenes.registrar_reenvio');
 Route::post('/ordenes/registrar-devolucion', [App\Http\Controllers\OrdenController::class, 'registrarDevolucion'])->name('ordenes.registrar_devolucion');
+Route::get('/ordenes/listareenvios-devoluciones', [App\Http\Controllers\OrdenController::class, 'listareenviosDevoluciones'])->name('ordenes.listareenvios_devoluciones');
 
 
 // 3. El formulario (ahora recibe los datos por sesión o query)   ordenes.ticket_detallesdevo

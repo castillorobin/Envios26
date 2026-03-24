@@ -780,5 +780,11 @@ public function registrarDevolucion(Request $request)
         return back()->with('error', 'Error: ' . $e->getMessage());
     }
 }
-    
+
+    public function listareenviosDevoluciones()
+    {
+        $ordenes = Orden::whereIn('estado', ['Reenvio', 'Devolucion'])->get();
+        return view('reenvdev.listado', compact('ordenes'));
+        
+    }
 }
