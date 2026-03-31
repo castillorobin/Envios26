@@ -714,7 +714,8 @@ $caja = $request->input('caja'); // El número de caja ingresado/escaneado
         // Guardar cambios
         $orden->freenvio = $request->fecha_reenvio; 
         $orden->preenvio = $request->punto_id; 
-        $orden->estado = 'Reenvio';
+        //$orden->estado = 'Reenvio';
+        $orden->tipoorden = 'Reenvio';
         $orden->save();
 
         // Historial
@@ -757,7 +758,8 @@ public function registrarDevolucion(Request $request)
         // Actualizamos la orden
         $orden->fdevolucion = $request->fecha_devolucion; 
         $orden->pdevolucion = $request->punto_id; 
-        $orden->estado = 'Devolucion';
+       // $orden->estado = 'Devolucion';
+        $orden->tipoorden = 'Devolucion';
         $orden->save();
 
         // Registrar en Hestado
@@ -783,8 +785,24 @@ public function registrarDevolucion(Request $request)
 
     public function listareenviosDevoluciones()
     {
-        $ordenes = Orden::whereIn('estado', ['Reenvio', 'Devolucion'])->get();
+        $ordenes = Orden::whereIn('tipoorden', ['Reenvio', 'Devolucion'])->get();
         return view('reenvdev.listado', compact('ordenes'));
         
     }
+
+    public function actualizarEstadoOrden(Request $request)
+{
+    try {
+        $orden = Orden::findOrFail($request->id);
+        $orden->estadoorden = $request->estado;
+        $orden->save();
+
+        // Opcional: Registrar en historial si es necesario
+        // $this->registrarHistorial($orden->id, "Cambio de estado a: " . $request->estado);
+
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+    }
+}
 }

@@ -218,15 +218,16 @@
                                            
                                             <tr>
                                                 <th>Guía</th>
+                                                <th>Tipo/Orden</th>
                                                 <th>Fecha de entrega</th>
                                                 <th>Destinatario</th>
                                                 <th>Destino</th>
-                                                <th>Ubicación</th>
-                                                <th>Ticket</th>
-                                                <th>Fecha devolucion</th>
-                                                <th>Punto</th>
-                                                
+                                                <th>Agencia</th>
                                                 <th>Status</th>
+                                                <th class="text-center">Acción</th>
+                                                
+        
+                                                
                                                 
                                             </tr>
                                             
@@ -241,37 +242,50 @@
                                                     </a>
                                                 </td>
                                                 <td>
+                                                    {{ $orden->tipoorden }}
+                                                </td>
+                                                <td>
                                                     
-                                                    @if($orden->hora_entrega != "NULL" && $orden->fecha_entrega != null)
-                                                         {{ date('d/m/Y', strtotime($orden->fecha_entrega)) }} 
+                                                    @if($orden->tipoorden == "Reenvio" )
+                                                         {{ date('d/m/Y', strtotime($orden->freenvio)) }} 
                                                     @else
-                                                         N/A
+                                                        {{ date('d/m/Y', strtotime($orden->fdevolucion)) }}
                                                     @endif
                                                 </td>
                                                 <td>
                                                     {{ $orden->destinatario }}
                                                 </td>
                                                 <td>
-                                                    {{ $orden->direccion }}
-                                                </td>
-                                                <td>
-                                                    {{ $orden->destino }}
-                                                </td>
-                                                <td>
-                                                    @if($orden->recepcion)
-                                                        <span class="badge bg-light text-dark border">
-                                                            <i class="bx bx-receipt"></i> {{ $orden->recepcion->codigo }}
-                                                        </span>
+                                                    @if($orden->tipoorden == "Reenvio" )
+                                                         {{ $orden->preenvio }} 
                                                     @else
-                                                        <span class="text-muted">Sin Ticket</span>
+                                                        {{ $orden->pdevolucion }}
                                                     @endif
                                                 </td>
-                                                <td> {{ $orden->fdevolucion }} </td>
-                                                <td>{{ $orden->pdevolucion }}</td>
-                                                
                                                 <td>
-                                                    {{ $orden->estado }}
+                                                    {{ $orden->agencia }}
                                                 </td>
+                                                <td>
+                                                   {{ $orden->estado }}
+                                                </td>
+                                                                                                
+                                                    <td class="text-center">
+                                                        <div id="wrapper-estado-{{ $orden->id }}" class="d-flex align-items-center justify-content-center gap-2">
+                                                            <div id="status-container-{{ $orden->id }}">
+                                                                <span class="badge bg-soft-primary text-primary status-text">
+                                                                    {{ $orden->estadoorden ?? 'Pendiente' }}
+                                                                </span>
+                                                            </div>
+
+                                                            <button type="button" class="btn btn-sm btn-outline-info btn-editar-estado" 
+                                                                    data-id="{{ $orden->id }}" 
+                                                                    data-actual="{{ $orden->estadoorden ?? 'Pendiente' }}">
+                                                                <i class="bx bx-edit"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                
+                                                
                                             </tr>
                                             @endforeach
                                         </tbody>
@@ -389,6 +403,73 @@
     // Buscador de texto normal
     $('#search').on('keyup', function() {
         table.search(this.value).draw();
+    });
+});
+</script>
+
+<script>
+    $(document).ready(function() {
+    // Manejar clic en botón Editar
+    $(document).on('click', '.btn-editar-estado', function() {
+        const ordenId = $(this).data('id');
+        const estadoActual = $(this).data('actual');
+        const container = $(`#status-container-${ordenId}`);
+
+        // Crear el select dinámicamente
+        const htmlSelect = `
+            <select class="form-select form-select-sm select-cambio-estado" data-id="${ordenId}">
+                <option value="Pendiente" ${estadoActual === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
+                <option value="Preparando" ${estadoActual === 'Preparando' ? 'selected' : ''}>Preparando</option>
+                <option value="Lista" ${estadoActual === 'Lista' ? 'selected' : ''}>Lista</option>
+            </select>
+        `;
+
+        container.html(htmlSelect);
+        $(this).hide(); // Ocultar botón editar mientras se edita
+    });
+
+    // Manejar cambio en el select
+    $(document).on('change', '.select-cambio-estado', function() {
+        const ordenId = $(this).data('id');
+        const nuevoEstado = $(this).val();
+        const container = $(`#status-container-${ordenId}`);
+        const btnEditar = $(`.btn-editar-estado[data-id="${ordenId}"]`);
+
+        // Llamada AJAX
+        fetch("{{ route('ordenes.actualizar_estado_orden') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                id: ordenId,
+                estado: nuevoEstado
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Actualizar visualmente a badge de nuevo
+                container.html(`<span class="badge bg-soft-success text-success status-text">${nuevoEstado}</span>`);
+                btnEditar.data('actual', nuevoEstado).show();
+                
+                // Toast de confirmación
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+                Toast.fire({ icon: 'success', title: 'Estado actualizado' });
+            } else {
+                Swal.fire('Error', 'No se pudo actualizar el estado', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error', 'Error de conexión', 'error');
+        });
     });
 });
 </script>
