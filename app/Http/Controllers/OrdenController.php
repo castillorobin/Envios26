@@ -825,16 +825,19 @@ public function registrarDevolucion(Request $request)
             \App\Models\Orden::whereIn('guia', $guias)
                 ->update(['estado' => 'Devolución Comercio']);
 
-                Hestado::whereIn('idenvio', function($query) use ($guias) {
-                    $query->select('id')
-                          ->from('ordens')
-                          ->whereIn('guia', $guias);
-                })
-                ->update([
-                    'estado' => 'Devolución Comercio',
-                    'nota' => 'El paquete se ha cambiado a Devolución Comercio.',
-                    'usuario' => Auth::user()->name
-                ]);
+               
+
+                 foreach ($guias as $guia) {
+            $orden = Orden::where('guia', $guia)->first();
+            if ($orden) {
+                $hesta = new Hestado();
+                $hesta->idenvio = $orden->id;
+                $hesta->estado = "Devolución Comercio";
+                $hesta->nota = "El paquete se ha cambiado a Devolución Comercio.";
+                $hesta->usuario = Auth::user()->name;
+                $hesta->save();
+            }
+        }
 
             return response()->json([
                 'success' => true, 
