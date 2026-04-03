@@ -218,14 +218,9 @@
                                 </div>
           
                                         <div class="d-flex justify-content-end mt-3 p-3">
-                                            <a href="/ordenes/asignar-mercancia">
-                                             <button type="button" id="btn-cancelar-asignacion" class="btn btn-secondary btn-lg" style="margin-right: 10px;">
-                                                 <i class="bx bx-x me-1"></i> Cancelar
-                                          
-                                            </button>
-                                            </a>
-                                            <button type="button" id="btn-finalizar-asignacion" class="btn btn-success btn-lg">
-                                                <i class="bx bx-save me-1"></i> Guardar
+                                            
+                                            <button type="button" class="btn btn-success btn-lg">
+                                                <i class="bx bx-save me-1"></i> Actualizar Devolución
                                             </button>
                                         </div>
                                
@@ -256,19 +251,10 @@
         const btnAgregar = document.getElementById('btn-agregar');
         const btnActivarQr = document.getElementById('btn-activar-qr');
         const readerContainer = document.getElementById('reader-container');
-        const modalSuelto = new bootstrap.Modal(document.getElementById('modalSuelto'));
+        
         let html5QrCode;
 
-        // 1. Inicializar Flatpickr
-        flatpickr("#humanfd-datepicker", {
-            locale: "es",
-            altInput: true,
-            altFormat: "F j, Y",
-            dateFormat: "Y-m-d",
-            minDate: "today",
-            defaultDate: "today",
-           
-        });
+       
 
         // 2. Inicializar DataTable
         var table = $('#tabla-asignacion').DataTable({
