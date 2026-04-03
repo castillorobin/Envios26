@@ -241,22 +241,21 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const inputGuia = document.getElementById('input-guia');
         const btnAgregar = document.getElementById('btn-agregar');
         const btnActivarQr = document.getElementById('btn-activar-qr');
+        const btnCerrarCamara = document.getElementById('btn-cerrar-camara');
         const readerContainer = document.getElementById('reader-container');
         
         let html5QrCode;
 
-       
-
-        // 2. Inicializar DataTable
+        // 1. Inicializar DataTable (Asegúrate que el ID coincida)
         var table = $('#tabla-asignacion').DataTable({
             "dom": 'tip',
             "language": { "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json" },
@@ -267,23 +266,25 @@
             }
         });
 
-        // 3. Función para agregar Guía a la lista
+        // 2. Función para agregar Guía a la lista
         async function agregarGuiaALista(codigo) {
             const guiaLimpia = codigo.trim();
             if (!guiaLimpia) return;
 
+            // Verificar duplicados localmente en la tabla
             let duplicado = false;
             table.rows().every(function() {
                 if (this.data()[0] === guiaLimpia) duplicado = true;
             });
 
             if (duplicado) {
-                Swal.fire('¡Atención!', 'Esta guía ya fue agregada.', 'warning');
+                Swal.fire('¡Atención!', 'Esta guía ya fue agregada a la lista.', 'warning');
                 inputGuia.value = '';
                 return;
             }
 
             try {
+                // Mostrar un pequeño indicador de carga si lo deseas
                 const response = await fetch(`{{ route('ordenes.buscar_guia_ajax') }}?guia=${guiaLimpia}`);
                 const res = await response.json();
 
@@ -294,7 +295,7 @@
                         d.comercio,
                         d.destinatario,
                         d.destino,
-                        d.fecha_entrega,
+                        d.fecha_entrega || 'N/A',
                         `<span class="badge bg-soft-primary text-primary">${d.estado}</span>`,
                         `<div class="text-center">
                             <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar">
@@ -305,40 +306,81 @@
 
                     inputGuia.value = '';
                     inputGuia.focus();
+                    
+                    // Toast rápido de éxito
+                    Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).fire({ icon: 'success', title: 'Guía agregada' });
+
                 } else {
-                    Swal.fire('Error', res.message, 'error');
+                    Swal.fire('No encontrado', res.message || 'La guía no existe.', 'error');
                 }
             } catch (error) {
-                Swal.fire('Error', 'Problema al consultar la guía.', 'error');
+                console.error(error);
+                Swal.fire('Error', 'Hubo un problema al consultar el servidor.', 'error');
             }
         }
 
-        // 4. Eventos
-        btnAgregar.addEventListener('click', () => agregarGuiaALista(inputGuia.value));
-        inputGuia.addEventListener('keypress', (e) => { if (e.key === 'Enter') agregarGuiaALista(inputGuia.value); });
-        $('#tabla-asignacion tbody').on('click', '.btn-eliminar', function () { table.row($(this).parents('tr')).remove().draw(); });
-
-        document.getElementById('btn-finalizar-asignacion').addEventListener('click', function() {
-            if (table.rows().count() === 0) {
-                Swal.fire('Atención', 'Agregue al menos una guía a la lista.', 'info');
-                return;
-            }
-            modalSuelto.show();
+        // 3. Eventos de botones
+        btnAgregar.addEventListener('click', function(e) {
+            e.preventDefault();
+            agregarGuiaALista(inputGuia.value);
         });
 
-       
+        inputGuia.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                agregarGuiaALista(this.value);
+            }
+        });
 
-        // Lógica QR...
+        // Eliminar fila
+        $('#tabla-asignacion tbody').on('click', '.btn-eliminar', function () {
+            table.row($(this).parents('tr')).remove().draw();
+        });
+
+        // 4. Lógica del Escáner QR
         btnActivarQr.addEventListener('click', function() {
             readerContainer.classList.remove('d-none');
+            // Evitar múltiples instancias
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => iniciarCamara());
+            } else {
+                iniciarCamara();
+            }
+        });
+
+        function iniciarCamara() {
             html5QrCode = new Html5Qrcode("reader");
-            html5QrCode.start({ facingMode: "environment" }, { fps: 15, qrbox: 250 }, (text) => {
-                agregarGuiaALista(text);
+            const config = { fps: 15, qrbox: { width: 250, height: 250 } };
+            
+            html5QrCode.start(
+                { facingMode: "environment" }, 
+                config, 
+                (text) => {
+                    // Al detectar código
+                    agregarGuiaALista(text);
+                    // Opcional: detener cámara tras detectar uno
+                    // detenerCamara(); 
+                },
+                (msg) => { /* Errores silenciosos de escaneo fallido por frame */ }
+            ).catch(err => {
+                Swal.fire('Error de Cámara', 'Asegúrate de dar permisos y usar HTTPS.', 'error');
             });
-        });
-        document.getElementById('btn-cerrar-camara').addEventListener('click', () => {
-            if(html5QrCode) html5QrCode.stop().then(() => readerContainer.classList.add('d-none'));
-        });
+        }
+
+        function detenerCamara() {
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    readerContainer.classList.add('d-none');
+                }).catch(err => console.error("Error al detener cámara", err));
+            }
+        }
+
+        btnCerrarCamara.addEventListener('click', detenerCamara);
     });
 </script>
 
