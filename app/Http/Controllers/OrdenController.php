@@ -823,7 +823,18 @@ public function registrarDevolucion(Request $request)
             // Actualizar el estado de todas las órdenes cuyos códigos estén en el array
             // Usamos whereIn para hacerlo de forma masiva y eficiente
             \App\Models\Orden::whereIn('guia', $guias)
-                ->update(['estado' => 'Actualizar Devolución']);
+                ->update(['estado' => 'Devolución Comercio']);
+
+                Hestado::whereIn('idenvio', function($query) use ($guias) {
+                    $query->select('id')
+                          ->from('ordens')
+                          ->whereIn('guia', $guias);
+                })
+                ->update([
+                    'estado' => 'Devolución Comercio',
+                    'nota' => 'El paquete se ha cambiado a Devolución Comercio.',
+                    'usuario' => Auth::user()->name
+                ]);
 
             return response()->json([
                 'success' => true, 

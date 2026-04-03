@@ -399,7 +399,7 @@ document.getElementById('btn-finalizar-devolucion').addEventListener('click', fu
     // 3. Alerta de confirmación
     Swal.fire({
         title: '¿Está seguro?',
-        text: "Está a punto de cambiar el estado a 'Actualizar Devolución' para " + guias.length + " guías.",
+        text: "Está a punto de cambiar el estado a 'Devolución Comercio' para " + guias.length + " guías.",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#198754',
