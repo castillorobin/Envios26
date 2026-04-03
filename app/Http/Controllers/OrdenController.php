@@ -805,4 +805,10 @@ public function registrarDevolucion(Request $request)
         return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
     }
 }
+
+    public function devolucionComercio()
+    {
+        return view('comercio.devolucion'); 
+    }
+
 }
