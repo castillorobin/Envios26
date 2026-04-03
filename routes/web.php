@@ -238,6 +238,7 @@ Route::get('/ordenes/listareenvios-devoluciones', [App\Http\Controllers\OrdenCon
 
 Route::post('/ordenes/actualizar-estado-orden', [App\Http\Controllers\OrdenController::class, 'actualizarEstadoOrden'])->name('ordenes.actualizar_estado_orden');
 Route::get('/ordenes/devolucion-comercio', [App\Http\Controllers\OrdenController::class, 'devolucionComercio'])->name('ordenes.devolucion_comercio');
+Route::post('/ordenes/actualizar-devolucion-masiva', [App\Http\Controllers\OrdenController::class, 'actualizarDevolucionMasiva'])->name('ordenes.actualizar_devolucion_masiva');
 
 
 // 3. El formulario (ahora recibe los datos por sesión o query)   ordenes.ticket_detallesdevo

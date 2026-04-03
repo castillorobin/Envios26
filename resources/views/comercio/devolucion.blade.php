@@ -219,7 +219,7 @@
           
                                         <div class="d-flex justify-content-end mt-3 p-3">
                                             
-                                            <button type="button" class="btn btn-success btn-lg">
+                                            <button type="button" id="btn-finalizar-devolucion" class="btn btn-success btn-lg">
                                                 <i class="bx bx-save me-1"></i> Actualizar Devolución
                                             </button>
                                         </div>
@@ -381,6 +381,64 @@
         }
 
         btnCerrarCamara.addEventListener('click', detenerCamara);
+
+        // --- LÓGICA PARA ACTUALIZAR ESTADO MASIVO ---
+document.getElementById('btn-finalizar-devolucion').addEventListener('click', function() {
+    // 1. Obtener todas las guías de la tabla
+    let guias = [];
+    table.rows().every(function() {
+        guias.push(this.data()[0]); // El código de la guía está en la columna 0
+    });
+
+    // 2. Validar si hay guías
+    if (guias.length === 0) {
+        Swal.fire('Lista vacía', 'Por favor agregue al menos una guía a la lista.', 'info');
+        return;
+    }
+
+    // 3. Alerta de confirmación
+    Swal.fire({
+        title: '¿Está seguro?',
+        text: "Está a punto de cambiar el estado a 'Actualizar Devolución' para " + guias.length + " guías.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#198754',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, actualizar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Procesando...',
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            // 4. Enviar petición AJAX
+            fetch("{{ route('ordenes.actualizar_devolucion_masiva') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ guias: guias })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('¡Éxito!', data.message, 'success').then(() => {
+                        window.location.reload(); // Recargar para limpiar la tabla
+                    });
+                } else {
+                    Swal.fire('Error', 'Hubo un problema: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                Swal.fire('Error', 'Error de conexión con el servidor.', 'error');
+            });
+        }
+    });
+});
     });
 </script>
 

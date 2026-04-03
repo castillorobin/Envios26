@@ -811,4 +811,30 @@ public function registrarDevolucion(Request $request)
         return view('comercio.devolucion'); 
     }
 
+    public function actualizarDevolucionMasiva(Request $request)
+    {
+        $guias = $request->input('guias');
+
+        if (empty($guias)) {
+            return response()->json(['success' => false, 'message' => 'No se enviaron guías.'], 400);
+        }
+
+        try {
+            // Actualizar el estado de todas las órdenes cuyos códigos estén en el array
+            // Usamos whereIn para hacerlo de forma masiva y eficiente
+            \App\Models\Orden::whereIn('guia', $guias)
+                ->update(['estado' => 'Actualizar Devolución']);
+
+            return response()->json([
+                'success' => true, 
+                'message' => 'Se han actualizado ' . count($guias) . ' guías correctamente.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false, 
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }
