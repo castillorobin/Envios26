@@ -74,10 +74,10 @@ class OrdenController extends Controller
         'comercio' => 'required|string',
         'destinatario' => 'required|string',
         'tipo' => 'required|string',
-        'destino' => 'required|string',
+        'destino' => 'nullable|string',
         'telefono' => 'required|string',
         'fecha_entrega' => 'required|date',
-        'total' => 'required|numeric',
+        'total' => 'nullable|numeric',
     ]);
 
     // 2. Buscar y Actualizar

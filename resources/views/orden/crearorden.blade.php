@@ -61,11 +61,11 @@
                         <div class="row">
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label">Destinatario</label>
-                                <input type="text" name="destinatario" class="form-control" placeholder="Ingrese el nombre del destinatario">
+                                <input type="text" name="destinatario" class="form-control" placeholder="Ingrese el nombre del destinatario" required>
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label">Tipo de paquete</label>
-                                <select name="tipo" id="tipo" class="form-control">
+                                <select name="tipo" id="tipo" class="form-control" required>
                                     <option value="" disabled selected>Seleccione el tipo de paquete</option>
                                     <option value="Personalizado">Personalizado</option>
                                     <option value="Personalizado departamental">Personalizado departamental</option>
@@ -78,7 +78,7 @@
                         <div class="row">
                             <div class="col-lg-12 mb-3" id="contenedor_direccion">
                                 <label class="form-label">Dirección de Destino</label>
-                                <input type="text" name="destino" id="input_destino" class="form-control" placeholder="Ingrese la dirección exacta">
+                                <input type="text" name="destino" id="input_destino" class="form-control" placeholder="Ingrese la dirección exacta" >
                             </div>
 
                             <div class="col-lg-12 mb-3 d-none" id="contenedor_puntos">
@@ -97,7 +97,7 @@
                         <div class="row">
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label">Telefono</label>
-                                <input type="text" name="telefono" class="form-control" placeholder="Ingrese el teléfono">
+                                <input type="text" name="telefono" class="form-control" placeholder="Ingrese el teléfono" required>
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label">Whatsapp</label>
@@ -109,7 +109,7 @@
                             <div class="col-lg-4 mb-3">
                                 <label class="form-label">Fecha de entrega</label>
                                <!-- <input type="text" name="fecha_entrega" class="form-control" placeholder="Ingrese la fecha de entrega">-->
-                                <input type="text" id="humanfd-datepicker" name="fecha_entrega" class="form-control" placeholder="{{ today()->format('F j, Y') }}">
+                                <input type="text" id="humanfd-datepicker" name="fecha_entrega" class="form-control" placeholder="{{ today()->format('F j, Y') }}" required>
                             </div>
                             <div class="col-lg-4 mb-3">
                                 <label class="form-label">Cobro del envío</label>
