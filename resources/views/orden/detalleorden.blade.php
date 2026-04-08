@@ -237,21 +237,30 @@
                                             {{-- Foto 1 --}}
                                             @if($orden->foto1)
                                                 <div class="col-md-4 mb-3">
-                                                    <img src="{{ asset('imgs/' . $orden->foto1) }}" alt="Foto 1" class="img-fluid rounded border shadow-sm" style="max-width: 100px;">
+                                                    <img src="{{ asset('imgs/' . $orden->foto1) }}" 
+                                                        alt="Foto 1" 
+                                                        class="img-fluid rounded border shadow-sm img-zoom cursor-pointer" 
+                                                        style="max-width: 100px; cursor: zoom-in;">
                                                 </div>
                                             @endif
 
                                             {{-- Foto 2 --}}
                                             @if($orden->foto2)
                                                 <div class="col-md-4 mb-3">
-                                                    <img src="{{ asset('imgs/' . $orden->foto2) }}" alt="Foto 2" class="img-fluid rounded border shadow-sm" style="max-width: 100px;">
+                                                    <img src="{{ asset('imgs/' . $orden->foto2) }}" 
+                                                        alt="Foto 2" 
+                                                        class="img-fluid rounded border shadow-sm img-zoom cursor-pointer" 
+                                                        style="max-width: 100px; cursor: zoom-in;">
                                                 </div>
                                             @endif
 
                                             {{-- Foto 3 --}}
                                             @if($orden->foto3)
                                                 <div class="col-md-4 mb-3">
-                                                    <img src="{{ asset('imgs/' . $orden->foto3) }}" alt="Foto 3" class="img-fluid rounded border shadow-sm" style="max-width: 100px;">
+                                                    <img src="{{ asset('imgs/' . $orden->foto3) }}" 
+                                                        alt="Foto 3" 
+                                                        class="img-fluid rounded border shadow-sm img-zoom cursor-pointer" 
+                                                        style="max-width: 100px; cursor: zoom-in;">
                                                 </div>
                                             @endif
                                         </div>
@@ -374,6 +383,17 @@
 
 
 
+                <div class="modal fade" id="modalFotoGrande" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-transparent border-0">
+            <div class="modal-body p-0 text-center">
+                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-2" data-bs-dismiss="modal" aria-label="Close"></button>
+                <img src="" id="imgGrande" class="img-fluid rounded shadow-lg">
+            </div>
+        </div>
+    </div>
+</div>
+
 @if(session('error'))
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -387,5 +407,23 @@
         });
     </script>
 @endif
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Seleccionamos todas las fotos que tengan la clase img-zoom
+    const fotosZoom = document.querySelectorAll('.img-zoom');
+    const modalImg = document.getElementById('imgGrande');
+    const modalElement = new bootstrap.Modal(document.getElementById('modalFotoGrande'));
+
+    fotosZoom.forEach(foto => {
+        foto.addEventListener('click', function() {
+            // Pasamos la ruta de la imagen pequeña al modal grande
+            modalImg.src = this.src;
+            // Abrimos el modal
+            modalElement.show();
+        });
+    });
+});
+</script>
 
 @endsection
