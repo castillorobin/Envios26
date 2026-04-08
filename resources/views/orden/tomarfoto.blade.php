@@ -20,6 +20,19 @@
         max-width: 400px;
         margin-top: 15px;
     }
+
+    @media (max-width: 768px) {
+        .dropzone {
+            min-height: 250px; /* Más grande en móviles para facilitar el toque */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        .dz-message {
+            margin: 2em 0 !important;
+        }
+    }
 </style>
 
 <div class="container-xxl">
@@ -204,13 +217,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var myDropzone = new Dropzone("#productImagesForm", {
         url: "{{ route('ordenes.guardar_fotos') }}",
-        paramName: "file",
-        maxFiles: 3,
-        maxFilesize: 2,
-        acceptedFiles: "image/*",
-        addRemoveLinks: true,
-        autoProcessQueue: false,
-        headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" }
+    paramName: "file",
+    maxFiles: 3,
+    maxFilesize: 2,
+    acceptedFiles: "image/*",
+    addRemoveLinks: true,
+    autoProcessQueue: false,
+    headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
+    dictDefaultMessage: "Toca aquí para tomar la foto", // Mejorar UX en móvil
+    init: function() {
+        this.on("addedfile", function(file) {
+            // Lógica opcional al añadir
+        });
+
+        // ESTA ES LA CLAVE PARA MÓVILES:
+        // Buscamos el input oculto que genera Dropzone
+        const hiddenInput = document.querySelector('input[type=file].dz-hidden-input');
+        if (hiddenInput) {
+            hiddenInput.setAttribute('capture', 'environment'); // Fuerza cámara trasera
+            hiddenInput.setAttribute('accept', 'image/*');      // Asegura solo imágenes
+        }
+        
+        }
     });
 
     btnGuardar.addEventListener("click", function() {
