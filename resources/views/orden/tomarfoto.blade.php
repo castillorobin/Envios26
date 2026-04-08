@@ -216,48 +216,75 @@ document.addEventListener('DOMContentLoaded', function() {
     if (Dropzone.instances.length > 0) Dropzone.instances.forEach(dz => dz.destroy());
 
     var myDropzone = new Dropzone("#productImagesForm", {
-        url: "{{ route('ordenes.guardar_fotos') }}",
+    url: "{{ route('ordenes.guardar_fotos') }}",
     paramName: "file",
     maxFiles: 3,
-    maxFilesize: 2,
+    maxFilesize: 5, // Aumentado a 5MB porque las fotos de cámara son pesadas
     acceptedFiles: "image/*",
     addRemoveLinks: true,
-    autoProcessQueue: false,
+    autoProcessQueue: false, // CLAVE: No subir automáticamente
     headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
-    dictDefaultMessage: "Toca aquí para tomar la foto", // Mejorar UX en móvil
     init: function() {
-        this.on("addedfile", function(file) {
-            // Lógica opcional al añadir
+        var dz = this;
+
+        // Inyectar atributos de cámara al input oculto
+        this.on("addedfile", function() {
+            if (dz.files.length > 3) {
+                dz.removeFile(dz.files[3]);
+                Swal.fire('Límite excedido', 'Solo puedes subir 3 fotos por guía.', 'warning');
+            }
         });
 
-        // ESTA ES LA CLAVE PARA MÓVILES:
-        // Buscamos el input oculto que genera Dropzone
+        // Asegurar que el input de cámara se mantenga activo
         const hiddenInput = document.querySelector('input[type=file].dz-hidden-input');
         if (hiddenInput) {
-            hiddenInput.setAttribute('capture', 'environment'); // Fuerza cámara trasera
-            hiddenInput.setAttribute('accept', 'image/*');      // Asegura solo imágenes
+            hiddenInput.setAttribute('capture', 'environment');
+            hiddenInput.setAttribute('accept', 'image/*');
         }
-        
-        }
-    });
+    }
+});
 
     btnGuardar.addEventListener("click", function() {
-        if (!guiaHidden.value) {
-            Swal.fire('Atención', 'Valida una guía primero', 'warning');
-            return;
-        }
-        if (myDropzone.getQueuedFiles().length === 0) {
-            Swal.fire('Atención', 'Agrega fotos primero', 'info');
-            return;
-        }
-        Swal.fire({ title: 'Guardando...', didOpen: () => Swal.showLoading() });
-        myDropzone.processQueue();
+    const guiaVal = guiaHidden.value;
+
+    if (!guiaVal) {
+        Swal.fire('Atención', 'Primero debes validar una guía válida.', 'warning');
+        return;
+    }
+
+    if (myDropzone.getQueuedFiles().length === 0) {
+        Swal.fire('Sin fotos', 'Por favor, toma al menos una fotografía.', 'info');
+        return;
+    }
+
+    Swal.fire({
+        title: 'Subiendo fotos...',
+        text: 'Guardando evidencias en el servidor',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
     });
 
-    myDropzone.on("sending", (file, xhr, formData) => formData.append("guia", guiaHidden.value));
-    myDropzone.on("queuecomplete", () => {
-        Swal.fire('Éxito', 'Fotos guardadas', 'success').then(() => window.location.reload());
+    // Procesar la cola manualmente
+    myDropzone.processQueue();
+});
+
+// Evento cuando TODOS los archivos se han subido con éxito
+myDropzone.on("successmultiple", function(files, response) {
+    // Si tu controlador devuelve un JSON de éxito
+    Swal.fire('¡Logrado!', 'Las fotos se guardaron correctamente.', 'success').then(() => {
+        window.location.reload();
     });
+});
+
+// En caso de que se suban uno por uno (comportamiento por defecto)
+myDropzone.on("queuecomplete", function() {
+    // Solo recargar si realmente hay archivos procesados con éxito
+    if (myDropzone.getAcceptedFiles().length > 0 && myDropzone.getQueuedFiles().length === 0) {
+        Swal.fire('¡Completado!', 'Evidencias guardadas.', 'success').then(() => {
+            window.location.reload();
+        });
+    }
+});
 });
 </script>
 @endsection

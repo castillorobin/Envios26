@@ -272,6 +272,8 @@ public function guardarFotos(Request $request)
         $hesta->nota = "Se han agregado fotos al paquete.";
         $hesta->usuario =  Auth::user()->name ;
         $hesta->save();
+
+        
         
         if ($guardado) {
             \Log::info('Base de datos actualizada con éxito');
