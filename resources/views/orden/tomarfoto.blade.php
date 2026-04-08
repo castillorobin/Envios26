@@ -219,10 +219,17 @@ document.addEventListener('DOMContentLoaded', function() {
     url: "{{ route('ordenes.guardar_fotos') }}",
     paramName: "file",
     maxFiles: 3,
-    maxFilesize: 5, // Aumentado a 5MB porque las fotos de cámara son pesadas
+    
+    // --- NUEVOS PARÁMETROS DE COMPRESIÓN ---
+    resizeWidth: 1200,          // Redimensiona a 1200px de ancho
+    resizeHeight: null,         // Mantiene la proporción
+    resizeMethod: 'contain',
+    resizeQuality: 0.6,         // Calidad al 80% (comprime muchísimo el peso)
+    
+    maxFilesize: 20,            // Permitir que entren archivos grandes para procesarlos
     acceptedFiles: "image/*",
     addRemoveLinks: true,
-    autoProcessQueue: false, // CLAVE: No subir automáticamente
+    autoProcessQueue: false,
     headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
     init: function() {
         var dz = this;
@@ -259,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     Swal.fire({
         title: 'Subiendo fotos...',
-        text: 'Guardando evidencias en el servidor',
+        text: 'Guardando fotos en el servidor',
         allowOutsideClick: false,
         didOpen: () => { Swal.showLoading(); }
     });
