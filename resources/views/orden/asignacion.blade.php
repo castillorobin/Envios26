@@ -291,13 +291,17 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // --- REFERENCIAS DE ELEMENTOS ---
         const inputGuia = document.getElementById('input-guia');
         const btnAgregar = document.getElementById('btn-agregar');
         const btnActivarQr = document.getElementById('btn-activar-qr');
+        const btnCerrarCamara = document.getElementById('btn-cerrar-camara');
         const readerContainer = document.getElementById('reader-container');
+        
+        // --- VARIABLES DE CONTROL ---
         let html5QrCode;
-
-
+        let isProcessing = false;    // Evita múltiples peticiones simultáneas
+        let lastScannedCode = null;  // Evita leer el mismo código repetidamente
 
         // 1. Inicializar DataTable
         var table = $('#tabla-asignacion').DataTable({
@@ -305,46 +309,59 @@
             "language": { "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json" },
             "drawCallback": function() {
                 $('.dataTables_paginate > ul.pagination').addClass('pagination-rounded');
-                $('#dt-info-container').append($(this.api().table().container()).find('.dataTables_info'));
-                $('#dt-pagination-container').append($(this.api().table().container()).find('.dataTables_paginate'));
+                // Limpiar y re-adjuntar contenedores de info/paginación
+                $('#dt-info-container').empty().append($(this.api().table().container()).find('.dataTables_info'));
+                $('#dt-pagination-container').empty().append($(this.api().table().container()).find('.dataTables_paginate'));
             }
         });
 
-        // 2. Función principal para agregar a la lista
+        // 2. Función Principal para agregar a la lista (Manual y QR)
         async function agregarGuiaALista(codigo) {
             const guiaLimpia = codigo.trim();
-            if (!guiaLimpia) return;
+            
+            // Validaciones básicas de entrada y estado
+            if (!guiaLimpia || isProcessing) return;
 
-            // Verificar si ya está en la tabla (lado del cliente)
+            // Bloqueamos procesamiento
+            isProcessing = true;
+
+            // Verificar si ya está en la tabla localmente
             let duplicado = false;
             table.rows().every(function() {
                 if (this.data()[0] === guiaLimpia) duplicado = true;
             });
 
             if (duplicado) {
-                Swal.fire('¡Atención!', 'Esta guía ya fue agregada a la lista actual.', 'warning');
+                // Solo mostrar alerta si no es un re-escaneo accidental del QR
+                if (lastScannedCode !== guiaLimpia) {
+                    Swal.fire('¡Atención!', 'Esta guía ya fue agregada a la lista actual.', 'warning');
+                }
                 inputGuia.value = '';
+                isProcessing = false; // Liberamos para que el usuario intente otra
                 return;
             }
 
+            // Guardamos el código actual para evitar spam del QR
+            lastScannedCode = guiaLimpia;
+
             try {
                 // Consultar al servidor
-                const response = await fetch(`{{ route('ordenes.buscar_guia_ajax') }}?guia=${guiaLimpia}`);
+                const response = await fetch(`{{ route('ordenes.buscar_guia_ajax') }}?guia=${encodeURIComponent(guiaLimpia)}`);
                 const res = await response.json();
 
                 if (res.success) {
                     const d = res.data;
                     
-                    // Agregamos la fila incluyendo el botón de eliminar al final
+                    // Agregamos la fila a la tabla
                     table.row.add([
                         d.guia,
                         d.comercio,
                         d.destinatario,
                         d.destino,
-                        d.fecha_entrega,
+                        d.fecha_entrega || 'N/A',
                         `<span class="badge bg-soft-primary text-primary">${d.estado}</span>`,
                         `<div class="text-center">
-                            <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar" title="Quitar de la lista">
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar" title="Quitar">
                                 <i class="bx bx-trash"></i>
                             </button>
                         </div>`
@@ -352,18 +369,27 @@
 
                     inputGuia.value = '';
                     inputGuia.focus();
-                }
-                else {
+                    
+                    // Vibración de confirmación en móviles
+                    if (navigator.vibrate) navigator.vibrate(100);
+
+                } else {
                     Swal.fire('Error', res.message, 'error');
                     inputGuia.value = '';
                 }
             } catch (error) {
                 console.error(error);
-                Swal.fire('Error', 'Hubo un problema al consultar la guía.', 'error');
+                Swal.fire('Error', 'Hubo un problema de conexión.', 'error');
+            } finally {
+                // Delay de 1.2 segundos antes de permitir el siguiente escaneo
+                // Esto da tiempo al operario de mover el celular al siguiente paquete
+                setTimeout(() => {
+                    isProcessing = false;
+                }, 1200);
             }
         }
 
-        // 3. Eventos de Entrada
+        // 3. Eventos de Interfaz
         btnAgregar.addEventListener('click', () => agregarGuiaALista(inputGuia.value));
 
         inputGuia.addEventListener('keypress', function(e) {
@@ -373,167 +399,106 @@
             }
         });
 
-        // 4. Lógica QR
+        // Eliminar fila de la tabla
+        $('#tabla-asignacion tbody').on('click', '.btn-eliminar', function () {
+            const row = table.row($(this).parents('tr'));
+            row.remove().draw();
+        });
+
+        // 4. Lógica del Escáner QR
         btnActivarQr.addEventListener('click', function() {
             readerContainer.classList.remove('d-none');
+            lastScannedCode = null; // Resetear historial de escaneo al abrir
+            
             html5QrCode = new Html5Qrcode("reader");
             html5QrCode.start(
                 { facingMode: "environment" },
-                { fps: 15, qrbox: 250 },
+                { 
+                    fps: 10,    // Velocidad moderada para estabilidad
+                    qrbox: 250 
+                },
                 (decodedText) => {
-                    agregarGuiaALista(decodedText);
-                    // Opcional: No cerrar la cámara para seguir escaneando rápido
+                    // Solo disparamos si no estamos procesando y el código es distinto al anterior
+                    if (!isProcessing && decodedText !== lastScannedCode) {
+                        agregarGuiaALista(decodedText);
+                    }
                 }
-            ).catch(err => Swal.fire('Error', 'No se pudo acceder a la cámara', 'error'));
+            ).catch(err => {
+                console.error(err);
+                Swal.fire('Cámara', 'No se pudo acceder a la cámara. Verifique permisos.', 'error');
+            });
         });
 
-        document.getElementById('btn-cerrar-camara').addEventListener('click', function() {
+        btnCerrarCamara.addEventListener('click', function() {
             if (html5QrCode) {
                 html5QrCode.stop().then(() => {
                     html5QrCode.clear();
                     readerContainer.classList.add('d-none');
                 });
+            } else {
+                readerContainer.classList.add('d-none');
             }
         });
 
-        // Evento para eliminar fila de la tabla
-$('#tabla-asignacion tbody').on('click', '.btn-eliminar', function () {
-    const row = table.row($(this).parents('tr'));
-    
-    Swal.fire({
-        title: '¿Quitar guía?',
-        text: "La guía será eliminada de esta lista de asignación.",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3e60d5',
-        cancelButtonColor: '#f1536e',
-        confirmButtonText: 'Sí, quitar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            row.remove().draw(); // Elimina la fila de DataTables
-            Swal.fire({
-                title: 'Eliminado',
-                text: 'La guía ha sido removida.',
-                icon: 'success',
-                timer: 1000,
-                showConfirmButton: false
+        // 5. Envío Final de Datos (Guardar Asignación)
+        const btnFinalizar = document.getElementById('btn-finalizar-asignacion');
+        
+        btnFinalizar.addEventListener('click', function() {
+            let guias = [];
+            table.rows().every(function() {
+                guias.push(this.data()[0]);
             });
-        }
-    });
-});
 
+            if (guias.length === 0) {
+                Swal.fire('Atención', 'La lista de guías está vacía.', 'info');
+                return;
+            }
 
-
-
-// Referencias a elementos
-const btnFinalizar = document.getElementById('btn-finalizar-asignacion');
-const modalSuelto = new bootstrap.Modal(document.getElementById('modalSuelto'));
-const btnConfirmarSuelto = document.getElementById('btn-confirmar-suelto');
-
-// Función para enviar los datos al servidor
-async function enviarAsignacion(datosExtra = {}) {
-    // 1. Obtener todas las guías actuales de la tabla
-    let guias = [];
-    table.rows().every(function() {
-        guias.push(this.data()[0]); // El índice 0 es el código de guía
-    });
-
-    if (guias.length === 0) {
-        Swal.fire('Error', 'La lista de guías está vacía.', 'error');
-        return;
-    }
-
-    // 2. Preparar el paquete de datos
-    const payload = {
-        guias: guias,
-        tipo: "{{ $tipo }}",
-        caja: "{{ $caja }}",
-        ...datosExtra // rack, nivel, gondola si vienen
-    };
-
-    try {
-        const response = await fetch("{{ route('ordenes.confirmar_asignacion') }}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': "{{ csrf_token() }}"
-            },
-            body: JSON.stringify(payload)
+            Swal.fire({
+                title: '¿Confirmar guardado?',
+                text: `Se procesarán ${guias.length} guías.`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#198754',
+                confirmButtonText: 'Sí, guardar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    enviarDatosAlServidor(guias);
+                }
+            });
         });
 
-        const res = await response.json();
+        async function enviarDatosAlServidor(guias) {
+            Swal.fire({ title: 'Guardando...', didOpen: () => { Swal.showLoading(); } });
 
-        // Dentro de enviarAsignacion()
-if (res.success) {
-    Swal.fire({
-        icon: 'success',
-        title: '¡Proceso Completado!',
-        text: res.message,
-        confirmButtonColor: '#198754', // Color btn-success
-        confirmButtonText: 'Aceptar',
-        customClass: {
-            confirmButton: 'btn btn-success'
-        },
-        buttonsStyling: false
-    }).then(() => {
-        window.location.href = "{{ route('ordenes.asignar_mercancia') }}";
-    });
-} else {
-            Swal.fire('Error', res.message, 'error');
+            try {
+                const response = await fetch("{{ route('ordenes.confirmar_asignacion') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        guias: guias,
+                        tipo: "{{ $tipo }}",
+                        caja: "{{ $caja }}"
+                    })
+                });
+
+                const res = await response.json();
+
+                if (res.success) {
+                    Swal.fire('¡Éxito!', res.message, 'success').then(() => {
+                        window.location.href = "{{ route('ordenes.asignar_mercancia') }}";
+                    });
+                } else {
+                    Swal.fire('Error', res.message, 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error');
+            }
         }
-    } catch (error) {
-        Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error');
-    }
-}
-
-// Evento principal del botón Guardar
-btnFinalizar.addEventListener('click', function() {
-    const tipo = "{{ $tipo }}";
-
-    if (tipo === 'Caja') {
-        Swal.fire({
-            title: '¿Confirmar asignación?',
-            text: `Se asignarán ${table.rows().count()} guías a la caja #{{ $caja }}`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#198754', // Color btn-success de Bootstrap 5
-            cancelButtonColor: '#6c757d',  // Color btn-secondary
-            confirmButtonText: 'Sí, guardar',
-            cancelButtonText: 'Cancelar',
-            customClass: {
-                confirmButton: 'btn btn-success',
-                cancelButton: 'btn btn-secondary'
-            },
-            buttonsStyling: false // Permite que las clases de Bootstrap tengan prioridad
-        }).then((result) => {
-            if (result.isConfirmed) enviarAsignacion();
-        });
-    } else {
-        modalSuelto.show();
-    }
-});
-
-// Evento dentro del modal para Suelto
-btnConfirmarSuelto.addEventListener('click', function() {
-    const rack = document.getElementById('rack').value.trim();
-    const nivel = document.getElementById('nivel').value.trim();
-    const gondola = document.getElementById('gondola').value.trim();
-
-    if (!rack || !nivel || !gondola) {
-        Swal.fire('Campos requeridos', 'Por favor complete todos los datos de ubicación.', 'warning');
-        return;
-    }
-
-    modalSuelto.hide();
-    enviarAsignacion({ rack, nivel, gondola });
-});
-
-
-
-
-
-
     });
 </script>
 
