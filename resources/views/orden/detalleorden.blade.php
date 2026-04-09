@@ -2,6 +2,28 @@
 
 @section('content')
 
+<style>
+    .img-container-cuadrado {
+        width: 100px;
+        height: 100px;
+        overflow: hidden;
+        display: inline-block;
+        margin: 5px;
+    }
+
+    .img-zoom.cursor-pointer {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover; /* Esto hace que la imagen llene el cuadro sin deformarse */
+        object-position: center;
+        border-radius: 8px; /* Opcional: bordes redondeados para que se vea más moderno */
+        transition: transform 0.2s;
+    }
+
+    .img-zoom.cursor-pointer:hover {
+        transform: scale(1.05); /* Efecto visual al pasar el mouse */
+    }
+</style>
 
 <div class="container-xxl">
                     <!-- ========== Page Title Start ========== -->
@@ -236,31 +258,28 @@
                                       <div class="row text-center">
                                             {{-- Foto 1 --}}
                                             @if($orden->foto1)
-                                                <div class="col-md-4 mb-3">
-                                                    <img src="{{ asset('imgs/' . $orden->foto1) }}" 
-                                                        alt="Foto 1" 
-                                                        class="img-fluid rounded border shadow-sm img-zoom cursor-pointer" 
-                                                        style="max-width: 100px; cursor: zoom-in;">
+                                                <div class="col-auto mb-3">
+                                                    <div class="img-container-cuadrado shadow-sm border rounded">
+                                                        <img src="{{ asset('imgs/' . $orden->foto1) }}" class="img-zoom cursor-pointer" alt="Foto 1">
+                                                    </div>
                                                 </div>
                                             @endif
 
                                             {{-- Foto 2 --}}
                                             @if($orden->foto2)
-                                                <div class="col-md-4 mb-3">
-                                                    <img src="{{ asset('imgs/' . $orden->foto2) }}" 
-                                                        alt="Foto 2" 
-                                                        class="img-fluid rounded border shadow-sm img-zoom cursor-pointer" 
-                                                        style="max-width: 100px; cursor: zoom-in;">
+                                                <div class="col-auto mb-3">
+                                                    <div class="img-container-cuadrado shadow-sm border rounded">
+                                                        <img src="{{ asset('imgs/' . $orden->foto2) }}" class="img-zoom cursor-pointer" alt="Foto 2">
+                                                    </div>
                                                 </div>
                                             @endif
 
                                             {{-- Foto 3 --}}
                                             @if($orden->foto3)
-                                                <div class="col-md-4 mb-3">
-                                                    <img src="{{ asset('imgs/' . $orden->foto3) }}" 
-                                                        alt="Foto 3" 
-                                                        class="img-fluid rounded border shadow-sm img-zoom cursor-pointer" 
-                                                        style="max-width: 100px; cursor: zoom-in;">
+                                                <div class="col-auto mb-3">
+                                                    <div class="img-container-cuadrado shadow-sm border rounded">
+                                                        <img src="{{ asset('imgs/' . $orden->foto3) }}" class="img-zoom cursor-pointer" alt="Foto 3">
+                                                    </div>
                                                 </div>
                                             @endif
                                         </div>
