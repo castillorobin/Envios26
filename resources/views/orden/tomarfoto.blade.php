@@ -3,6 +3,9 @@
 @section('content')
 
 <style>
+
+    
+
     .dropzone {
         min-height: 150px;
         border: 2px dashed #ced4da;
@@ -20,6 +23,18 @@
         max-width: 400px;
         margin-top: 15px;
     }
+
+    .avatar-sm {
+    height: 3rem;
+    width: 3rem;
+    object-fit: cover; /* Mantiene la miniatura cuadrada y centrada */
+}
+
+/* Evita que el contenedor de miniaturas se desborde */
+#file-previews {
+    width: 100%;
+    max-width: 100%;
+}
 
     @media (max-width: 768px) {
         .dropzone {
@@ -90,14 +105,41 @@
                             <h5 class="fs-14 mb-1">Fotos de la orden</h5>
                             <p class="text-muted fs-13">Agregar fotos a la orden (Máximo 3).</p>
                             
-                            <form action="{{ route('ordenes.guardar_fotos') }}" method="post" class="dropzone disabled" id="productImagesForm">
-                                @csrf
-                                <input type="hidden" name="guia" id="guia_hidden">
-                                <div class="dz-message needsclick">
-                                    <i class="h1 bx bx-cloud-upload"></i>
-                                    <h3>Click o tab para subir fotos.</h3>
-                                </div>
-                            </form>
+                            <form action="{{ route('ordenes.guardar_fotos') }}" method="post" 
+      class="dropzone disabled" id="productImagesForm"
+      data-previews-container="#file-previews" 
+      data-upload-preview-template="#uploadPreviewTemplate">
+    @csrf
+    <input type="hidden" name="guia" id="guia_hidden">
+    <div class="dz-message needsclick">
+        <i class="h1 bx bx-cloud-upload"></i>
+        <h3>Click para tomar foto.</h3>
+        <span class="text-muted fs-13">Máximo 3 fotografías por guía.</span>
+    </div>
+</form>
+
+<div class="dropzone-previews mt-3" id="file-previews"></div>
+
+<div class="d-none" id="uploadPreviewTemplate">
+    <div class="card mt-1 mb-0 shadow-none border">
+        <div class="p-2">
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <img data-dz-thumbnail src="#" class="avatar-sm rounded bg-light" alt="">
+                </div>
+                <div class="col ps-0">
+                    <a href="javascript:void(0);" class="text-muted fw-bold" data-dz-name></a>
+                    <p class="mb-0" data-dz-size></p>
+                </div>
+                <div class="col-auto">
+                    <a href="" class="btn btn-link btn-lg text-danger p-0" data-dz-remove>
+                        <i class="bx bx-x"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
                             <div class="d-flex flex-wrap gap-2 justify-content-end mt-3">
                                 <a href="{{ url()->previous() }}" class="btn btn-secondary">
@@ -220,21 +262,20 @@ document.addEventListener('DOMContentLoaded', function() {
     paramName: "file",
     maxFiles: 3,
     
-    // --- NUEVOS PARÁMETROS DE COMPRESIÓN ---
-    resizeWidth: 1200,          // Redimensiona a 1200px de ancho
-    resizeHeight: null,         // Mantiene la proporción
-    resizeMethod: 'contain',
-    resizeQuality: 0.6,         // Calidad al 80% (comprime muchísimo el peso)
+    // ESTAS LINEAS SON LAS QUE ACTIVAN EL DISEÑO VERTICAL
+    previewsContainer: "#file-previews",
+    previewTemplate: document.querySelector('#uploadPreviewTemplate').innerHTML,
     
-    maxFilesize: 20,            // Permitir que entren archivos grandes para procesarlos
+    resizeWidth: 1200,
+    resizeMethod: 'contain',
+    resizeQuality: 0.6,
+    maxFilesize: 20,
     acceptedFiles: "image/*",
-    addRemoveLinks: true,
     autoProcessQueue: false,
     headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
+    
     init: function() {
         var dz = this;
-
-        // Inyectar atributos de cámara al input oculto
         this.on("addedfile", function() {
             if (dz.files.length > 3) {
                 dz.removeFile(dz.files[3]);
@@ -242,7 +283,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Asegurar que el input de cámara se mantenga activo
         const hiddenInput = document.querySelector('input[type=file].dz-hidden-input');
         if (hiddenInput) {
             hiddenInput.setAttribute('capture', 'environment');
@@ -292,6 +332,7 @@ myDropzone.on("queuecomplete", function() {
         });
     }
 });
+
 });
 </script>
 @endsection
